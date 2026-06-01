@@ -20,6 +20,8 @@
 
     * { box-sizing: border-box; }
 
+    [hidden] { display: none !important; }
+
     body {
       margin: 0;
       background: var(--bg);
@@ -306,6 +308,60 @@
       background: #f0fff6;
     }
 
+    .agent-actions {
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .agent-actions .ghost-btn,
+    .agent-actions .export-btn {
+      margin-top: 0;
+    }
+
+    .agent-transcript {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .agent-line {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      word-break: break-word;
+    }
+
+    .agent-line.assistant {
+      border-color: rgba(178, 255, 82, .42);
+      background: rgba(178, 255, 82, .08);
+      color: #333a43;
+    }
+
+    .agent-preview {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .agent-preview img {
+      width: 64px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+    }
+
     button:disabled {
       cursor: wait;
       opacity: .68;
@@ -421,6 +477,36 @@
 
     <aside class="inspector">
       <section class="group" style="margin-top:0;">
+        <p class="group-title">对话生成</p>
+
+        <div class="field">
+          <label for="agentMessage">自然语言</label>
+          <textarea id="agentMessage" style="min-height:86px;" placeholder="比如：这条讲 Anthropic 估值回调，但我想表达 AI 下半场强者恒强。"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="agentLink">抖音作品链接</label>
+          <input id="agentLink" placeholder="https://v.douyin.com/...">
+        </div>
+
+        <div class="field">
+          <label for="agentImage">参考图片</label>
+          <input id="agentImage" type="file" accept="image/*">
+          <div class="agent-preview" id="agentPreview" hidden>
+            <img id="agentPreviewImg" alt="参考图预览">
+            <span id="agentPreviewText">已加入参考图</span>
+          </div>
+        </div>
+
+        <div class="agent-actions">
+          <button class="export-btn" id="agentRunBtn">对话生成封面</button>
+          <button class="ghost-btn" id="agentClearBtn">清空</button>
+        </div>
+        <div class="ai-status" id="agentStatus">DeepSeek 负责理解内容，Image 负责生成背景。</div>
+        <div class="agent-transcript" id="agentTranscript"></div>
+      </section>
+
+      <section class="group">
         <p class="group-title">内容输入</p>
 
         <div class="field" data-field="profileVariant">
@@ -578,6 +664,10 @@
       template: "work",
       category: "ai",
       customBg: null,
+      agentReference: null,
+      agentCoverImageUrl: "",
+      agentPromptHint: "",
+      agentMessages: [],
       images: {},
       fields: {}
     };
@@ -586,6 +676,16 @@
       canvas: document.getElementById("coverCanvas"),
       templateButtons: document.getElementById("templateButtons"),
       categoryButtons: document.getElementById("categoryButtons"),
+      agentMessage: document.getElementById("agentMessage"),
+      agentLink: document.getElementById("agentLink"),
+      agentImage: document.getElementById("agentImage"),
+      agentPreview: document.getElementById("agentPreview"),
+      agentPreviewImg: document.getElementById("agentPreviewImg"),
+      agentPreviewText: document.getElementById("agentPreviewText"),
+      agentRunBtn: document.getElementById("agentRunBtn"),
+      agentClearBtn: document.getElementById("agentClearBtn"),
+      agentStatus: document.getElementById("agentStatus"),
+      agentTranscript: document.getElementById("agentTranscript"),
       modeTitle: document.getElementById("modeTitle"),
       categoryLabel: document.getElementById("categoryLabel"),
       sizeMeta: document.getElementById("sizeMeta"),
@@ -618,6 +718,54 @@
         img.onload = () => resolve(img);
         img.onerror = reject;
         img.src = src;
+      });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function compressReferenceImage(file) {
+      const sourceUrl = await readFileAsDataUrl(file);
+      const source = await loadImage(sourceUrl);
+      const maxSide = 1280;
+      const ratio = Math.min(1, maxSide / Math.max(source.width, source.height));
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(source.width * ratio));
+      c.height = Math.max(1, Math.round(source.height * ratio));
+      c.getContext("2d").drawImage(source, 0, 0, c.width, c.height);
+      return {
+        name: file.name,
+        size: file.size,
+        dataUrl: c.toDataURL("image/jpeg", .88)
+      };
+    }
+
+    function setAgentStatus(message, type = "") {
+      el.agentStatus.textContent = message;
+      el.agentStatus.className = `ai-status ${type}`.trim();
+    }
+
+    function addAgentMessage(role, text) {
+      const clean = String(text || "").trim();
+      if (!clean) return;
+      state.agentMessages.push({ role, content: clean });
+      state.agentMessages = state.agentMessages.slice(-8);
+      renderAgentTranscript();
+    }
+
+    function renderAgentTranscript() {
+      el.agentTranscript.innerHTML = "";
+      state.agentMessages.slice(-4).forEach(item => {
+        const node = document.createElement("div");
+        node.className = `agent-line ${item.role === "assistant" ? "assistant" : ""}`;
+        node.textContent = item.content;
+        el.agentTranscript.appendChild(node);
       });
     }
 
@@ -988,12 +1136,15 @@
         `Brand: Mr.K, Chinese AI/business solo creator, calm judgment, cross-border AI, field notes.`,
         `Category: ${v.categoryTitle || cat.label} / ${v.categoryEn || cat.en}. Accent color hint: ${cat.color}.`,
         `Theme: ${theme}.`,
+        state.agentPromptHint ? `Editorial direction from DeepSeek: ${state.agentPromptHint}.` : "",
+        state.agentReference ? "Use the uploaded image as a loose visual reference for mood, color and scene structure, but do not copy text or identifiable UI." : "",
+        state.agentCoverImageUrl ? "Use the Douyin source cover image as a loose visual reference when provided, while keeping the final result in Mr.K's fixed cover system." : "",
         `Visual style: ${styleLabel()}. Information density: ${densityLabel()}.`,
         safeArea,
         "Use a dark cinematic base, realistic depth, subtle neon accent highlights, mature business and technology mood.",
         noText,
         "The image will be used only as a background; leave room for overlay typography and avatar stamp."
-      ].join(" ");
+      ].filter(Boolean).join(" ");
     }
 
     function setAiStatus(message, type = "") {
@@ -1001,17 +1152,23 @@
       el.aiStatus.className = `ai-status ${type}`.trim();
     }
 
-    async function generateAiBackground() {
+    async function generateAiBackground(options = {}) {
       const prompt = buildAiPrompt();
       el.generateBgBtn.disabled = true;
-      setAiStatus("正在请求 AI 生成配图，通常需要几十秒。", "working");
+      if (options.fromAgent) el.agentRunBtn.disabled = true;
+      setAiStatus(options.fromAgent ? "正在按方案生成背景图。" : "正在请求 AI 生成配图，通常需要几十秒。", "working");
       el.status.textContent = "Generating AI image";
 
       try {
         const response = await fetch("/api/generate-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt, template: state.template })
+          body: JSON.stringify({
+            prompt,
+            template: state.template,
+            reference_image_data_url: state.agentReference ? state.agentReference.dataUrl : "",
+            reference_image_url: state.agentCoverImageUrl || ""
+          })
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
@@ -1019,7 +1176,8 @@
         }
         const img = await loadImage(payload.image_data_url);
         state.customBg = img;
-        setAiStatus(`AI 配图已生成：${payload.model || "image model"} / ${payload.size || "auto"}`, "success");
+        const refLabel = payload.reference_used ? " / 已参考图片" : "";
+        setAiStatus(`AI 配图已生成：${payload.model || "image model"} / ${payload.size || "auto"}${refLabel}`, "success");
         el.status.textContent = "AI image generated";
       } catch (error) {
         state.customBg = await makeThemeBackground();
@@ -1027,7 +1185,103 @@
         el.status.textContent = "Local fallback generated";
       } finally {
         el.generateBgBtn.disabled = false;
+        if (options.fromAgent) el.agentRunBtn.disabled = false;
         draw();
+      }
+    }
+
+    function currentAgentContext() {
+      return {
+        template: state.template,
+        category: state.category,
+        categoryTitle: el.categoryTitle.value,
+        categoryEn: el.categoryEn.value,
+        categorySub: el.categorySub.value,
+        title: el.title.value,
+        enTitle: el.enTitle.value,
+        summary: el.summary.value,
+        code: el.code.value,
+        imageTheme: el.imageTheme.value,
+        imageStyle: el.imageStyle.value,
+        imageDensity: el.imageDensity.value
+      };
+    }
+
+    function setValue(input, value) {
+      const clean = String(value || "").trim();
+      if (clean) input.value = clean;
+    }
+
+    function applyAgentPlan(payload) {
+      const plan = payload.plan || {};
+      if (plan.category && categories[plan.category]) {
+        setCategory(plan.category);
+      }
+      if (["work", "collection", "profile"].includes(plan.template)) {
+        setTemplate(plan.template);
+      }
+
+      const fields = plan.fields || {};
+      setValue(el.categoryTitle, fields.categoryTitle);
+      setValue(el.categoryEn, fields.categoryEn);
+      setValue(el.categorySub, fields.categorySub);
+      setValue(el.title, fields.title);
+      setValue(el.enTitle, fields.enTitle);
+      setValue(el.summary, fields.summary);
+      setValue(el.code, fields.code);
+
+      const image = plan.image || {};
+      setValue(el.imageTheme, image.theme);
+      if (["cinematic", "terminal", "field", "minimal"].includes(image.style)) el.imageStyle.value = image.style;
+      if (["low", "medium", "high"].includes(image.density)) el.imageDensity.value = image.density;
+      state.agentPromptHint = String(image.promptHints || plan.reason || "").trim();
+      state.agentCoverImageUrl = payload.source && payload.source.cover_image_url ? payload.source.cover_image_url : "";
+      el.bgPreset.value = "auto";
+      draw();
+    }
+
+    async function runCoverAgent() {
+      const message = el.agentMessage.value.trim();
+      const douyinUrl = el.agentLink.value.trim();
+      const userLine = [
+        message || "按当前内容生成一版封面",
+        douyinUrl ? `链接：${douyinUrl}` : "",
+        state.agentReference ? `参考图：${state.agentReference.name}` : ""
+      ].filter(Boolean).join("\n");
+
+      addAgentMessage("user", userLine);
+      el.agentRunBtn.disabled = true;
+      setAgentStatus("正在让 DeepSeek 拆内容、定栏目和标题。", "working");
+      el.status.textContent = "Agent planning";
+
+      try {
+        const response = await fetch("/api/cover-agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            douyin_url: douyinUrl,
+            has_reference_image: Boolean(state.agentReference),
+            current: currentAgentContext(),
+            history: state.agentMessages
+          })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.message || `HTTP ${response.status}`);
+        }
+        applyAgentPlan(payload);
+        addAgentMessage("assistant", payload.reply || (payload.plan && payload.plan.reason) || "封面方案已生成。");
+        const sourceNote = payload.source && payload.source.status === "ok" ? "，已读取抖音链接信息" : "";
+        setAgentStatus(`${payload.fallback ? "本地方案" : "DeepSeek 方案"}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
+        await generateAiBackground({ fromAgent: true });
+        setAgentStatus(`${payload.fallback ? "已用本地方案完成" : "已用 DeepSeek 方案完成"}，可以直接导出 PNG。`, payload.fallback ? "error" : "success");
+        el.status.textContent = "Agent cover generated";
+      } catch (error) {
+        setAgentStatus(`对话生成失败：${error.message}`, "error");
+        el.status.textContent = "Agent failed";
+      } finally {
+        el.agentRunBtn.disabled = false;
       }
     }
 
@@ -1244,6 +1498,37 @@
         el.status.textContent = `Using ${file.name}`;
         draw();
       });
+    });
+
+    el.agentImage.addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      setAgentStatus("正在读取参考图。", "working");
+      try {
+        state.agentReference = await compressReferenceImage(file);
+        el.agentPreviewImg.src = state.agentReference.dataUrl;
+        el.agentPreviewText.textContent = `${file.name} 已加入参考`;
+        el.agentPreview.hidden = false;
+        setAgentStatus("参考图已加入，生成时会作为 image-to-image 输入。", "success");
+      } catch (error) {
+        state.agentReference = null;
+        el.agentPreview.hidden = true;
+        setAgentStatus(`参考图读取失败：${error.message}`, "error");
+      }
+    });
+
+    el.agentRunBtn.addEventListener("click", runCoverAgent);
+    el.agentClearBtn.addEventListener("click", () => {
+      state.agentMessages = [];
+      state.agentReference = null;
+      state.agentCoverImageUrl = "";
+      state.agentPromptHint = "";
+      el.agentMessage.value = "";
+      el.agentLink.value = "";
+      el.agentImage.value = "";
+      el.agentPreview.hidden = true;
+      renderAgentTranscript();
+      setAgentStatus("DeepSeek 负责理解内容，Image 负责生成背景。");
     });
 
     el.exportBtn.addEventListener("click", exportPng);

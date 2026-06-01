@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler
 
-from cover_image_service import ServiceError, generate_image
+from cover_agent_service import create_cover_plan
 
 
 class handler(BaseHTTPRequestHandler):
@@ -23,6 +23,6 @@ class handler(BaseHTTPRequestHandler):
             return
 
         try:
-            self._json(200, generate_image(incoming))
-        except ServiceError as exc:
-            self._json(exc.status, exc.payload)
+            self._json(200, create_cover_plan(incoming))
+        except Exception as exc:
+            self._json(502, {"error": "agent_failed", "message": str(exc)})

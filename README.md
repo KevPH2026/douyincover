@@ -22,21 +22,25 @@ OPENAI_API_KEY=sk-... python3 cover_studio_server.py
 
 ## Deploy
 
-Vercel serves the static app and the Python serverless function at:
+Vercel serves the static app and the Python serverless functions at:
 
 ```text
+/api/cover-agent
 /api/generate-image
 ```
 
 Required production environment variable:
 
 ```text
+DEEPSEEK_API_KEY
 OPENAI_API_KEY
 ```
 
 Optional:
 
 ```text
-OPENAI_IMAGE_MODEL=gpt-image-1.5
+DEEPSEEK_MODEL=deepseek-chat
+OPENAI_IMAGE_MODEL=gpt-image-2
 OPENAI_IMAGE_QUALITY=medium
+OPENAI_IMAGE_INPUT_FIDELITY=high
 ```
