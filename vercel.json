@@ -6,6 +6,12 @@
     }
   ],
   "functions": {
+    "api/auth.py": {
+      "maxDuration": 30
+    },
+    "api/assets.py": {
+      "maxDuration": 30
+    },
     "api/cover-agent.py": {
       "maxDuration": 60
     },

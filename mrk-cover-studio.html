@@ -44,6 +44,7 @@
       background: var(--panel);
       border-right: 1px solid var(--line);
       padding: 22px;
+      overflow: auto;
     }
 
     .inspector {
@@ -362,6 +363,119 @@
       border: 1px solid var(--line);
     }
 
+    .auth-actions,
+    .material-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .account-card {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .account-card strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      margin-top: 8px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: #eef2f6;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .material-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .material-item {
+      display: grid;
+      grid-template-columns: 74px 1fr;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .material-thumb {
+      width: 74px;
+      height: 96px;
+      border-radius: 6px;
+      object-fit: cover;
+      background: #101317;
+    }
+
+    .material-info {
+      min-width: 0;
+      display: grid;
+      gap: 6px;
+      align-content: start;
+    }
+
+    .material-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.25;
+      word-break: break-word;
+    }
+
+    .material-meta {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .tiny-btn {
+      height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .tiny-btn.primary {
+      border-color: #15191f;
+      background: #15191f;
+      color: #fff;
+    }
+
+    .tiny-btn.danger {
+      color: #9b2c24;
+      border-color: #ffc2bb;
+      background: #fff4f2;
+    }
+
+    .empty-state {
+      padding: 10px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      background: rgba(255,255,255,.48);
+    }
+
     button:disabled {
       cursor: wait;
       opacity: .68;
@@ -423,6 +537,37 @@
         <p>固定账号视觉系统，只改内容和背景。</p>
         <div class="domain">dna.superk.ai</div>
       </div>
+
+      <section class="group" style="margin-top:0;">
+        <p class="group-title">账号空间</p>
+        <div id="authLoggedOut">
+          <div class="field">
+            <label for="authEmail">邮箱</label>
+            <input id="authEmail" type="email" autocomplete="email" placeholder="you@company.com">
+          </div>
+          <div class="field">
+            <label for="authPassword">密码</label>
+            <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 6 位">
+          </div>
+          <div class="field">
+            <label for="authName">昵称</label>
+            <input id="authName" autocomplete="name" placeholder="Mr.K">
+          </div>
+          <div class="auth-actions">
+            <button class="ghost-btn" id="loginBtn" style="margin-top:0;">登录</button>
+            <button class="ghost-btn" id="registerBtn" style="margin-top:0;">注册</button>
+          </div>
+        </div>
+        <div id="authLoggedIn" hidden>
+          <div class="account-card">
+            <strong id="accountName">未登录</strong>
+            <span id="accountEmail">本地访客空间</span>
+            <div class="pill" id="storageMode">Local</div>
+          </div>
+          <button class="ghost-btn" id="logoutBtn">退出登录</button>
+        </div>
+        <div class="hint" id="authStatus">未登录也可以保存到本机。</div>
+      </section>
 
       <section class="group">
         <p class="group-title">模板</p>
@@ -604,8 +749,19 @@
       <section class="group">
         <p class="group-title">导出</p>
         <button class="export-btn" id="exportBtn">导出 PNG</button>
+        <button class="ghost-btn" id="saveAssetBtn">保存到素材库</button>
         <button class="ghost-btn" id="resetBtn">恢复当前栏目默认文案</button>
         <div class="hint" id="fileNameHint">work-ai-AI-03.png</div>
+      </section>
+
+      <section class="group">
+        <p class="group-title">素材库</p>
+        <div class="auth-actions">
+          <button class="ghost-btn" id="refreshAssetsBtn" style="margin-top:0;">刷新</button>
+          <button class="ghost-btn" id="saveAssetSmallBtn" style="margin-top:0;">保存当前</button>
+        </div>
+        <div class="ai-status" id="assetStatus">保存过的封面会出现在这里。</div>
+        <div class="material-list" id="assetList"></div>
       </section>
     </aside>
   </div>
@@ -664,10 +820,15 @@
       template: "work",
       category: "ai",
       customBg: null,
+      customBgDataUrl: "",
       agentReference: null,
       agentCoverImageUrl: "",
       agentPromptHint: "",
       agentMessages: [],
+      authToken: localStorage.getItem("mrk.authToken") || "",
+      user: null,
+      storageMode: "local",
+      assets: [],
       images: {},
       fields: {}
     };
@@ -676,6 +837,18 @@
       canvas: document.getElementById("coverCanvas"),
       templateButtons: document.getElementById("templateButtons"),
       categoryButtons: document.getElementById("categoryButtons"),
+      authEmail: document.getElementById("authEmail"),
+      authPassword: document.getElementById("authPassword"),
+      authName: document.getElementById("authName"),
+      loginBtn: document.getElementById("loginBtn"),
+      registerBtn: document.getElementById("registerBtn"),
+      logoutBtn: document.getElementById("logoutBtn"),
+      authLoggedOut: document.getElementById("authLoggedOut"),
+      authLoggedIn: document.getElementById("authLoggedIn"),
+      accountName: document.getElementById("accountName"),
+      accountEmail: document.getElementById("accountEmail"),
+      storageMode: document.getElementById("storageMode"),
+      authStatus: document.getElementById("authStatus"),
       agentMessage: document.getElementById("agentMessage"),
       agentLink: document.getElementById("agentLink"),
       agentImage: document.getElementById("agentImage"),
@@ -706,6 +879,11 @@
       generateBgBtn: document.getElementById("generateBgBtn"),
       aiStatus: document.getElementById("aiStatus"),
       exportBtn: document.getElementById("exportBtn"),
+      saveAssetBtn: document.getElementById("saveAssetBtn"),
+      saveAssetSmallBtn: document.getElementById("saveAssetSmallBtn"),
+      refreshAssetsBtn: document.getElementById("refreshAssetsBtn"),
+      assetStatus: document.getElementById("assetStatus"),
+      assetList: document.getElementById("assetList"),
       resetBtn: document.getElementById("resetBtn"),
       fileNameHint: document.getElementById("fileNameHint")
     };
@@ -767,6 +945,207 @@
         node.textContent = item.content;
         el.agentTranscript.appendChild(node);
       });
+    }
+
+    function storageKey(name) {
+      return `mrk.cover.${name}`;
+    }
+
+    function readJson(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function writeJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    async function digestText(text) {
+      if (window.crypto && crypto.subtle) {
+        const bytes = new TextEncoder().encode(text);
+        const hash = await crypto.subtle.digest("SHA-256", bytes);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+      }
+      return btoa(unescape(encodeURIComponent(text)));
+    }
+
+    function setAuthStatus(message, type = "") {
+      el.authStatus.textContent = message;
+      el.authStatus.className = `hint ${type}`.trim();
+    }
+
+    function setAssetStatus(message, type = "") {
+      el.assetStatus.textContent = message;
+      el.assetStatus.className = `ai-status ${type}`.trim();
+    }
+
+    async function apiPost(path, body) {
+      const headers = { "Content-Type": "application/json" };
+      if (state.authToken) headers.Authorization = `Bearer ${state.authToken}`;
+      const response = await fetch(path, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body)
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        const error = new Error(payload.message || `HTTP ${response.status}`);
+        error.payload = payload;
+        error.status = response.status;
+        throw error;
+      }
+      return payload;
+    }
+
+    function localUsers() {
+      return readJson(storageKey("users"), {});
+    }
+
+    function setLocalUsers(users) {
+      writeJson(storageKey("users"), users);
+    }
+
+    function setLocalSession(user) {
+      if (user) writeJson(storageKey("session"), user);
+      else localStorage.removeItem(storageKey("session"));
+    }
+
+    async function localRegister(email, password, name) {
+      const cleanEmail = email.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) throw new Error("请输入有效邮箱。");
+      if (password.length < 6) throw new Error("密码至少 6 位。");
+      const users = localUsers();
+      if (users[cleanEmail]) throw new Error("这个邮箱已经注册。");
+      const user = {
+        id: `local-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        email: cleanEmail,
+        name: name.trim() || cleanEmail.split("@")[0],
+        password_hash: await digestText(`${cleanEmail}:${password}`)
+      };
+      users[cleanEmail] = user;
+      setLocalUsers(users);
+      setLocalSession({ id: user.id, email: user.email, name: user.name });
+      return { user: { id: user.id, email: user.email, name: user.name }, storage: "local" };
+    }
+
+    async function localLogin(email, password) {
+      const cleanEmail = email.trim().toLowerCase();
+      const users = localUsers();
+      const user = users[cleanEmail];
+      if (!user) throw new Error("邮箱或密码不正确。");
+      const hash = await digestText(`${cleanEmail}:${password}`);
+      if (hash !== user.password_hash) throw new Error("邮箱或密码不正确。");
+      setLocalSession({ id: user.id, email: user.email, name: user.name });
+      return { user: { id: user.id, email: user.email, name: user.name }, storage: "local" };
+    }
+
+    function localAssetKey() {
+      const owner = state.user ? state.user.id : "guest";
+      return storageKey(`assets.${owner}`);
+    }
+
+    function localAssets() {
+      return readJson(localAssetKey(), []);
+    }
+
+    function setLocalAssets(assets) {
+      writeJson(localAssetKey(), assets.slice(0, 80));
+    }
+
+    function renderAuth() {
+      const loggedIn = Boolean(state.user);
+      el.authLoggedOut.hidden = loggedIn;
+      el.authLoggedIn.hidden = !loggedIn;
+      if (loggedIn) {
+        el.accountName.textContent = state.user.name || "Mr.K";
+        el.accountEmail.textContent = state.user.email || "本地账号";
+        el.storageMode.textContent = state.storageMode === "cloud" ? "Cloud KV" : "Local";
+      }
+    }
+
+    async function finishAuth(payload, fallbackMessage) {
+      state.user = payload.user;
+      state.storageMode = payload.storage || "cloud";
+      if (payload.token) {
+        state.authToken = payload.token;
+        localStorage.setItem("mrk.authToken", payload.token);
+      } else {
+        state.authToken = "";
+        localStorage.removeItem("mrk.authToken");
+      }
+      renderAuth();
+      setAuthStatus(fallbackMessage || `${state.user.name || state.user.email} 已登录。`);
+      await refreshAssets();
+    }
+
+    async function registerAccount() {
+      const email = el.authEmail.value.trim();
+      const password = el.authPassword.value;
+      const name = el.authName.value.trim();
+      setAuthStatus("正在注册账号。");
+      try {
+        const payload = await apiPost("/api/auth", { action: "register", email, password, name });
+        await finishAuth(payload, "云端账号已注册并登录。");
+      } catch (error) {
+        if (error.payload && error.payload.error !== "missing_storage") throw error;
+        const payload = await localRegister(email, password, name);
+        await finishAuth(payload, "当前未配置云端 KV，已创建本机账号。");
+      }
+    }
+
+    async function loginAccount() {
+      const email = el.authEmail.value.trim();
+      const password = el.authPassword.value;
+      setAuthStatus("正在登录。");
+      try {
+        const payload = await apiPost("/api/auth", { action: "login", email, password });
+        await finishAuth(payload, "云端账号已登录。");
+      } catch (error) {
+        if (error.payload && error.payload.error !== "missing_storage") throw error;
+        const payload = await localLogin(email, password);
+        await finishAuth(payload, "当前未配置云端 KV，已登录本机账号。");
+      }
+    }
+
+    async function logoutAccount() {
+      if (state.authToken) {
+        apiPost("/api/auth", { action: "logout" }).catch(() => {});
+      }
+      state.authToken = "";
+      state.user = null;
+      state.storageMode = "local";
+      localStorage.removeItem("mrk.authToken");
+      setLocalSession(null);
+      renderAuth();
+      setAuthStatus("已退出。未登录时素材会保存到本机访客空间。");
+      await refreshAssets();
+    }
+
+    async function initAuth() {
+      if (state.authToken) {
+        try {
+          const payload = await apiPost("/api/auth", { action: "me" });
+          await finishAuth({ ...payload, token: state.authToken }, "云端账号已恢复登录。");
+          return;
+        } catch {
+          state.authToken = "";
+          localStorage.removeItem("mrk.authToken");
+        }
+      }
+      const session = readJson(storageKey("session"), null);
+      if (session) {
+        state.user = session;
+        state.storageMode = "local";
+        renderAuth();
+        setAuthStatus("已恢复本机账号。");
+      } else {
+        renderAuth();
+        setAuthStatus("未登录也可以保存到本机。");
+      }
+      await refreshAssets();
     }
 
     function colorToRgb(hex) {
@@ -1176,11 +1555,13 @@
         }
         const img = await loadImage(payload.image_data_url);
         state.customBg = img;
+        state.customBgDataUrl = payload.image_data_url;
         const refLabel = payload.reference_used ? " / 已参考图片" : "";
         setAiStatus(`AI 配图已生成：${payload.model || "image model"} / ${payload.size || "auto"}${refLabel}`, "success");
         el.status.textContent = "AI image generated";
       } catch (error) {
         state.customBg = await makeThemeBackground();
+        state.customBgDataUrl = state.customBg.src || "";
         setAiStatus(`AI 接口暂不可用，已使用本地占位配图。原因：${error.message}`, "error");
         el.status.textContent = "Local fallback generated";
       } finally {
@@ -1474,6 +1855,212 @@
       el.status.textContent = `Exported ${link.download}`;
     }
 
+    function canvasPreview(maxWidth = 720, quality = .82) {
+      const ratio = Math.min(1, maxWidth / el.canvas.width);
+      const c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(el.canvas.width * ratio));
+      c.height = Math.max(1, Math.round(el.canvas.height * ratio));
+      c.getContext("2d").drawImage(el.canvas, 0, 0, c.width, c.height);
+      return c.toDataURL("image/jpeg", quality);
+    }
+
+    function editableSnapshot() {
+      return {
+        template: state.template,
+        category: state.category,
+        profileVariant: el.profileVariant.value,
+        categoryTitle: el.categoryTitle.value,
+        categoryEn: el.categoryEn.value,
+        categorySub: el.categorySub.value,
+        title: el.title.value,
+        enTitle: el.enTitle.value,
+        summary: el.summary.value,
+        code: el.code.value,
+        bgPreset: el.bgPreset.value,
+        imageTheme: el.imageTheme.value,
+        imageStyle: el.imageStyle.value,
+        imageDensity: el.imageDensity.value,
+        customBgDataUrl: state.customBgDataUrl && state.customBgDataUrl.length < 900000 ? state.customBgDataUrl : ""
+      };
+    }
+
+    function buildAsset() {
+      draw();
+      const v = values();
+      const title = (v.title || v.categoryTitle || el.modeTitle.textContent || "未命名素材").replace(/\s+/g, " ").trim();
+      return {
+        id: `asset-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+        title,
+        template: state.template,
+        category: state.category,
+        code: v.code,
+        summary: v.summary,
+        thumbnail: canvasPreview(360, .76),
+        render_data_url: canvasPreview(980, .84),
+        editable: editableSnapshot(),
+        source: {
+          agentPromptHint: state.agentPromptHint,
+          douyinCoverImageUrl: state.agentCoverImageUrl,
+          savedFrom: state.storageMode
+        },
+        created_at: Date.now()
+      };
+    }
+
+    function formatTime(ts) {
+      const date = new Date(ts || Date.now());
+      return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    }
+
+    function templateName(template) {
+      return { work: "作品", collection: "合集", profile: "主页" }[template] || "素材";
+    }
+
+    function renderAssets() {
+      el.assetList.innerHTML = "";
+      if (!state.assets.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "还没有素材。生成或调整好封面后，点“保存到素材库”。";
+        el.assetList.appendChild(empty);
+        return;
+      }
+      state.assets.forEach(asset => {
+        const item = document.createElement("div");
+        item.className = "material-item";
+
+        const img = document.createElement("img");
+        img.className = "material-thumb";
+        img.alt = asset.title || "素材预览";
+        img.src = asset.thumbnail || asset.render_data_url || "";
+        item.appendChild(img);
+
+        const info = document.createElement("div");
+        info.className = "material-info";
+
+        const title = document.createElement("div");
+        title.className = "material-title";
+        title.textContent = asset.title || "未命名素材";
+        info.appendChild(title);
+
+        const meta = document.createElement("div");
+        meta.className = "material-meta";
+        const cat = categories[asset.category] ? categories[asset.category].label : asset.category;
+        meta.textContent = `${templateName(asset.template)} / ${cat || "未分类"} / ${formatTime(asset.created_at)}`;
+        info.appendChild(meta);
+
+        const actions = document.createElement("div");
+        actions.className = "material-actions";
+        [
+          ["load", "载入", "primary"],
+          ["download", "下载", ""],
+          ["delete", "删除", "danger"]
+        ].forEach(([action, label, cls]) => {
+          const btn = document.createElement("button");
+          btn.className = `tiny-btn ${cls}`.trim();
+          btn.textContent = label;
+          btn.dataset.assetAction = action;
+          btn.dataset.assetId = asset.id;
+          actions.appendChild(btn);
+        });
+        info.appendChild(actions);
+        item.appendChild(info);
+        el.assetList.appendChild(item);
+      });
+    }
+
+    async function refreshAssets() {
+      if (state.authToken && state.storageMode === "cloud") {
+        try {
+          const payload = await apiPost("/api/assets", { action: "list" });
+          state.assets = payload.assets || [];
+          setAssetStatus(`云端素材 ${state.assets.length} 个。`, "success");
+          renderAssets();
+          return;
+        } catch (error) {
+          if (!(error.payload && error.payload.error === "missing_storage")) {
+            setAssetStatus(`云端素材读取失败，已切换本机素材。原因：${error.message}`, "error");
+          }
+        }
+      }
+      state.assets = localAssets();
+      setAssetStatus(`${state.user ? "本机账号" : "访客"}素材 ${state.assets.length} 个。`);
+      renderAssets();
+    }
+
+    async function saveCurrentAsset() {
+      const asset = buildAsset();
+      if (state.authToken && state.storageMode === "cloud") {
+        try {
+          const payload = await apiPost("/api/assets", { action: "save", asset });
+          state.assets = payload.assets || [payload.asset, ...state.assets];
+          setAssetStatus("已保存到云端素材库。", "success");
+          renderAssets();
+          return;
+        } catch (error) {
+          setAssetStatus(`云端保存失败，已保存到本机。原因：${error.message}`, "error");
+        }
+      }
+      const assets = [asset, ...localAssets().filter(item => item.id !== asset.id)].slice(0, 80);
+      setLocalAssets(assets);
+      state.assets = assets;
+      setAssetStatus("已保存到本机素材库。", "success");
+      renderAssets();
+    }
+
+    async function deleteAsset(assetId) {
+      if (state.authToken && state.storageMode === "cloud") {
+        try {
+          const payload = await apiPost("/api/assets", { action: "delete", id: assetId });
+          state.assets = payload.assets || [];
+          setAssetStatus("云端素材已删除。", "success");
+          renderAssets();
+          return;
+        } catch (error) {
+          setAssetStatus(`云端删除失败，尝试删除本机素材。原因：${error.message}`, "error");
+        }
+      }
+      const assets = localAssets().filter(item => item.id !== assetId);
+      setLocalAssets(assets);
+      state.assets = assets;
+      renderAssets();
+    }
+
+    async function loadAsset(asset) {
+      const snap = asset.editable || {};
+      if (snap.category && categories[snap.category]) setCategory(snap.category);
+      if (["work", "collection", "profile"].includes(snap.template)) setTemplate(snap.template);
+      setValue(el.categoryTitle, snap.categoryTitle);
+      setValue(el.categoryEn, snap.categoryEn);
+      setValue(el.categorySub, snap.categorySub);
+      setValue(el.title, snap.title);
+      setValue(el.enTitle, snap.enTitle);
+      setValue(el.summary, snap.summary);
+      setValue(el.code, snap.code);
+      if (snap.profileVariant) el.profileVariant.value = snap.profileVariant;
+      if (snap.bgPreset) el.bgPreset.value = snap.bgPreset;
+      setValue(el.imageTheme, snap.imageTheme);
+      if (["cinematic", "terminal", "field", "minimal"].includes(snap.imageStyle)) el.imageStyle.value = snap.imageStyle;
+      if (["low", "medium", "high"].includes(snap.imageDensity)) el.imageDensity.value = snap.imageDensity;
+      state.customBg = null;
+      state.customBgDataUrl = "";
+      if (snap.customBgDataUrl) {
+        state.customBg = await loadImage(snap.customBgDataUrl);
+        state.customBgDataUrl = snap.customBgDataUrl;
+      }
+      state.agentPromptHint = asset.source && asset.source.agentPromptHint ? asset.source.agentPromptHint : "";
+      state.agentCoverImageUrl = asset.source && asset.source.douyinCoverImageUrl ? asset.source.douyinCoverImageUrl : "";
+      draw();
+      setAssetStatus(`已载入：${asset.title || "素材"}`, "success");
+    }
+
+    function downloadAsset(asset) {
+      const link = document.createElement("a");
+      link.download = `${(asset.title || "mrk-cover").replace(/[^\w\u4e00-\u9fff-]+/g, "-")}.jpg`;
+      link.href = asset.render_data_url || asset.thumbnail;
+      link.click();
+    }
+
     el.templateButtons.addEventListener("click", event => {
       const btn = event.target.closest("[data-template]");
       if (btn) setTemplate(btn.dataset.template);
@@ -1492,12 +2079,12 @@
     el.bgUpload.addEventListener("change", event => {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
-      const url = URL.createObjectURL(file);
-      loadImage(url).then(img => {
+      readFileAsDataUrl(file).then(url => loadImage(url).then(img => {
         state.customBg = img;
+        state.customBgDataUrl = url;
         el.status.textContent = `Using ${file.name}`;
         draw();
-      });
+      }));
     });
 
     el.agentImage.addEventListener("change", async event => {
@@ -1531,7 +2118,30 @@
       setAgentStatus("DeepSeek 负责理解内容，Image 负责生成背景。");
     });
 
+    el.loginBtn.addEventListener("click", () => {
+      loginAccount().catch(error => setAuthStatus(`登录失败：${error.message}`));
+    });
+
+    el.registerBtn.addEventListener("click", () => {
+      registerAccount().catch(error => setAuthStatus(`注册失败：${error.message}`));
+    });
+
+    el.logoutBtn.addEventListener("click", logoutAccount);
+
     el.exportBtn.addEventListener("click", exportPng);
+    el.saveAssetBtn.addEventListener("click", saveCurrentAsset);
+    el.saveAssetSmallBtn.addEventListener("click", saveCurrentAsset);
+    el.refreshAssetsBtn.addEventListener("click", refreshAssets);
+    el.assetList.addEventListener("click", event => {
+      const btn = event.target.closest("[data-asset-action]");
+      if (!btn) return;
+      const asset = state.assets.find(item => item.id === btn.dataset.assetId);
+      if (!asset) return;
+      const action = btn.dataset.assetAction;
+      if (action === "load") loadAsset(asset);
+      if (action === "download") downloadAsset(asset);
+      if (action === "delete") deleteAsset(asset.id);
+    });
     el.generateBgBtn.addEventListener("click", generateAiBackground);
     el.resetBtn.addEventListener("click", () => {
       applyCategoryDefaults(state.category);
@@ -1539,6 +2149,7 @@
     });
 
     preload();
+    initAuth();
   </script>
 </body>
 </html>

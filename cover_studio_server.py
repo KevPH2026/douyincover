@@ -4,6 +4,8 @@ import os
 import sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
+from account_service import ServiceError as AccountServiceError
+from account_service import handle_assets, handle_auth, list_assets
 from cover_agent_service import create_cover_plan
 from cover_image_service import ServiceError as ImageServiceError
 from cover_image_service import generate_image
@@ -45,14 +47,41 @@ class CoverStudioHandler(SimpleHTTPRequestHandler):
                 self._json(502, {"error": "agent_failed", "message": str(exc)})
             return
 
+        if self.path == "/api/auth":
+            try:
+                self._json(200, handle_auth(self._read_json(), self.headers))
+            except ValueError as exc:
+                self._json(400, {"error": "bad_request", "message": str(exc)})
+            except AccountServiceError as exc:
+                self._json(exc.status, exc.payload)
+            return
+
+        if self.path == "/api/assets":
+            try:
+                self._json(200, handle_assets(self._read_json(), self.headers))
+            except ValueError as exc:
+                self._json(400, {"error": "bad_request", "message": str(exc)})
+            except AccountServiceError as exc:
+                self._json(exc.status, exc.payload)
+            return
+
         self._json(404, {"error": "not_found", "message": "Unknown API endpoint."})
+
+    def do_GET(self):
+        if self.path == "/api/assets":
+            try:
+                self._json(200, list_assets(self.headers))
+            except AccountServiceError as exc:
+                self._json(exc.status, exc.payload)
+            return
+        return super().do_GET()
 
 
 def main():
     port = int(os.environ.get("PORT", "8765"))
     server = ThreadingHTTPServer(("127.0.0.1", port), CoverStudioHandler)
     print(f"Mr.K Cover Studio running at http://127.0.0.1:{port}/mrk-cover-studio.html", flush=True)
-    print("Set DEEPSEEK_API_KEY and OPENAI_API_KEY to enable the full agent workflow.", flush=True)
+    print("Set KV, DEEPSEEK_API_KEY and OPENAI_API_KEY to enable the full product workflow.", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
