@@ -131,9 +131,113 @@ def fetch_douyin_metadata(url):
     return data
 
 
+URL_PATTERN = re.compile(r"https?://[^\s，。！!？?；;、)）\]】\"'<>]+", re.I)
+HASHTAG_PATTERN = re.compile(r"#\s*([^#\s，。！？；;、]+)")
+
+
+def normalize_space(text):
+    return re.sub(r"\s+", " ", str(text or "")).strip()
+
+
+def extract_first_url(text):
+    for match in URL_PATTERN.findall(str(text or "")):
+        candidate = match.strip().rstrip("，。！!？?；;、")
+        if candidate:
+            return candidate
+    return ""
+
+
+def extract_hashtags(text):
+    seen = set()
+    tags = []
+    ignored = {"抖音精选", "热评文案收集"}
+    for match in HASHTAG_PATTERN.finditer(str(text or "")):
+        tag = match.group(1).strip(" #，。！？；;、")
+        key = tag.lower()
+        if tag and tag not in ignored and key not in seen:
+            seen.add(key)
+            tags.append(tag)
+    return tags[:12]
+
+
+def strip_hashtags(text):
+    return normalize_space(HASHTAG_PATTERN.sub(" ", str(text or "")).replace("#", " "))
+
+
+def clean_share_text(text):
+    raw = html.unescape(str(text or ""))
+    raw = raw.replace("Dou音", "抖音").replace("dou音", "抖音")
+    raw = URL_PATTERN.sub(" ", raw)
+    for phrase in [
+        "复制此链接，打开抖音搜索，直接观看视频！",
+        "复制此链接，打开抖音搜索，直接观看视频",
+        "复制此链接，打开Dou音搜索，直接观看视频！",
+        "复制此链接，打开Dou音搜索，直接观看视频",
+        "打开抖音搜索，直接观看视频！",
+        "打开抖音搜索，直接观看视频",
+        "抖音精选",
+    ]:
+        raw = raw.replace(phrase, " ")
+    raw = normalize_space(raw)
+
+    # Douyin share text often starts with copy-code noise before the first real Chinese phrase.
+    first_cjk = re.search(r"[\u4e00-\u9fff]", raw)
+    if first_cjk and 0 < first_cjk.start() <= 90:
+        prefix = raw[: first_cjk.start()]
+        noisy_tokens = re.findall(r"[A-Za-z0-9@:/._%-]+", prefix)
+        if len(noisy_tokens) >= 2 or re.search(r"\d{1,2}/\d{1,2}|@", prefix):
+            raw = raw[first_cjk.start() :]
+
+    raw = re.sub(r"\s*([，。！？；、])\s*", r"\1", raw)
+    raw = re.sub(r"\s+#", " #", raw)
+    return normalize_space(raw).strip("，。！？；;、 ")
+
+
+def build_douyin_context(incoming):
+    share_text = trim(incoming.get("douyin_share_text"), 2000)
+    message = trim(incoming.get("message"), 1200)
+    explicit_url = trim(incoming.get("douyin_url"), 500)
+    url = explicit_url or extract_first_url("\n".join([share_text, message]))
+    meta = fetch_douyin_metadata(url)
+    raw_text = "\n".join([share_text, message])
+    hashtags = extract_hashtags(raw_text)
+    clean_text = clean_share_text(share_text or message)
+    clean_without_tags = strip_hashtags(clean_text)
+    meta_text = " / ".join(
+        item
+        for item in [
+            meta.get("og_title") or meta.get("title") or "",
+            meta.get("og_description") or meta.get("description") or "",
+        ]
+        if item
+    )
+    source_text = " / ".join(
+        item
+        for item in [
+            clean_without_tags,
+            " ".join(f"#{tag}" for tag in hashtags),
+            meta_text,
+        ]
+        if item
+    )
+    return {
+        "status": meta.get("status", "empty"),
+        "url": url,
+        "share_text": share_text,
+        "clean_text": trim(clean_text, 800),
+        "clean_without_tags": trim(clean_without_tags, 600),
+        "hashtags": hashtags,
+        "source_text": trim(source_text, 1600),
+        "cover_image_url": meta.get("cover_image_url", ""),
+        "meta": meta,
+    }
+
+
 def infer_category(text):
     source = str(text or "").lower()
     compact = re.sub(r"\s+", "", source)
+    if any(k in compact for k in ["强势文化", "乔布斯", "强者恒强", "聪明的人"]):
+        return "strong"
     if "ai下半场" in compact or "模型" in source or "agent" in source or "saas" in source:
         return "ai"
     if "强者恒强" in compact:
@@ -150,6 +254,12 @@ def infer_category(text):
 def fallback_title(text, current_title):
     source = str(text or "")
     compact = re.sub(r"\s+", "", source)
+    if "乔布斯" in compact and any(k in compact for k in ["聪明", "交往", "多和", "强势文化", "强者恒强"]):
+        return "乔布斯：\n多和聪明的人\n交往"
+    if "乔布斯" in compact:
+        return "乔布斯\n强者逻辑"
+    if "强势文化" in compact:
+        return "强势\n文化"
     if "估值" in compact and any(k in compact for k in ["回调", "下杀", "蒸发", "缩水"]):
         return "估值\n回调"
     if "saas" in source.lower() and "消失" in compact:
@@ -166,24 +276,76 @@ def fallback_title(text, current_title):
     return trim(current_title or "这一轮\n要看懂", 18)
 
 
-def fallback_plan(incoming, link_meta, reason="local_fallback"):
+def fallback_summary(text, category, current_summary):
+    source = str(text or "")
+    compact = re.sub(r"\s+", "", source)
+    if "乔布斯" in compact and any(k in compact for k in ["聪明", "交往", "多和", "强势文化", "强者恒强"]):
+        return "强者会主动进入更高密度的人群。"
+    if "强势文化" in compact:
+        return "不是情绪强，是判断和行动更稳定。"
+    if "强者恒强" in compact:
+        return "差距会在每一次判断里继续拉开。"
+    if category == "ai":
+        return "看懂模型之后，才看得懂生意。"
+    if category == "road":
+        return "一线现场，比会议室更早给答案。"
+    return trim(current_summary or "把这一轮变化讲清楚。", 34)
+
+
+def fallback_en_title(text, category, current_en_title):
+    source = str(text or "")
+    compact = re.sub(r"\s+", "", source)
+    if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
+        return "Stay With Smart People"
+    if "强势文化" in compact:
+        return "Strong Culture"
+    if "强者恒强" in compact:
+        return "The Strong Get Stronger"
+    if category == "ai":
+        return "AI Field Note"
+    if category == "road":
+        return "Road Note"
+    return trim(current_en_title or "Field Note", 36)
+
+
+def fallback_image_theme(text, category, current_theme):
+    source = trim(text, 180)
+    compact = re.sub(r"\s+", "", source)
+    if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
+        return "硅谷深夜办公室，聪明人围绕白板讨论，黑白肖像气质，强势文化，低调电影感"
+    if "强势文化" in compact:
+        return "强势文化，深夜会议室，白板，筹码，判断力，安静的压迫感"
+    if source:
+        return source
+    return current_theme or (
+        "出差在路上，机场候机，客户现场，一线观察，雨夜城市"
+        if category == "road"
+        else "深夜城市，AI商业判断，代码屏幕"
+    )
+
+
+def fallback_plan(incoming, douyin_context, reason="local_fallback"):
     current = incoming.get("current") or {}
-    message = trim(incoming.get("message"), 240)
+    message = "" if douyin_context.get("share_text") else trim(incoming.get("message"), 500)
     source_text = " / ".join(
-        [
-            message,
-            link_meta.get("og_title") or link_meta.get("title") or "",
-            link_meta.get("og_description") or link_meta.get("description") or "",
+        item
+        for item in [
+            douyin_context.get("source_text") or "",
+            message if message and message not in (douyin_context.get("source_text") or "") else "",
         ]
+        if item
     )
     category = infer_category(source_text)
-    clean = re.sub(r"https?://\S+", "", source_text).strip(" /，。")
-    title = trim(fallback_title(clean, current.get("title")), 18)
+    clean = URL_PATTERN.sub(" ", source_text).strip(" /，。")
+    readable_clean = strip_hashtags(clean).strip(" /，。#")
+    title = trim(fallback_title(clean, current.get("title")), 24)
+    summary = trim(fallback_summary(clean, category, current.get("summary")), 42)
+    en_title = trim(fallback_en_title(clean, category, current.get("enTitle")), 44)
 
     category_defaults = {
-        "ai": ("AI下半场", "AI SECOND HALF", "模型 / Agent / 商业重构", "AI-NEW"),
-        "strong": ("强者恒强", "THE STRONG GET STRONGER", "判断力 / 筹码 / 个体系统", "K-NEW"),
-        "road": ("在路上", "ON THE ROAD", "出差 / 客户 / 一线观察", "ROAD-NEW"),
+        "ai": ("AI下半场", "AI SECOND HALF", "模型 / Agent / 商业重构", "AI-01"),
+        "strong": ("强者恒强", "THE STRONG GET STRONGER", "判断力 / 筹码 / 个体系统", "K-01"),
+        "road": ("在路上", "ON THE ROAD", "出差 / 客户 / 一线观察", "ROAD-01"),
     }[category]
 
     return {
@@ -195,22 +357,22 @@ def fallback_plan(incoming, link_meta, reason="local_fallback"):
             "categoryEn": category_defaults[1],
             "categorySub": category_defaults[2],
             "title": title,
-            "enTitle": trim(current.get("enTitle") or "Field Note", 36),
-            "summary": trim(current.get("summary") or clean or "把这一轮变化讲清楚。", 34),
+            "enTitle": en_title,
+            "summary": summary,
             "code": category_defaults[3],
         },
         "image": {
-            "theme": trim(clean or current.get("imageTheme") or "深夜城市，AI商业判断，代码屏幕", 180),
+            "theme": trim(fallback_image_theme(clean, category, current.get("imageTheme")), 180),
             "style": "field" if category == "road" else "cinematic",
             "density": "medium",
-            "promptHints": trim(clean, 220),
+            "promptHints": trim(readable_clean or clean, 220),
         },
         "reason": reason,
     }
 
 
 SYSTEM_PROMPT = """
-你是 Mr.K 在路上的抖音封面导演。你的任务是把自然语言、抖音作品链接信息、当前封面字段，整理成可以直接套用的封面方案。
+你是 Mr.K 在路上的抖音封面导演。你的任务是把自然语言、抖音作品链接信息、抖音分享文案、当前封面字段，整理成可以直接套用的封面方案。
 
 账号固定规则：
 - 账号：MR.K 在路上；ID：KevPH2026。
@@ -218,6 +380,7 @@ SYSTEM_PROMPT = """
 - 单条作品封面要服务点击：中文标题必须短、狠、好读，建议 2-8 个汉字一行，用 \\n 控制换行，最多 3 行。
 - 摘要是点击理由，不要流水账，控制在 12-28 个中文字符。
 - 图片只做背景，不要把标题文字写进生成图里；标题由前端固定版式叠加。
+- 如果用户只粘贴抖音分享文案或短链，优先使用 douyin_context.clean_without_tags、hashtags 和 douyin_meta 来判断主题；忽略复制口令、时间、随机码、"复制此链接" 这类噪声。
 - 如果用户上传图片，你不能声称自己看到了图片细节；只把它作为生图参考图使用，并在 image.promptHints 中说明如何利用参考图的气质、颜色或场景。
 
 只输出合法 JSON，不要 markdown，不要解释。JSON 结构：
@@ -245,8 +408,8 @@ SYSTEM_PROMPT = """
 """
 
 
-def normalize_plan(plan, incoming, link_meta):
-    fallback = fallback_plan(incoming, link_meta, "normalized_fallback")
+def normalize_plan(plan, incoming, douyin_context):
+    fallback = fallback_plan(incoming, douyin_context, "normalized_fallback")
     plan = plan if isinstance(plan, dict) else {}
     fields = plan.get("fields") if isinstance(plan.get("fields"), dict) else {}
     image = plan.get("image") if isinstance(plan.get("image"), dict) else {}
@@ -276,15 +439,16 @@ def normalize_plan(plan, incoming, link_meta):
 
 
 def create_cover_plan(incoming):
-    link_meta = fetch_douyin_metadata(incoming.get("douyin_url"))
+    douyin_context = build_douyin_context(incoming)
+    link_meta = douyin_context.get("meta") or {}
     api_key = os.environ.get("DEEPSEEK_API_KEY")
     if not api_key:
-        plan = fallback_plan(incoming, link_meta, "missing_deepseek_api_key")
+        plan = fallback_plan(incoming, douyin_context, "missing_deepseek_api_key")
         return {
             "plan": plan,
             "reply": plan["reply"],
             "model": "local-fallback",
-            "source": link_meta,
+            "source": douyin_context,
             "fallback": True,
         }
 
@@ -293,7 +457,9 @@ def create_cover_plan(incoming):
     history = history[-8:] if isinstance(history, list) else []
     user_payload = {
         "user_message": trim(incoming.get("message"), 1200),
+        "douyin_share_text": trim(incoming.get("douyin_share_text"), 2000),
         "douyin_url": trim(incoming.get("douyin_url"), 500),
+        "douyin_context": douyin_context,
         "douyin_meta": link_meta,
         "has_uploaded_reference_image": bool(incoming.get("has_reference_image")),
         "current": current,
@@ -324,33 +490,33 @@ def create_cover_plan(incoming):
         with urllib.request.urlopen(request, timeout=60) as response:
             result = json.loads(response.read().decode("utf-8"))
         content = result["choices"][0]["message"]["content"]
-        plan = normalize_plan(safe_json_loads(content), incoming, link_meta)
+        plan = normalize_plan(safe_json_loads(content), incoming, douyin_context)
         return {
             "plan": plan,
             "reply": plan["reply"],
             "model": model,
-            "source": link_meta,
+            "source": douyin_context,
             "fallback": False,
             "usage": result.get("usage"),
         }
     except urllib.error.HTTPError as exc:
         message = exc.read().decode("utf-8", errors="replace")
-        plan = fallback_plan(incoming, link_meta, "deepseek_http_error")
+        plan = fallback_plan(incoming, douyin_context, "deepseek_http_error")
         return {
             "plan": plan,
             "reply": plan["reply"],
             "model": "local-fallback",
-            "source": link_meta,
+            "source": douyin_context,
             "fallback": True,
             "error": message,
         }
     except Exception as exc:
-        plan = fallback_plan(incoming, link_meta, "deepseek_failed")
+        plan = fallback_plan(incoming, douyin_context, "deepseek_failed")
         return {
             "plan": plan,
             "reply": plan["reply"],
             "model": "local-fallback",
-            "source": link_meta,
+            "source": douyin_context,
             "fallback": True,
             "error": str(exc),
         }

@@ -625,6 +625,12 @@
         <p class="group-title">对话生成</p>
 
         <div class="field">
+          <label for="douyinShare">抖音分享文案/链接</label>
+          <textarea id="douyinShare" style="min-height:82px;" placeholder="粘贴抖音复制出来的一整段，或只粘贴 https://v.douyin.com/..."></textarea>
+          <button class="export-btn" id="douyinRunBtn" style="margin-top:8px;">抖音链接生成封面</button>
+        </div>
+
+        <div class="field">
           <label for="agentMessage">自然语言</label>
           <textarea id="agentMessage" style="min-height:86px;" placeholder="比如：这条讲 Anthropic 估值回调，但我想表达 AI 下半场强者恒强。"></textarea>
         </div>
@@ -647,7 +653,7 @@
           <button class="export-btn" id="agentRunBtn">对话生成封面</button>
           <button class="ghost-btn" id="agentClearBtn">清空</button>
         </div>
-        <div class="ai-status" id="agentStatus">DeepSeek 负责理解内容，Image 负责生成背景。</div>
+        <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；DeepSeek 负责理解内容，Image 负责生成背景。</div>
         <div class="agent-transcript" id="agentTranscript"></div>
       </section>
 
@@ -849,12 +855,14 @@
       accountEmail: document.getElementById("accountEmail"),
       storageMode: document.getElementById("storageMode"),
       authStatus: document.getElementById("authStatus"),
+      douyinShare: document.getElementById("douyinShare"),
       agentMessage: document.getElementById("agentMessage"),
       agentLink: document.getElementById("agentLink"),
       agentImage: document.getElementById("agentImage"),
       agentPreview: document.getElementById("agentPreview"),
       agentPreviewImg: document.getElementById("agentPreviewImg"),
       agentPreviewText: document.getElementById("agentPreviewText"),
+      douyinRunBtn: document.getElementById("douyinRunBtn"),
       agentRunBtn: document.getElementById("agentRunBtn"),
       agentClearBtn: document.getElementById("agentClearBtn"),
       agentStatus: document.getElementById("agentStatus"),
@@ -945,6 +953,24 @@
         node.textContent = item.content;
         el.agentTranscript.appendChild(node);
       });
+    }
+
+    function extractUrlFromText(text) {
+      const match = String(text || "").match(/https?:\/\/[^\s，。！？；;、)）\]】"'<>]+/i);
+      return match ? match[0].replace(/[，。！？；;、]+$/g, "") : "";
+    }
+
+    function setAgentButtonsDisabled(disabled) {
+      el.agentRunBtn.disabled = disabled;
+      el.douyinRunBtn.disabled = disabled;
+    }
+
+    function agentSourceNote(source = {}) {
+      const status = source.status || (source.meta && source.meta.status);
+      if (source.clean_text) return "，已解析抖音分享文案";
+      if (status === "ok") return "，已读取抖音链接信息";
+      if (source.url) return "，已提取抖音链接";
+      return "";
     }
 
     function storageKey(name) {
@@ -1534,7 +1560,7 @@
     async function generateAiBackground(options = {}) {
       const prompt = buildAiPrompt();
       el.generateBgBtn.disabled = true;
-      if (options.fromAgent) el.agentRunBtn.disabled = true;
+      if (options.fromAgent) setAgentButtonsDisabled(true);
       setAiStatus(options.fromAgent ? "正在按方案生成背景图。" : "正在请求 AI 生成配图，通常需要几十秒。", "working");
       el.status.textContent = "Generating AI image";
 
@@ -1566,7 +1592,7 @@
         el.status.textContent = "Local fallback generated";
       } finally {
         el.generateBgBtn.disabled = false;
-        if (options.fromAgent) el.agentRunBtn.disabled = false;
+        if (options.fromAgent) setAgentButtonsDisabled(false);
         draw();
       }
     }
@@ -1616,23 +1642,43 @@
       if (["cinematic", "terminal", "field", "minimal"].includes(image.style)) el.imageStyle.value = image.style;
       if (["low", "medium", "high"].includes(image.density)) el.imageDensity.value = image.density;
       state.agentPromptHint = String(image.promptHints || plan.reason || "").trim();
-      state.agentCoverImageUrl = payload.source && payload.source.cover_image_url ? payload.source.cover_image_url : "";
+      const source = payload.source || {};
+      const sourceMeta = source.meta || source;
+      state.agentCoverImageUrl = source.cover_image_url || sourceMeta.cover_image_url || "";
       el.bgPreset.value = "auto";
       draw();
     }
 
-    async function runCoverAgent() {
-      const message = el.agentMessage.value.trim();
-      const douyinUrl = el.agentLink.value.trim();
+    async function runCoverAgent(options = {}) {
+      const fromDouyin = Boolean(options.fromDouyin);
+      const shareText = el.douyinShare.value.trim();
+      const extractedUrl = extractUrlFromText(shareText);
+      const message = fromDouyin
+        ? (shareText || el.agentLink.value.trim() || el.agentMessage.value.trim())
+        : el.agentMessage.value.trim();
+      const douyinUrl = fromDouyin
+        ? (extractedUrl || el.agentLink.value.trim())
+        : el.agentLink.value.trim();
+
+      if (fromDouyin && !message && !douyinUrl) {
+        setAgentStatus("先粘贴一段抖音分享文案或链接。", "error");
+        return;
+      }
+      if (fromDouyin && extractedUrl) {
+        el.agentLink.value = extractedUrl;
+      }
+
       const userLine = [
-        message || "按当前内容生成一版封面",
-        douyinUrl ? `链接：${douyinUrl}` : "",
+        fromDouyin ? "抖音链接生成封面" : (message || "按当前内容生成一版封面"),
+        fromDouyin && shareText ? shareText : "",
+        !fromDouyin && douyinUrl ? `链接：${douyinUrl}` : "",
+        fromDouyin && douyinUrl ? `链接：${douyinUrl}` : "",
         state.agentReference ? `参考图：${state.agentReference.name}` : ""
       ].filter(Boolean).join("\n");
 
       addAgentMessage("user", userLine);
-      el.agentRunBtn.disabled = true;
-      setAgentStatus("正在让 DeepSeek 拆内容、定栏目和标题。", "working");
+      setAgentButtonsDisabled(true);
+      setAgentStatus(fromDouyin ? "正在解析抖音分享内容、定栏目和标题。" : "正在让 DeepSeek 拆内容、定栏目和标题。", "working");
       el.status.textContent = "Agent planning";
 
       try {
@@ -1642,6 +1688,7 @@
           body: JSON.stringify({
             message,
             douyin_url: douyinUrl,
+            douyin_share_text: fromDouyin ? shareText : "",
             has_reference_image: Boolean(state.agentReference),
             current: currentAgentContext(),
             history: state.agentMessages
@@ -1653,7 +1700,7 @@
         }
         applyAgentPlan(payload);
         addAgentMessage("assistant", payload.reply || (payload.plan && payload.plan.reason) || "封面方案已生成。");
-        const sourceNote = payload.source && payload.source.status === "ok" ? "，已读取抖音链接信息" : "";
+        const sourceNote = agentSourceNote(payload.source);
         setAgentStatus(`${payload.fallback ? "本地方案" : "DeepSeek 方案"}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
         await generateAiBackground({ fromAgent: true });
         setAgentStatus(`${payload.fallback ? "已用本地方案完成" : "已用 DeepSeek 方案完成"}，可以直接导出 PNG。`, payload.fallback ? "error" : "success");
@@ -1662,7 +1709,7 @@
         setAgentStatus(`对话生成失败：${error.message}`, "error");
         el.status.textContent = "Agent failed";
       } finally {
-        el.agentRunBtn.disabled = false;
+        setAgentButtonsDisabled(false);
       }
     }
 
@@ -2104,18 +2151,20 @@
       }
     });
 
-    el.agentRunBtn.addEventListener("click", runCoverAgent);
+    el.douyinRunBtn.addEventListener("click", () => runCoverAgent({ fromDouyin: true }));
+    el.agentRunBtn.addEventListener("click", () => runCoverAgent());
     el.agentClearBtn.addEventListener("click", () => {
       state.agentMessages = [];
       state.agentReference = null;
       state.agentCoverImageUrl = "";
       state.agentPromptHint = "";
+      el.douyinShare.value = "";
       el.agentMessage.value = "";
       el.agentLink.value = "";
       el.agentImage.value = "";
       el.agentPreview.hidden = true;
       renderAgentTranscript();
-      setAgentStatus("DeepSeek 负责理解内容，Image 负责生成背景。");
+      setAgentStatus("粘贴抖音分享文案可自动提炼标题；DeepSeek 负责理解内容，Image 负责生成背景。");
     });
 
     el.loginBtn.addEventListener("click", () => {

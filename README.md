@@ -20,6 +20,8 @@ Enable real AI image generation locally:
 OPENAI_API_KEY=sk-... python3 cover_studio_server.py
 ```
 
+The studio can generate a cover from a full Douyin share snippet or short link. Paste the copied Douyin text into the right inspector and use `抖音链接生成封面`; the backend extracts the link, cleans copy-code noise, reads available metadata, and returns a fixed-style Mr.K cover plan.
+
 ## Deploy
 
 Vercel serves the static app and the Python serverless functions at:
