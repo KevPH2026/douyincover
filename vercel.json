@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/mrk-cover-studio.html"
+    }
+  ],
+  "functions": {
+    "api/generate-image.py": {
+      "maxDuration": 60
+    }
+  }
+}

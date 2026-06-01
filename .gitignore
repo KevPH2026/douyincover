@@ -1,0 +1,7 @@
+.DS_Store
+.vercel/output
+__pycache__/
+*.pyc
+.env
+.env.local
+.vercel

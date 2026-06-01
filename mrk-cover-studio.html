@@ -1,0 +1,1267 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mr.K Cover Studio | dna.superk.ai</title>
+  <style>
+    :root {
+      --bg: #e8ebef;
+      --panel: #f7f8fa;
+      --ink: #080a0d;
+      --line: #d7dde5;
+      --text: #15191f;
+      --muted: #687380;
+      --lime: #b2ff52;
+      --cyan: #50d6ff;
+      --red: #ff6052;
+      --font: "PingFang SC", "STHeiti", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    button, input, textarea, select {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 240px minmax(420px, 1fr) 340px;
+      min-height: 100vh;
+    }
+
+    .side,
+    .inspector {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 22px;
+    }
+
+    .inspector {
+      border-right: 0;
+      border-left: 1px solid var(--line);
+      overflow: auto;
+    }
+
+    .brand-head {
+      margin-bottom: 28px;
+    }
+
+    .brand-head h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .brand-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .domain {
+      display: inline-flex;
+      align-items: center;
+      height: 26px;
+      margin-top: 14px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: #15191f;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .group {
+      margin-top: 24px;
+    }
+
+    .group-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .seg {
+      display: grid;
+      gap: 8px;
+    }
+
+    .seg button,
+    .category button,
+    .preset button,
+    .export-btn,
+    .ghost-btn {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .seg button,
+    .category button,
+    .preset button {
+      text-align: left;
+      padding: 0 12px;
+    }
+
+    .seg button.active,
+    .category button.active,
+    .preset button.active {
+      border-color: #15191f;
+      background: #15191f;
+      color: #fff;
+    }
+
+    .category,
+    .preset {
+      display: grid;
+      gap: 8px;
+    }
+
+    .category button::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--dot);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: 74px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 248, 250, .72);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: right;
+    }
+
+    .stage {
+      display: grid;
+      place-items: center;
+      min-height: 0;
+      padding: 28px;
+      overflow: auto;
+    }
+
+    .canvas-wrap {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    canvas {
+      display: block;
+      max-width: min(100%, 860px);
+      max-height: calc(100vh - 170px);
+      border-radius: 8px;
+      background: #090b0f;
+      box-shadow: 0 22px 58px rgba(15, 23, 42, .2);
+    }
+
+    .footbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 24px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      background: #f7f8fa;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #333a43;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    input,
+    select {
+      height: 40px;
+      padding: 0 11px;
+    }
+
+    textarea {
+      min-height: 90px;
+      padding: 10px 11px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #15191f;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .export-btn {
+      width: 100%;
+      height: 44px;
+      border-color: #15191f;
+      background: #15191f;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .ghost-btn {
+      width: 100%;
+      margin-top: 10px;
+      background: transparent;
+      color: #15191f;
+    }
+
+    .hint {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .ai-status {
+      margin-top: 8px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .ai-status.working {
+      color: #15191f;
+      border-color: #15191f;
+    }
+
+    .ai-status.error {
+      color: #9b2c24;
+      border-color: #ffc2bb;
+      background: #fff4f2;
+    }
+
+    .ai-status.success {
+      color: #136342;
+      border-color: #b8e8cf;
+      background: #f0fff6;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .68;
+    }
+
+    .fixed-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      margin-right: 6px;
+      border-radius: 50%;
+      vertical-align: -1px;
+      background: var(--active-color);
+    }
+
+    @media (max-width: 1100px) {
+      .app {
+        grid-template-columns: 210px 1fr;
+      }
+
+      .inspector {
+        grid-column: 1 / -1;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        display: block;
+      }
+
+      .stage {
+        padding: 16px;
+      }
+
+      canvas {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand-head">
+        <h1>Mr.K Cover Studio</h1>
+        <p>固定账号视觉系统，只改内容和背景。</p>
+        <div class="domain">dna.superk.ai</div>
+      </div>
+
+      <section class="group">
+        <p class="group-title">模板</p>
+        <div class="seg" id="templateButtons">
+          <button data-template="work" class="active">单条作品封面</button>
+          <button data-template="collection">合集封面</button>
+          <button data-template="profile">主页背景</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <p class="group-title">栏目</p>
+        <div class="category" id="categoryButtons">
+          <button data-category="ai" class="active" style="--dot: var(--lime);">AI下半场</button>
+          <button data-category="strong" style="--dot: var(--cyan);">强者恒强</button>
+          <button data-category="road" style="--dot: var(--red);">在路上</button>
+        </div>
+      </section>
+
+      <section class="group">
+        <p class="group-title">固定资产</p>
+        <ul class="fixed-list">
+          <li>账号名：MR.K 在路上</li>
+          <li>ID：KevPH2026</li>
+          <li>头像印章已锁定</li>
+          <li>K 字标已锁定</li>
+          <li>口号：少和人对话，多和AI对话</li>
+        </ul>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <h2 id="modeTitle">单条作品封面</h2>
+          <div class="hint"><span class="swatch"></span><span id="categoryLabel">AI下半场</span></div>
+        </div>
+        <div class="meta" id="sizeMeta">1080 x 1920<br>PNG</div>
+      </header>
+
+      <section class="stage">
+        <div class="canvas-wrap">
+          <canvas id="coverCanvas" width="1080" height="1920"></canvas>
+        </div>
+      </section>
+
+      <footer class="footbar">
+        <span id="status">Ready</span>
+        <span>本地渲染，不上传图片</span>
+      </footer>
+    </main>
+
+    <aside class="inspector">
+      <section class="group" style="margin-top:0;">
+        <p class="group-title">内容输入</p>
+
+        <div class="field" data-field="profileVariant">
+          <label for="profileVariant">主页版本</label>
+          <select id="profileVariant">
+            <option value="safe">安全区版</option>
+            <option value="clean">干净版</option>
+          </select>
+        </div>
+
+        <div class="field" data-field="categoryTitle">
+          <label for="categoryTitle">栏目中文</label>
+          <input id="categoryTitle" value="AI下半场">
+        </div>
+
+        <div class="field" data-field="categoryEn">
+          <label for="categoryEn">栏目英文</label>
+          <input id="categoryEn" value="AI SECOND HALF">
+        </div>
+
+        <div class="field" data-field="categorySub">
+          <label for="categorySub">栏目副文案</label>
+          <input id="categorySub" value="模型 / Agent / 商业重构">
+        </div>
+
+        <div class="field" data-field="title">
+          <label for="title">作品中文标题</label>
+          <textarea id="title" style="min-height:66px;">SaaS
+正在消失</textarea>
+          <div class="hint">可用空格或换行控制断句。</div>
+        </div>
+
+        <div class="field" data-field="enTitle">
+          <label for="enTitle">作品英文标题</label>
+          <input id="enTitle" value="SaaS Is Disappearing">
+        </div>
+
+        <div class="field" data-field="summary">
+          <label for="summary">摘要/点击理由</label>
+          <textarea id="summary">模型厂商开始绕过 API，直接吞掉应用层。</textarea>
+        </div>
+
+        <div class="row">
+          <div class="field" data-field="code">
+            <label for="code">编号</label>
+            <input id="code" value="AI-03">
+          </div>
+          <div class="field">
+            <label for="bgPreset">默认背景</label>
+            <select id="bgPreset">
+              <option value="auto">跟随栏目</option>
+              <option value="ai">AI下半场</option>
+              <option value="strong">强者恒强</option>
+              <option value="road">在路上</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="bgUpload">上传背景</label>
+          <input id="bgUpload" type="file" accept="image/*">
+          <div class="hint">只在本地浏览器读取，不上传服务器。</div>
+        </div>
+
+        <div class="field">
+          <label for="imageTheme">文字主题生成配图</label>
+          <textarea id="imageTheme" style="min-height:72px;">AI吞噬SaaS，深夜机场，代码屏幕，商业判断</textarea>
+          <div class="hint">默认会结合栏目、标题和摘要生成背景。</div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="imageStyle">配图风格</label>
+            <select id="imageStyle">
+              <option value="cinematic">深夜电影感</option>
+              <option value="terminal">代码终端感</option>
+              <option value="field">一线纪实感</option>
+              <option value="minimal">极简抽象感</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="imageDensity">信息密度</label>
+            <select id="imageDensity">
+              <option value="medium">适中</option>
+              <option value="low">留白多</option>
+              <option value="high">细节多</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="ghost-btn" id="generateBgBtn" style="margin-top:0;">AI 生成主题配图</button>
+        <div class="ai-status" id="aiStatus">需要启动 `cover_studio_server.py` 并配置 OPENAI_API_KEY。未配置时会自动使用本地占位配图。</div>
+      </section>
+
+      <section class="group">
+        <p class="group-title">导出</p>
+        <button class="export-btn" id="exportBtn">导出 PNG</button>
+        <button class="ghost-btn" id="resetBtn">恢复当前栏目默认文案</button>
+        <div class="hint" id="fileNameHint">work-ai-AI-03.png</div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const assets = {
+      avatar: "douyin-avatar.webp",
+      bg: {
+        ai: "collection-covers-personal/bg-ai-xiabanchang-personal.png",
+        strong: "collection-covers-personal/bg-qiangzhe-hengqiang-personal.png",
+        road: "collection-covers-personal/bg-zai-lushang-personal.png",
+        profile: "profile-background/profile-bg-source.png"
+      }
+    };
+
+    const categories = {
+      ai: {
+        label: "AI下半场",
+        en: "AI SECOND HALF",
+        sub: "模型 / Agent / 商业重构",
+        code: "AI-03",
+        title: "SaaS\n正在消失",
+        enTitle: "SaaS Is Disappearing",
+        summary: "模型厂商开始绕过 API，直接吞掉应用层。",
+        theme: "AI吞噬SaaS，深夜机场，代码屏幕，商业判断",
+        color: "#b2ff52",
+        slug: "ai"
+      },
+      strong: {
+        label: "强者恒强",
+        en: "THE STRONG GET STRONGER",
+        sub: "判断力 / 筹码 / 个体系统",
+        code: "K-12",
+        title: "判断\n不能外包",
+        enTitle: "Judgment Is Not Outsourced",
+        summary: "AI越强，越考验人的方向感和取舍能力。",
+        theme: "强者恒强，深夜书桌，筹码，判断力，安静的压迫感",
+        color: "#50d6ff",
+        slug: "strong"
+      },
+      road: {
+        label: "在路上",
+        en: "ON THE ROAD",
+        sub: "出差 / 客户 / 一线观察",
+        code: "ROAD-01",
+        title: "5天\n4城",
+        enTitle: "5 Days / 4 Cities",
+        summary: "我在一线看到：AI创业正在变成线下战争。",
+        theme: "出差在路上，机场候机，客户现场，一线观察，雨夜城市",
+        color: "#ff6052",
+        slug: "road"
+      }
+    };
+
+    const state = {
+      template: "work",
+      category: "ai",
+      customBg: null,
+      images: {},
+      fields: {}
+    };
+
+    const el = {
+      canvas: document.getElementById("coverCanvas"),
+      templateButtons: document.getElementById("templateButtons"),
+      categoryButtons: document.getElementById("categoryButtons"),
+      modeTitle: document.getElementById("modeTitle"),
+      categoryLabel: document.getElementById("categoryLabel"),
+      sizeMeta: document.getElementById("sizeMeta"),
+      status: document.getElementById("status"),
+      profileVariant: document.getElementById("profileVariant"),
+      categoryTitle: document.getElementById("categoryTitle"),
+      categoryEn: document.getElementById("categoryEn"),
+      categorySub: document.getElementById("categorySub"),
+      title: document.getElementById("title"),
+      enTitle: document.getElementById("enTitle"),
+      summary: document.getElementById("summary"),
+      code: document.getElementById("code"),
+      bgPreset: document.getElementById("bgPreset"),
+      bgUpload: document.getElementById("bgUpload"),
+      imageTheme: document.getElementById("imageTheme"),
+      imageStyle: document.getElementById("imageStyle"),
+      imageDensity: document.getElementById("imageDensity"),
+      generateBgBtn: document.getElementById("generateBgBtn"),
+      aiStatus: document.getElementById("aiStatus"),
+      exportBtn: document.getElementById("exportBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      fileNameHint: document.getElementById("fileNameHint")
+    };
+
+    const ctx = el.canvas.getContext("2d");
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    function colorToRgb(hex) {
+      const clean = hex.replace("#", "");
+      return {
+        r: parseInt(clean.slice(0, 2), 16),
+        g: parseInt(clean.slice(2, 4), 16),
+        b: parseInt(clean.slice(4, 6), 16)
+      };
+    }
+
+    function rgba(hex, alpha) {
+      const c = colorToRgb(hex);
+      return `rgba(${c.r}, ${c.g}, ${c.b}, ${alpha})`;
+    }
+
+    function font(size, weight = 700) {
+      return `${weight} ${size}px PingFang SC, STHeiti, Microsoft YaHei, Arial, sans-serif`;
+    }
+
+    function setCanvasSize() {
+      const sizes = {
+        work: [1080, 1920],
+        collection: [1080, 1080],
+        profile: [1920, 640]
+      };
+      const [w, h] = sizes[state.template];
+      el.canvas.width = w;
+      el.canvas.height = h;
+      el.sizeMeta.innerHTML = `${w} x ${h}<br>PNG`;
+    }
+
+    function drawCoverImage(img, x, y, w, h) {
+      const scale = Math.max(w / img.width, h / img.height);
+      const sw = w / scale;
+      const sh = h / scale;
+      const sx = (img.width - sw) / 2;
+      const sy = (img.height - sh) / 2;
+      ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    }
+
+    function lineGradient(x1, y1, x2, y2, stops) {
+      const g = ctx.createLinearGradient(x1, y1, x2, y2);
+      stops.forEach(([pos, color]) => g.addColorStop(pos, color));
+      return g;
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function fillRoundRect(x, y, w, h, r, fillStyle) {
+      ctx.save();
+      ctx.fillStyle = fillStyle;
+      roundRect(x, y, w, h, r);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawCenteredText(text, x, y, w, h, size, weight, fill) {
+      ctx.save();
+      ctx.font = font(size, weight);
+      ctx.fillStyle = fill;
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      ctx.fillText(text, x + w / 2, y + h / 2 + 1);
+      ctx.restore();
+    }
+
+    function drawText(text, x, y, size, weight, fill, maxWidth) {
+      ctx.save();
+      ctx.font = font(size, weight);
+      ctx.fillStyle = fill;
+      ctx.textBaseline = "top";
+      ctx.fillText(text, x, y, maxWidth);
+      ctx.restore();
+    }
+
+    function wrapText(text, maxChars) {
+      const manual = text.split(/\n+/).map(t => t.trim()).filter(Boolean);
+      if (manual.length > 1) return manual;
+      const source = manual[0] || "";
+      const parts = [];
+      let rest = source;
+      while (rest.length > maxChars) {
+        parts.push(rest.slice(0, maxChars));
+        rest = rest.slice(maxChars);
+      }
+      if (rest) parts.push(rest);
+      return parts.length ? parts : [source];
+    }
+
+    function drawAvatar(x, y, size, accent) {
+      const avatar = state.images.avatar;
+      ctx.save();
+      ctx.fillStyle = "rgba(6, 8, 10, .88)";
+      ctx.beginPath();
+      ctx.arc(x + size / 2, y + size / 2, size / 2 + 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.filter = "grayscale(1)";
+      ctx.drawImage(avatar, x, y, size, size);
+      ctx.restore();
+    }
+
+    function drawCutK(x, y, size, accent, opacity) {
+      const s = size / 1000;
+      const strokes = [
+        [[240, 100], [240, 900]],
+        [[300, 520], [785, 105]],
+        [[305, 520], [820, 900]]
+      ];
+      ctx.save();
+      ctx.lineCap = "butt";
+      ctx.lineJoin = "round";
+      ctx.shadowBlur = 20 * s;
+      ctx.shadowColor = rgba(accent, opacity * 1.4);
+      ctx.lineWidth = 130 * s;
+      strokes.forEach(points => {
+        ctx.strokeStyle = rgba(accent, opacity * .85);
+        ctx.beginPath();
+        ctx.moveTo(x + (points[0][0] + 22) * s, y + points[0][1] * s);
+        ctx.lineTo(x + (points[1][0] + 22) * s, y + points[1][1] * s);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(80, 214, 255, ${opacity * .55})`;
+        ctx.beginPath();
+        ctx.moveTo(x + (points[0][0] - 18) * s, y + (points[0][1] + 8) * s);
+        ctx.lineTo(x + (points[1][0] - 18) * s, y + (points[1][1] + 8) * s);
+        ctx.stroke();
+      });
+      ctx.shadowBlur = 0;
+      ctx.lineWidth = 105 * s;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${opacity})`;
+      strokes.forEach(points => {
+        ctx.beginPath();
+        ctx.moveTo(x + points[0][0] * s, y + points[0][1] * s);
+        ctx.lineTo(x + points[1][0] * s, y + points[1][1] * s);
+        ctx.stroke();
+      });
+      ctx.strokeStyle = "rgba(5, 7, 10, .72)";
+      ctx.lineWidth = 34 * s;
+      ctx.beginPath();
+      ctx.moveTo(x + 120 * s, y + 330 * s);
+      ctx.lineTo(x + 378 * s, y + 230 * s);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + 475 * s, y + 708 * s);
+      ctx.lineTo(x + 665 * s, y + 610 * s);
+      ctx.stroke();
+      ctx.strokeStyle = rgba(accent, opacity * 1.3);
+      ctx.lineWidth = 25 * s;
+      ctx.beginPath();
+      ctx.moveTo(x + 718 * s, y + 120 * s);
+      ctx.lineTo(x + 900 * s, y + 120 * s);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(80, 214, 255, ${opacity * .9})`;
+      ctx.beginPath();
+      ctx.moveTo(x + 760 * s, y + 890 * s);
+      ctx.lineTo(x + 900 * s, y + 890 * s);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawOverlay(w, h, mode) {
+      ctx.save();
+      if (mode === "profile") {
+        ctx.fillStyle = lineGradient(0, 0, w, 0, [
+          [0, "rgba(0,0,0,.74)"],
+          [.62, "rgba(0,0,0,.18)"],
+          [1, "rgba(0,0,0,.18)"]
+        ]);
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = lineGradient(0, 0, 0, h, [
+          [0, "rgba(0,0,0,0)"],
+          [.6, "rgba(0,0,0,0)"],
+          [1, "rgba(0,0,0,.28)"]
+        ]);
+        ctx.fillRect(0, 0, w, h);
+      } else {
+        ctx.fillStyle = lineGradient(0, 0, w, 0, [
+          [0, "rgba(0,0,0,.86)"],
+          [.52, "rgba(0,0,0,.36)"],
+          [1, "rgba(0,0,0,.12)"]
+        ]);
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = lineGradient(0, 0, 0, h, [
+          [0, "rgba(0,0,0,.08)"],
+          [.55, "rgba(0,0,0,.02)"],
+          [1, "rgba(0,0,0,.6)"]
+        ]);
+        ctx.fillRect(0, 0, w, h);
+      }
+      ctx.restore();
+    }
+
+    function hashText(text) {
+      let h = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        h ^= text.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return h >>> 0;
+    }
+
+    function randomFromSeed(seed) {
+      let x = seed || 123456789;
+      return () => {
+        x ^= x << 13;
+        x ^= x >>> 17;
+        x ^= x << 5;
+        return ((x >>> 0) / 4294967295);
+      };
+    }
+
+    function makeThemeBackground() {
+      const v = values();
+      const cat = categories[state.category];
+      const theme = [
+        el.imageTheme.value.trim(),
+        v.categoryTitle,
+        v.title,
+        v.summary,
+        el.imageStyle.value,
+        el.imageDensity.value
+      ].filter(Boolean).join(" / ");
+      const seed = hashText(theme);
+      const rand = randomFromSeed(seed);
+      const size = state.template === "profile" ? [1920, 640] : [1600, 1600];
+      const c = document.createElement("canvas");
+      c.width = size[0];
+      c.height = size[1];
+      const g = c.getContext("2d");
+      const w = c.width;
+      const h = c.height;
+      const accent = cat.color;
+
+      const palettes = {
+        cinematic: ["#05070a", "#111820", "#27303a", accent],
+        terminal: ["#030806", "#071512", "#0f2c25", accent],
+        field: ["#101112", "#252422", "#3a3935", accent],
+        minimal: ["#080a0d", "#14171c", "#1f242c", accent]
+      };
+      const p = palettes[el.imageStyle.value] || palettes.cinematic;
+      const bg = g.createLinearGradient(0, 0, w, h);
+      bg.addColorStop(0, p[0]);
+      bg.addColorStop(.48, p[1]);
+      bg.addColorStop(1, p[2]);
+      g.fillStyle = bg;
+      g.fillRect(0, 0, w, h);
+
+      const density = { low: 18, medium: 34, high: 58 }[el.imageDensity.value] || 34;
+      for (let i = 0; i < density; i++) {
+        const x = rand() * w;
+        const y = rand() * h;
+        const r = (rand() * 180 + 40) * (state.template === "profile" ? .8 : 1);
+        const glow = g.createRadialGradient(x, y, 0, x, y, r);
+        const useAccent = rand() > .56;
+        glow.addColorStop(0, useAccent ? rgba(accent, .18 + rand() * .12) : `rgba(255,255,255,${.05 + rand() * .08})`);
+        glow.addColorStop(1, "rgba(0,0,0,0)");
+        g.fillStyle = glow;
+        g.fillRect(x - r, y - r, r * 2, r * 2);
+      }
+
+      g.save();
+      g.globalAlpha = el.imageStyle.value === "minimal" ? .18 : .28;
+      g.strokeStyle = rgba(accent, .48);
+      g.lineWidth = Math.max(2, w * .003);
+      for (let i = 0; i < Math.floor(density / 3); i++) {
+        const x = rand() * w;
+        const y = rand() * h;
+        const len = 90 + rand() * 360;
+        g.beginPath();
+        g.moveTo(x, y);
+        g.lineTo(x + len, y - len * (.22 + rand() * .42));
+        g.stroke();
+      }
+      g.restore();
+
+      if (el.imageStyle.value === "terminal") {
+        g.save();
+        g.font = `${Math.max(14, Math.round(w * .018))}px Menlo, Monaco, monospace`;
+        g.fillStyle = rgba(accent, .26);
+        const snippets = ["agent.run()", "model.context", "api.route", "cashflow > hype", "system thinking", "SaaS -> API", "KevPH2026"];
+        for (let i = 0; i < density; i++) {
+          g.fillText(snippets[i % snippets.length], rand() * w, rand() * h);
+        }
+        g.restore();
+      }
+
+      if (el.imageStyle.value === "field") {
+        g.save();
+        g.globalAlpha = .34;
+        g.fillStyle = "rgba(255,255,255,.08)";
+        for (let i = 0; i < 5; i++) {
+          const y = h * (.18 + rand() * .66);
+          g.fillRect(0, y, w, 1 + rand() * 3);
+        }
+        g.restore();
+      }
+
+      const vignette = g.createRadialGradient(w * .55, h * .42, Math.min(w, h) * .1, w * .55, h * .42, Math.max(w, h) * .72);
+      vignette.addColorStop(0, "rgba(0,0,0,0)");
+      vignette.addColorStop(1, "rgba(0,0,0,.64)");
+      g.fillStyle = vignette;
+      g.fillRect(0, 0, w, h);
+
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.src = c.toDataURL("image/png");
+      });
+    }
+
+    function activeBg() {
+      if (state.customBg) return state.customBg;
+      if (state.template === "profile") return state.images.profile;
+      const preset = el.bgPreset.value === "auto" ? state.category : el.bgPreset.value;
+      return state.images[preset];
+    }
+
+    function templateLabel() {
+      return {
+        work: "vertical 9:16 Douyin work cover background",
+        collection: "square 1:1 Douyin series cover background",
+        profile: "wide 3:1 Douyin profile banner background"
+      }[state.template];
+    }
+
+    function styleLabel() {
+      return {
+        cinematic: "late-night cinematic, premium, realistic photography",
+        terminal: "code terminal glow, AI product workspace, realistic screen light",
+        field: "field-note documentary, travel and customer visit atmosphere",
+        minimal: "minimal abstract, quiet negative space, premium editorial"
+      }[el.imageStyle.value] || "late-night cinematic, premium, realistic photography";
+    }
+
+    function densityLabel() {
+      return {
+        low: "large negative space, few objects",
+        medium: "balanced detail and clear negative space",
+        high: "richer environmental detail but still cover-safe"
+      }[el.imageDensity.value] || "balanced detail and clear negative space";
+    }
+
+    function buildAiPrompt() {
+      const v = values();
+      const cat = categories[state.category];
+      const theme = el.imageTheme.value.trim() || [v.title, v.summary].filter(Boolean).join(" / ");
+      const safeArea = state.template === "profile"
+        ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
+        : "Keep the left half dark and readable for large Chinese title text. Put the main visual object on the right third or lower right.";
+      const noText = "Do not include readable text, letters, logos, watermarks, UI labels, QR codes, captions, or faces looking at camera.";
+      return [
+        `Create a high-end background image for ${templateLabel()}.`,
+        `Brand: Mr.K, Chinese AI/business solo creator, calm judgment, cross-border AI, field notes.`,
+        `Category: ${v.categoryTitle || cat.label} / ${v.categoryEn || cat.en}. Accent color hint: ${cat.color}.`,
+        `Theme: ${theme}.`,
+        `Visual style: ${styleLabel()}. Information density: ${densityLabel()}.`,
+        safeArea,
+        "Use a dark cinematic base, realistic depth, subtle neon accent highlights, mature business and technology mood.",
+        noText,
+        "The image will be used only as a background; leave room for overlay typography and avatar stamp."
+      ].join(" ");
+    }
+
+    function setAiStatus(message, type = "") {
+      el.aiStatus.textContent = message;
+      el.aiStatus.className = `ai-status ${type}`.trim();
+    }
+
+    async function generateAiBackground() {
+      const prompt = buildAiPrompt();
+      el.generateBgBtn.disabled = true;
+      setAiStatus("正在请求 AI 生成配图，通常需要几十秒。", "working");
+      el.status.textContent = "Generating AI image";
+
+      try {
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt, template: state.template })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.message || `HTTP ${response.status}`);
+        }
+        const img = await loadImage(payload.image_data_url);
+        state.customBg = img;
+        setAiStatus(`AI 配图已生成：${payload.model || "image model"} / ${payload.size || "auto"}`, "success");
+        el.status.textContent = "AI image generated";
+      } catch (error) {
+        state.customBg = await makeThemeBackground();
+        setAiStatus(`AI 接口暂不可用，已使用本地占位配图。原因：${error.message}`, "error");
+        el.status.textContent = "Local fallback generated";
+      } finally {
+        el.generateBgBtn.disabled = false;
+        draw();
+      }
+    }
+
+    function values() {
+      return {
+        categoryTitle: el.categoryTitle.value.trim(),
+        categoryEn: el.categoryEn.value.trim(),
+        categorySub: el.categorySub.value.trim(),
+        title: el.title.value.trim(),
+        enTitle: el.enTitle.value.trim(),
+        summary: el.summary.value.trim(),
+        code: el.code.value.trim(),
+        profileVariant: el.profileVariant.value
+      };
+    }
+
+    function drawBrand(accent, scale = 1) {
+      const x = 80 * scale;
+      const y = 72 * scale;
+      drawText("MR.K 在路上", x, y, 42 * scale, 800, "rgba(248,248,242,.96)");
+      drawText("KevPH2026 / Deep thoughts on AI", x, y + 60 * scale, 26 * scale, 400, "rgba(248,248,242,.72)");
+      drawAvatar(852 * scale, 82 * scale, 116 * scale, accent);
+    }
+
+    function drawCollection(v, cat) {
+      const w = 1080;
+      const h = 1080;
+      drawCoverImage(activeBg(), 0, 0, w, h);
+      drawOverlay(w, h, "collection");
+      drawBrand(cat.color, 1);
+      drawCutK(730, 664, 310, cat.color, .24);
+
+      fillRoundRect(80, 218, 172, 54, 27, cat.color);
+      drawCenteredText("SERIES", 80, 218, 172, 54, 28, 700, "#080a0d");
+
+      const titleLines = v.categoryTitle === "AI下半场" ? ["AI", "下半场"] : wrapText(v.categoryTitle, 4);
+      const titleSize = v.categoryTitle === "强者恒强" ? 124 : 136;
+      let y = 348;
+      titleLines.slice(0, 2).forEach(line => {
+        drawText(line, 80, y, titleSize, 800, "rgba(252,252,246,1)");
+        y += titleSize * .98;
+      });
+      drawText(v.categoryEn.toUpperCase(), 80, y + 26, 32, 700, "rgba(248,248,242,.78)", 860);
+      y += 74;
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(80, y + 24, 300, 11);
+      drawText(v.categorySub, 80, y + 78, 38, 400, "rgba(248,248,242,.86)", 860);
+      drawText("少和人对话，多和AI对话", 80, 946, 32, 400, "rgba(248,248,242,.68)");
+    }
+
+    function drawWork(v, cat) {
+      const w = 1080;
+      const h = 1920;
+      drawCoverImage(activeBg(), 0, 0, w, h);
+      drawOverlay(w, h, "work");
+      drawBrand(cat.color, 1);
+      drawCutK(666, 1220, 390, cat.color, .23);
+
+      fillRoundRect(82, 238, 190, 54, 27, cat.color);
+      drawCenteredText(v.categoryTitle, 82, 238, 190, 54, 30, 700, "#080a0d");
+
+      const titleLines = wrapText(v.title, 6);
+      const maxLen = Math.max(...titleLines.map(line => line.length));
+      const titleSize = maxLen <= 4 ? 150 : 136;
+      let y = 390;
+      titleLines.slice(0, 3).forEach(line => {
+        drawText(line, 82, y, titleSize, 800, "rgba(252,252,246,1)", 920);
+        y += titleSize * .98;
+      });
+      drawText(v.enTitle.toUpperCase(), 82, y + 30, 38, 700, "rgba(248,248,242,.78)", 900);
+      y += 90;
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(82, y + 28, 300, 11);
+      drawText(v.summary, 82, y + 90, 42, 400, "rgba(248,248,242,.9)", 920);
+      drawText("少和人对话，多和AI对话", 82, 1744, 32, 400, "rgba(248,248,242,.7)");
+      drawText(v.code, 860, 1740, 30, 700, cat.color);
+    }
+
+    function drawProfile(v, cat) {
+      const w = 1920;
+      const h = 640;
+      drawCoverImage(activeBg(), 0, 0, w, h);
+      drawOverlay(w, h, "profile");
+      if (v.profileVariant === "clean") {
+        drawCutK(1360, 128, 400, "#b2ff52", .29);
+        ctx.fillStyle = "#b2ff52";
+        ctx.fillRect(1060, 402, 338, 11);
+        return;
+      }
+      drawText("Deep thoughts on AI", 1110, 120, 46, 500, "rgba(248,248,242,.9)");
+      drawText("Business / Human Nature / Field Notes", 1112, 184, 26, 400, "rgba(248,248,242,.66)");
+      ctx.fillStyle = "#b2ff52";
+      ctx.fillRect(1112, 238, 308, 10);
+      drawText("KevPH2026", 1112, 298, 24, 400, "rgba(248,248,242,.62)");
+      drawCutK(1460, 124, 390, "#b2ff52", .27);
+    }
+
+    function draw() {
+      setCanvasSize();
+      const v = values();
+      const cat = categories[state.category];
+      document.documentElement.style.setProperty("--active-color", cat.color);
+      el.categoryLabel.textContent = v.categoryTitle || cat.label;
+      el.modeTitle.textContent = {
+        work: "单条作品封面",
+        collection: "合集封面",
+        profile: "主页背景"
+      }[state.template];
+
+      ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
+      if (state.template === "work") drawWork(v, cat);
+      if (state.template === "collection") drawCollection(v, cat);
+      if (state.template === "profile") drawProfile(v, cat);
+      updateVisibility();
+      updateFileName();
+    }
+
+    function updateVisibility() {
+      const visible = {
+        profileVariant: state.template === "profile",
+        categoryTitle: state.template !== "profile",
+        categoryEn: state.template !== "profile",
+        categorySub: state.template === "collection",
+        title: state.template === "work",
+        enTitle: state.template === "work",
+        summary: state.template === "work",
+        code: state.template === "work"
+      };
+      Object.entries(visible).forEach(([name, show]) => {
+        document.querySelectorAll(`[data-field="${name}"]`).forEach(node => {
+          node.style.display = show ? "" : "none";
+        });
+      });
+    }
+
+    function updateFileName() {
+      const v = values();
+      const cat = categories[state.category];
+      const safeCode = (v.code || "draft").replace(/[^\w-]+/g, "-");
+      const names = {
+        work: `work-${cat.slug}-${safeCode}.png`,
+        collection: `collection-${cat.slug}.png`,
+        profile: `mrk-profile-background-${v.profileVariant}.png`
+      };
+      el.fileNameHint.textContent = names[state.template];
+    }
+
+    function applyCategoryDefaults(categoryKey) {
+      const cat = categories[categoryKey];
+      el.categoryTitle.value = cat.label;
+      el.categoryEn.value = cat.en;
+      el.categorySub.value = cat.sub;
+      el.title.value = cat.title;
+      el.enTitle.value = cat.enTitle;
+      el.summary.value = cat.summary;
+      el.code.value = cat.code;
+      el.imageTheme.value = cat.theme;
+    }
+
+    function setTemplate(template) {
+      state.template = template;
+      document.querySelectorAll("[data-template]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.template === template);
+      });
+      draw();
+    }
+
+    function setCategory(category) {
+      state.category = category;
+      document.querySelectorAll("[data-category]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.category === category);
+      });
+      applyCategoryDefaults(category);
+      draw();
+    }
+
+    async function preload() {
+      el.status.textContent = "Loading assets";
+      const entries = [
+        ["avatar", assets.avatar],
+        ["ai", assets.bg.ai],
+        ["strong", assets.bg.strong],
+        ["road", assets.bg.road],
+        ["profile", assets.bg.profile]
+      ];
+      for (const [key, src] of entries) {
+        state.images[key] = await loadImage(src);
+      }
+      el.status.textContent = "Ready";
+      draw();
+    }
+
+    function exportPng() {
+      const link = document.createElement("a");
+      link.download = el.fileNameHint.textContent;
+      link.href = el.canvas.toDataURL("image/png");
+      link.click();
+      el.status.textContent = `Exported ${link.download}`;
+    }
+
+    el.templateButtons.addEventListener("click", event => {
+      const btn = event.target.closest("[data-template]");
+      if (btn) setTemplate(btn.dataset.template);
+    });
+
+    el.categoryButtons.addEventListener("click", event => {
+      const btn = event.target.closest("[data-category]");
+      if (btn) setCategory(btn.dataset.category);
+    });
+
+    ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity"].forEach(id => {
+      el[id].addEventListener("input", draw);
+      el[id].addEventListener("change", draw);
+    });
+
+    el.bgUpload.addEventListener("change", event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      loadImage(url).then(img => {
+        state.customBg = img;
+        el.status.textContent = `Using ${file.name}`;
+        draw();
+      });
+    });
+
+    el.exportBtn.addEventListener("click", exportPng);
+    el.generateBgBtn.addEventListener("click", generateAiBackground);
+    el.resetBtn.addEventListener("click", () => {
+      applyCategoryDefaults(state.category);
+      draw();
+    });
+
+    preload();
+  </script>
+</body>
+</html>

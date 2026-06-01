@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mr.K Cover System</title>
+  <style>
+    :root {
+      --ink: #080a0d;
+      --paper: #f7f4eb;
+      --lime: #b2ff52;
+      --cyan: #50d6ff;
+      --red: #ff6052;
+      --text: #f7f6ef;
+      --muted: rgba(247, 246, 239, .68);
+      --font: "PingFang SC", "STHeiti", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #e8ebef;
+      color: #101318;
+      font-family: var(--font);
+    }
+
+    .page {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 34px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      margin-bottom: 28px;
+    }
+
+    h1, h2, p { margin: 0; }
+
+    h1 {
+      font-size: 30px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .note {
+      max-width: 700px;
+      margin-top: 10px;
+      color: #56606b;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .spec {
+      color: #66717d;
+      font-size: 13px;
+      line-height: 1.7;
+      text-align: right;
+    }
+
+    .section {
+      margin-top: 34px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .section-note {
+      color: #66717d;
+      font-size: 13px;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .profile-bg {
+      width: 100%;
+      aspect-ratio: 3 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, .18);
+      background: #111;
+    }
+
+    .collection {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, .18);
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      align-items: start;
+    }
+
+    .work-cover {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 9 / 16;
+      min-height: 690px;
+      color: var(--text);
+      border-radius: 8px;
+      background: var(--ink);
+      box-shadow: 0 18px 46px rgba(15, 23, 42, .18);
+    }
+
+    .work-sample {
+      width: 100%;
+      display: block;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 18px 46px rgba(15, 23, 42, .18);
+      background: var(--ink);
+    }
+
+    .work-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.86) 0%, rgba(0,0,0,.68) 38%, rgba(0,0,0,.20) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.05) 45%, rgba(0,0,0,.76) 100%);
+      z-index: 1;
+    }
+
+    .work-cover::after {
+      content: "K";
+      position: absolute;
+      right: 34px;
+      bottom: 108px;
+      z-index: 1;
+      color: rgba(255,255,255,.12);
+      font-size: 250px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .brand {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 32px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .handle {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      background: #111;
+      object-fit: cover;
+    }
+
+    .tag {
+      position: absolute;
+      left: 34px;
+      top: 126px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #080a0d;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .headline {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 202px;
+      z-index: 2;
+      font-size: 82px;
+      line-height: .98;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .headline.long {
+      font-size: 74px;
+      line-height: 1.02;
+    }
+
+    .en-title {
+      margin-top: 22px;
+      color: rgba(247,246,239,.76);
+      font-size: 26px;
+      line-height: 1.15;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      position: absolute;
+      left: 34px;
+      top: 548px;
+      z-index: 2;
+      width: 210px;
+      height: 8px;
+      background: var(--accent);
+    }
+
+    .summary {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      top: 596px;
+      z-index: 2;
+      color: rgba(247,246,239,.82);
+      font-size: 23px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .bottom {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 34px;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 18px;
+      color: rgba(247,246,239,.72);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .code {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .label {
+      margin-top: 10px;
+      color: #4f5964;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 1050px) {
+      .collection-grid, .work-grid { grid-template-columns: 1fr; }
+      .work-cover { min-height: auto; }
+      .header, .section-head { display: block; }
+      .spec, .section-note { margin-top: 10px; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="header">
+      <div>
+        <h1>Mr.K 在路上｜封面系统</h1>
+        <p class="note">合集封面负责栏目识别；单条作品封面负责点击理由。固定头像印章、栏目色和标题层级，让每条作品既有账号统一感，也能一眼看懂这条讲什么。</p>
+      </div>
+      <div class="spec">合集 1:1 / 1080x1080<br>作品 9:16 / 1080x1920</div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>主页背景</h2>
+        <p class="section-note">左侧留给抖音头像、昵称和简介；视觉识别放右侧。</p>
+      </div>
+      <div class="profile-grid">
+        <article>
+          <img class="profile-bg" src="profile-background/mrk-profile-background-safe-1920x640.png?v=cut-k-4" alt="主页背景安全区版">
+          <div class="label">推荐上传：安全区版</div>
+        </article>
+        <article>
+          <img class="profile-bg" src="profile-background/mrk-profile-background-clean-1920x640.png?v=cut-k-4" alt="主页背景干净版">
+          <div class="label">备用：干净版，只保留 K 识别</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>合集封面</h2>
+        <p class="section-note">只放栏目名和人设识别，不塞单条标题。</p>
+      </div>
+      <div class="collection-grid">
+        <article>
+          <img class="collection" src="collection-covers-personal/ai-xiabanchang-personal.png?v=cut-k-4" alt="AI下半场合集封面">
+          <div class="label">AI下半场</div>
+        </article>
+        <article>
+          <img class="collection" src="collection-covers-personal/qiangzhe-hengqiang-personal.png?v=cut-k-4" alt="强者恒强合集封面">
+          <div class="label">强者恒强</div>
+        </article>
+        <article>
+          <img class="collection" src="collection-covers-personal/zai-lushang-personal.png?v=cut-k-4" alt="在路上合集封面">
+          <div class="label">在路上</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>单条作品封面</h2>
+        <p class="section-note">标题最大，栏目第二，账号识别第三；一句话必须给点击理由。</p>
+      </div>
+      <div class="work-grid">
+        <article>
+          <img class="work-sample" src="work-cover-samples/work-ai-saas.png?v=cut-k-4" alt="SaaS 正在消失单条作品封面">
+          <div class="label">适合：AI趋势 / 模型厂商 / SaaS冲击</div>
+        </article>
+
+        <article>
+          <img class="work-sample" src="work-cover-samples/work-judgment.png?v=cut-k-4" alt="判断不能外包单条作品封面">
+          <div class="label">适合：个体成长 / 筹码 / 认知与行动</div>
+        </article>
+
+        <article>
+          <img class="work-sample" src="work-cover-samples/work-road.png?v=cut-k-4" alt="5天4城单条作品封面">
+          <div class="label">适合：出差 / 客户 / 城市与现场观察</div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
