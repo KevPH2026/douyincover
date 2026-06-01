@@ -426,7 +426,7 @@
         <div class="field" data-field="profileVariant">
           <label for="profileVariant">主页版本</label>
           <select id="profileVariant">
-            <option value="safe">安全区版</option>
+            <option value="safe">移动端安全版（推荐）</option>
             <option value="clean">干净版</option>
           </select>
         </div>
@@ -1111,18 +1111,10 @@
       const h = 640;
       drawCoverImage(activeBg(), 0, 0, w, h);
       drawOverlay(w, h, "profile");
-      if (v.profileVariant === "clean") {
-        drawCutK(1360, 128, 400, "#b2ff52", .29);
-        ctx.fillStyle = "#b2ff52";
-        ctx.fillRect(1060, 402, 338, 11);
-        return;
-      }
-      drawText("Deep thoughts on AI", 1110, 120, 46, 500, "rgba(248,248,242,.9)");
-      drawText("Business / Human Nature / Field Notes", 1112, 184, 26, 400, "rgba(248,248,242,.66)");
-      ctx.fillStyle = "#b2ff52";
-      ctx.fillRect(1112, 238, 308, 10);
-      drawText("KevPH2026", 1112, 298, 24, 400, "rgba(248,248,242,.62)");
-      drawCutK(1460, 124, 390, "#b2ff52", .27);
+      // Keep the top band empty: Douyin mobile UI covers it on the profile page.
+      drawCutK(1436, 246, 320, "#b2ff52", .22);
+      ctx.fillStyle = "rgba(178,255,82,.82)";
+      ctx.fillRect(1248, 468, 290, 10);
     }
 
     function draw() {

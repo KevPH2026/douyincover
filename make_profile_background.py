@@ -84,17 +84,16 @@ def make():
 
     safe = add_base_overlay(fit_banner(SRC).convert("RGBA"))
     sd = ImageDraw.Draw(safe)
-    sd.text((1110, 120), "Deep thoughts on AI", font=font(46), fill=(248, 248, 242, 220))
-    sd.text((1112, 184), "Business / Human Nature / Field Notes", font=font(26, False), fill=(248, 248, 242, 158))
-    sd.rectangle((1112, 238, 1420, 248), fill=(178, 255, 82, 235))
-    sd.text((1112, 298), "KevPH2026", font=font(24, False), fill=(248, 248, 242, 150))
-    paste_cut_k(safe, (1460, 124), 390, (178, 255, 82), opacity=0.27)
+    # Douyin mobile overlays status/menu icons on the top band and profile info
+    # on the left/middle. Keep the banner text-free and push identity low-right.
+    paste_cut_k(safe, (1436, 246), 320, (178, 255, 82), opacity=0.22)
+    sd.rectangle((1248, 468, 1538, 478), fill=(178, 255, 82, 210))
     safe.convert("RGB").save(OUT / "mrk-profile-background-safe-1920x640.png", "PNG", optimize=True)
 
     clean = add_base_overlay(fit_banner(SRC).convert("RGBA"))
     cd = ImageDraw.Draw(clean)
-    paste_cut_k(clean, (1360, 128), 400, (178, 255, 82), opacity=0.29)
-    cd.rectangle((1060, 402, 1398, 413), fill=(178, 255, 82, 220))
+    paste_cut_k(clean, (1436, 246), 320, (178, 255, 82), opacity=0.22)
+    cd.rectangle((1248, 468, 1538, 478), fill=(178, 255, 82, 210))
     clean.convert("RGB").save(OUT / "mrk-profile-background-clean-1920x640.png", "PNG", optimize=True)
 
 
