@@ -12,6 +12,9 @@
     "api/assets.py": {
       "maxDuration": 30
     },
+    "api/feedback.py": {
+      "maxDuration": 30
+    },
     "api/cover-agent.py": {
       "maxDuration": 60
     },

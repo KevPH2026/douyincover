@@ -49,6 +49,7 @@ This project fixes that problem for `MR.K 在路上`.
 - Local-only configuration for OpenAI-compatible LLM and image models
 - Anonymous users can try 3 AI generation actions before email-code login is required
 - Email verification login with auto-create account on first verified email
+- In-product feedback entry for bugs, confusing flows, output issues, and feature requests
 - Realistic editorial backgrounds instead of generic AI wallpaper
 - Local material management for generated covers and motion frames
 - A deployable Skill for Agent workflows
@@ -140,6 +141,7 @@ Vercel serves the static studio and Python serverless APIs:
 /api/transcode-m4v
 /api/auth
 /api/assets
+/api/feedback
 ```
 
 Required environment variables:

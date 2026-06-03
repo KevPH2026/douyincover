@@ -72,6 +72,10 @@ Built-in starters cover AI news analysis, strong quotes, field notes, motion int
 
 Covers can be saved into a material library. It works locally by default and can use KV storage in production.
 
+### User Feedback Loop
+
+The page includes a feedback entry in the top actions and footer. Users can report errors, confusing flows, unsatisfying outputs, login/material-library issues, or feature ideas. The form can include current template, category, title, page URL, and viewport context for faster debugging.
+
 ### Trial Limit And Email Login
 
 Logged-out visitors can use 3 AI production actions: conversational cover/motion generation, DNA decode, or manual AI background generation. After the third action, the account menu asks for email-code login. A verified new email automatically creates an account.
@@ -195,6 +199,7 @@ Vercel serves the static studio and Python serverless APIs:
 /api/transcode-m4v
 /api/auth
 /api/assets
+/api/feedback
 ```
 
 Required environment variables:
