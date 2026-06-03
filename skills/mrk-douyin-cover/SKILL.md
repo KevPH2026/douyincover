@@ -27,7 +27,20 @@ metadata:
    - If the link cannot be opened because of auth, anti-bot, or app restrictions, do not get stuck; ask for the caption, screenshot, or key text.
    - Private works are excluded by default unless the user explicitly asks to process them.
 
-2. **DNA decode mode**
+2. **Conversational Agent intake**
+   Use a short dialogue funnel before generating. The Agent should collect context in this order, while skipping anything already known:
+   - `账号入口`: ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026` unless the user names a different account.
+   - `任务目标`: ask whether this is single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
+   - `内容分类`: infer one of `AI下半场`, `强者恒强`, `在路上`; ask only when ambiguous. Use custom category only when the content clearly does not fit.
+   - `素材输入`: for a single work, ask for the link/caption/screenshot/key text; for DNA decode, require at least 10 public work samples; for batch work, ask for the list and priority rule.
+   - `生成确认`: before producing the asset, confirm title, English subtitle, background direction, ratio, and code in one compact brief.
+
+   Opening pattern:
+   ```text
+   先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、解码 DNA、批量换封面、合集封面，还是主页背景？
+   ```
+
+3. **DNA decode mode**
    Use this mode when the user asks to analyze a creator/account, read multiple Douyin works, extract `账号DNA`, or produce a design direction before generating individual covers.
    - Require at least 10 public work samples before making a full DNA conclusion. Samples can be titles, cover text, captions, copied share text, or OCR from screenshots.
    - If a Douyin profile/work link is blocked by login, anti-bot, or the in-app browser, say that clearly and ask for the missing samples instead of guessing.
@@ -48,8 +61,10 @@ metadata:
      }
      ```
 
-3. **Ask only missing questions**
+4. **Ask only missing questions**
    Ask 2-4 concise questions when the answer is not inferable. Use defaults aggressively.
+   - `账号`: default to Mr.K / `KevPH2026` unless the user says this is another account.
+   - `任务`: ask only if the user did not specify single cover, DNA decode, batch refresh, collection, or profile background.
    - `用途/比例`: single-work cover `1:1` by default; ask only if it may be a collection cover, homepage background, or image-post carousel.
    - `主标题`: offer a recommended title and ask whether to use it. Preserve exact user-specified titles.
    - `内容分类`: infer from the content; ask only if ambiguous among `AI下半场`, `强者恒强`, `在路上`.
@@ -58,17 +73,19 @@ metadata:
 
    Good question pattern:
    ```text
-   我先按 1:1 单条封面处理。还差 3 个判断：
+   我先按 Mr.K / KevPH2026 的 1:1 单条封面处理。还差 3 个判断：
    1. 主标题用「...」可以吗？
    2. 分类我建议放「AI下半场 / 强者恒强 / 在路上」，你选哪个？
    3. 背景走 A「...」、B「...」还是 C「...」？
    ```
 
-4. **Build a cover brief**
+5. **Build a cover brief**
    Keep a compact brief before generation:
    ```json
    {
+     "account": "MR.K 在路上 / KevPH2026",
      "source_url": "",
+     "task": "single_cover|dna_decode|batch_refresh|collection|profile",
      "category": "ai|strong|road",
      "ratio": "1:1",
      "title_cn": "",
@@ -80,7 +97,7 @@ metadata:
    }
    ```
 
-5. **Title rules**
+6. **Title rules**
    - Ideal Chinese title length: 8-18 characters, split into 2-3 strong lines.
    - Use judgment-title forms:
      - `X不是Y，是Z`
@@ -91,13 +108,13 @@ metadata:
    - Avoid plain topic labels like `AI发展趋势` unless the user insists.
    - For quote/cognition content, sharpen into a repeatable judgment rather than a soft slogan.
 
-6. **Background mapping**
+7. **Background mapping**
    - AI model/product/business news: real product screen, terminal/API console, founder desk, conference table, market chart, server room, newsroom wall.
    - Strong people/cognition/Jobs/business judgment: late-night office, whiteboard discussion, desk lamp, book/notes, portrait-like black-and-white editorial, negotiation room.
    - Road/field notes: city night, airport/train/car interior, client site, hotel desk, rainy street, border/cross-border scene.
    - Use the accent color only as subtle environmental light or a small design element.
 
-7. **Generate and compose**
+8. **Generate and compose**
    - In `/Users/k/Documents/SNS`, prefer the existing MRK cover system and drawing rules:
      - `mrk-cover-studio.html` for interactive generation/material management.
      - `make_high_play_covers.py` and `make_low_play_covers.py` as reference implementations for typography, layout, avatar, K mark, category chips, and output manifests.
@@ -105,7 +122,7 @@ metadata:
    - If AI background generation is needed, generate the background first from the `background_prompt`, then composite the fixed Mr.K overlay. The background must serve the title, not compete with it.
    - If the user asks to update the web product/material library, update the relevant manifest/local storage/cloud asset path when available, then open the page or folder for inspection.
 
-8. **Local page deployment**
+9. **Local page deployment**
    - If the user asks to deploy, preview, open, or use a local page, run this skill's local launcher:
      ```bash
      scripts/launch_local_studio.sh
@@ -115,7 +132,7 @@ metadata:
    - Open the printed URL in the in-app browser when the user wants to operate the page directly.
    - For full AI workflow, preserve any available `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `KV_REST_API_URL`, and `KV_REST_API_TOKEN` environment variables. Without them, the page still works for local editing and local asset storage.
 
-9. **Local model configuration**
+10. **Local model configuration**
    - The Web Studio exposes a local-only model panel for analysis, copywriting, and image generation.
    - Store model settings only in the browser's `localStorage` under `mrk.localModelConfig`; never commit API keys, model keys, or private endpoints to the repo.
    - Supported LLM shape: OpenAI-compatible Chat Completions endpoint, model name, optional API key. Examples: DeepSeek, LM Studio, Ollama OpenAI-compatible `/v1/chat/completions`.
@@ -123,7 +140,7 @@ metadata:
    - Each request may include `model_config`; the local server uses it only for that request and does not persist it.
    - If the configured endpoint fails, fall back to the existing local planning/image placeholder flow so the user can still continue editing.
 
-10. **Verify**
+11. **Verify**
    Before finishing, inspect or open the generated image/contact sheet and check:
    - ratio and pixel size match the request;
    - title is readable in Douyin grid size;
@@ -132,7 +149,7 @@ metadata:
    - category, ID, and code are correct;
    - background feels specific to the copy, not generic AI wallpaper.
 
-11. **Hand off**
+12. **Hand off**
    - Show the generated image with a Markdown image tag when possible.
    - Give the absolute file path.
    - If a local page was deployed, give the URL and the log path.

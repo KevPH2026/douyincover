@@ -15,6 +15,22 @@ Give it a Douyin share snippet, short link, screenshot, image reference, or plai
 | Agent Skill | You want to send a Douyin link to an Agent and let it ask the missing questions | `scripts/install_agent_skill.sh` |
 | Local Web Studio | You want a browser workspace for previewing, tuning, saving, and exporting covers | `scripts/run_local_studio.sh` |
 
+## Conversational Agent Workflow
+
+The Agent asks before it generates:
+
+1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
+2. Task type: single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
+3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.
+4. Material: one link/caption/screenshot for a single work; at least 10 public samples for DNA decode.
+5. Final brief: Chinese title, English subtitle, background direction, ratio, and code. After confirmation, generate and save the asset.
+
+Starter prompt:
+
+```text
+My Douyin ID is KevPH2026. I want a single-work cover. The content link is ...
+```
+
 ## Why This Exists
 
 Many creator accounts do not lose attention because one post is weak. They lose it because the grid has no memory.
@@ -63,7 +79,7 @@ If fewer than 10 usable samples are available, the Agent asks for the missing sa
 
 - Account: `MR.K 在路上`
 - Douyin ID: `KevPH2026`
-- WeChat ID: `Kevph2026`
+- WeChat ID: `kevph2026`
 - Domain: `dna.superk.ai`
 - Slogan: `少和人对话，多和AI对话`
 

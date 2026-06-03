@@ -13,6 +13,22 @@ Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content
 | Agent Skill | Send a Douyin link to an Agent, answer a few questions, generate a cover brief and asset | `scripts/install_agent_skill.sh` |
 | Local Web Studio | Preview, tune, save to material library, export PNG locally | `scripts/run_local_studio.sh` |
 
+## Conversational Agent Workflow
+
+The Agent does not generate first. It asks for context, then turns the answer into a production brief:
+
+1. Ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
+2. Ask for the task: single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
+3. Choose the category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only when needed.
+4. Collect material: one link/caption/screenshot for a single work; at least 10 public work samples for DNA decode.
+5. Confirm the brief: Chinese title, English subtitle, background direction, ratio, and code. Then generate and save to the material library.
+
+Starter prompt:
+
+```text
+My Douyin ID is KevPH2026. I want a single-work cover. The content link is ...
+```
+
 ## Why It Exists
 
 Most creator homepages fail quietly. The content may be sharp, but the grid looks accidental: different crops, different fonts, different visual logic, no memory hook.
@@ -34,7 +50,7 @@ This project fixes that problem for `MR.K 在路上`.
 
 - Account: `MR.K 在路上`
 - Douyin ID: `KevPH2026`
-- WeChat ID: `Kevph2026`
+- WeChat ID: `kevph2026`
 - Domain: `dna.superk.ai`
 - Categories: `AI下半场`, `强者恒强`, `在路上`
 

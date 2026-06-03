@@ -615,6 +615,93 @@
       margin-top: 0;
     }
 
+    .agent-flow {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .agent-flow-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #edf1f5;
+    }
+
+    .agent-flow-head strong {
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .agent-flow-head span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      text-align: right;
+    }
+
+    .agent-flow-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .agent-flow-list li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .agent-flow-index {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .agent-flow-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .agent-flow-copy strong {
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .agent-flow-copy span {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .agent-flow-prompt {
+      padding: 8px 9px;
+      border: 1px solid #edf1f5;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+      background: #f7f8fa;
+    }
+
     .agent-transcript {
       display: grid;
       gap: 8px;
@@ -1481,6 +1568,40 @@
       color: rgba(232,237,242,.58);
     }
 
+    .agent-flow {
+      border-color: rgba(255,255,255,.1);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.035)),
+        rgba(255,255,255,.04);
+      color: rgba(232,237,242,.68);
+    }
+
+    .agent-flow-head {
+      border-bottom-color: rgba(255,255,255,.08);
+    }
+
+    .agent-flow-head strong,
+    .agent-flow-copy strong {
+      color: #f7ffe8;
+    }
+
+    .agent-flow-head span,
+    .agent-flow-copy span {
+      color: rgba(232,237,242,.52);
+    }
+
+    .agent-flow-index {
+      border-color: rgba(178,255,82,.28);
+      background: rgba(178,255,82,.06);
+      color: rgba(178,255,82,.82);
+    }
+
+    .agent-flow-prompt {
+      border-color: rgba(178,255,82,.14);
+      background: rgba(0,0,0,.18);
+      color: rgba(232,237,242,.54);
+    }
+
     .ai-command-input {
       min-height: 178px !important;
       border-color: rgba(178,255,82,.28);
@@ -2188,6 +2309,50 @@
           <button class="ghost-btn" id="agentClearBtn">清空</button>
         </div>
         <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。</div>
+        <div class="agent-flow" aria-label="Agent 对话式接入工作流">
+          <div class="agent-flow-head">
+            <strong>Agent 接入问法</strong>
+            <span>先建上下文，再生成资产</span>
+          </div>
+          <ol class="agent-flow-list">
+            <li>
+              <span class="agent-flow-index">01</span>
+              <div class="agent-flow-copy">
+                <strong>抖音 ID / 主页链接</strong>
+                <span>默认 Mr.K 用 KevPH2026；新账号先发 ID、主页链接或主页截图。</span>
+              </div>
+            </li>
+            <li>
+              <span class="agent-flow-index">02</span>
+              <div class="agent-flow-copy">
+                <strong>这次要做什么</strong>
+                <span>单条封面、解码 DNA、批量换封面、合集封面或主页背景。</span>
+              </div>
+            </li>
+            <li>
+              <span class="agent-flow-index">03</span>
+              <div class="agent-flow-copy">
+                <strong>内容分类</strong>
+                <span>先在 AI下半场、强者恒强、在路上里判断；不合适再开自定义栏目。</span>
+              </div>
+            </li>
+            <li>
+              <span class="agent-flow-index">04</span>
+              <div class="agent-flow-copy">
+                <strong>素材和样本</strong>
+                <span>单条给链接/文案/截图；解码 DNA 至少给 10 条公开作品样本。</span>
+              </div>
+            </li>
+            <li>
+              <span class="agent-flow-index">05</span>
+              <div class="agent-flow-copy">
+                <strong>确认后生成</strong>
+                <span>Agent 给标题、英文副题、背景方向、编号；确认后生成并保存到素材库。</span>
+              </div>
+            </li>
+          </ol>
+          <div class="agent-flow-prompt">推荐开场：我的抖音 ID 是 ___，这次要做 ___，内容/链接是 ___。</div>
+        </div>
         <div class="agent-transcript" id="agentTranscript"></div>
         <div class="dna-result" id="dnaResult" hidden></div>
       </section>
