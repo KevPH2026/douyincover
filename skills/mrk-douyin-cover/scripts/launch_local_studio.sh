@@ -54,7 +54,7 @@ echo "log=$LOG_FILE"
 if [[ "$MODE" == "background" ]]; then
   (
     cd "$PROJECT_DIR"
-    PORT="$PORT_TO_USE" nohup python3 cover_studio_server.py >"$LOG_FILE" 2>&1 &
+    PORT="$PORT_TO_USE" nohup python3 -u cover_studio_server.py >"$LOG_FILE" 2>&1 < /dev/null &
     echo $! >"$PID_FILE"
   )
 

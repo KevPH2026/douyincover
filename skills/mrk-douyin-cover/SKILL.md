@@ -1,6 +1,6 @@
 ---
 name: mrk-douyin-cover
-description: Use when the user sends a Douyin/TikTok China share link, copied Douyin share text, screenshot, caption, image, or topic and wants to generate or revise an on-brand cover for the Mr.K在路上 account. Guides Codex to ask a few focused questions, extract the core idea, choose one of the fixed Mr.K content categories, generate a realistic background, compose the cover, save it into the SNS cover/material library, and help the user replace or manage the asset.
+description: Use when the user sends a Douyin/TikTok China share link, copied Douyin share text, screenshot, caption, image, video, or topic and wants to generate or revise an on-brand cover or 1-2 second motion intro for the Mr.K在路上 account. Guides Codex to ask a few focused questions, extract the core idea, choose one of the fixed Mr.K content categories, generate a realistic background, compose the cover/intro, save it into the SNS cover/material library, and help the user replace or manage the asset.
 metadata:
   short-description: Mr.K 抖音链接封面生成
 ---
@@ -14,8 +14,10 @@ metadata:
   - `AI下半场` (`ai`, accent `#b2ff52`)
   - `强者恒强` (`strong`, accent `#50d6ff`)
   - `在路上` (`road`, accent `#ff6052`)
-- New single-work covers default to `1:1`, `1080x1080`.
+- New single-work covers default to `9:16`, `1080x1920`; use `1:1`, `1080x1080` only when the user asks for a square/grid cover.
+- Motion intros default to `9:16`, `1080x1920`, `1.5s`; they are used to cover the first 1-2 seconds of a video with animated main-viewpoint text.
 - A cover must include the work's main title. Make the Chinese title large enough for Douyin grid browsing; include an uppercase English subtitle when useful.
+- A motion intro must make the main viewpoint appear within 1-2 seconds. Use image/video material as the background layer, while keeping text in the fixed Mr.K overlay system.
 - Do not add play count, likes, or historical performance numbers unless the user explicitly asks.
 - Style: dark editorial, high contrast, mature technology/business mood, restrained neon accent, K mark/avatar/category chip, consistent typography.
 - Avoid generic AI-looking backgrounds: no abstract orbs, bokeh blobs, random neural-network wallpaper, or vague sci-fi gradients. Prefer realistic/editorial scenes that match the content.
@@ -30,14 +32,14 @@ metadata:
 2. **Conversational Agent intake**
    Use a short dialogue funnel before generating. The Agent should collect context in this order, while skipping anything already known:
    - `账号入口`: ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026` unless the user names a different account.
-   - `任务目标`: ask whether this is single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
+   - `任务目标`: ask whether this is single-work cover, motion intro, DNA decode, batch cover refresh, collection cover, or profile background.
    - `内容分类`: infer one of `AI下半场`, `强者恒强`, `在路上`; ask only when ambiguous. Use custom category only when the content clearly does not fit.
-   - `素材输入`: for a single work, ask for the link/caption/screenshot/key text; for DNA decode, require at least 10 public work samples; for batch work, ask for the list and priority rule.
-   - `生成确认`: before producing the asset, confirm title, English subtitle, background direction, ratio, and code in one compact brief.
+   - `素材输入`: for a single work, ask for the link/caption/screenshot/key text; for a motion intro, also ask whether the user has image/video material; for DNA decode, require at least 10 public work samples; for batch work, ask for the list and priority rule.
+   - `生成确认`: before producing the asset, confirm title, English subtitle, background direction, ratio/duration, and code in one compact brief.
 
    Opening pattern:
    ```text
-   先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、解码 DNA、批量换封面、合集封面，还是主页背景？
+   先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、片头动效、解码 DNA、批量换封面、合集封面，还是主页背景？
    ```
 
 3. **DNA decode mode**
@@ -64,8 +66,9 @@ metadata:
 4. **Ask only missing questions**
    Ask 2-4 concise questions when the answer is not inferable. Use defaults aggressively.
    - `账号`: default to Mr.K / `KevPH2026` unless the user says this is another account.
-   - `任务`: ask only if the user did not specify single cover, DNA decode, batch refresh, collection, or profile background.
-   - `用途/比例`: single-work cover `1:1` by default; ask only if it may be a collection cover, homepage background, or image-post carousel.
+   - `任务`: ask only if the user did not specify single cover, motion intro, DNA decode, batch refresh, collection, or profile background.
+   - `用途/比例`: single-work cover `9:16` by default; ask only if it may be a square cover, collection cover, homepage background, motion intro, or image-post carousel.
+   - `片头素材`: for motion intros, ask whether to use an uploaded image/video, an AI-generated background, or the static cover as the base.
    - `主标题`: offer a recommended title and ask whether to use it. Preserve exact user-specified titles.
    - `内容分类`: infer from the content; ask only if ambiguous among `AI下半场`, `强者恒强`, `在路上`.
    - `背景方向`: offer 2-3 realistic options tied to the copy, such as office desk, city night, product screen, conference room, road scene, lab, market chart, or portrait-like editorial scene.
@@ -73,7 +76,7 @@ metadata:
 
    Good question pattern:
    ```text
-   我先按 Mr.K / KevPH2026 的 1:1 单条封面处理。还差 3 个判断：
+   我先按 Mr.K / KevPH2026 的 9:16 单条封面处理。还差 3 个判断：
    1. 主标题用「...」可以吗？
    2. 分类我建议放「AI下半场 / 强者恒强 / 在路上」，你选哪个？
    3. 背景走 A「...」、B「...」还是 C「...」？
@@ -85,9 +88,10 @@ metadata:
    {
      "account": "MR.K 在路上 / KevPH2026",
      "source_url": "",
-     "task": "single_cover|dna_decode|batch_refresh|collection|profile",
+     "task": "single_cover|motion_intro|dna_decode|batch_refresh|collection|profile",
      "category": "ai|strong|road",
-     "ratio": "1:1",
+     "ratio": "9:16",
+     "duration": "1.5s",
      "title_cn": "",
      "title_en": "",
      "summary": "",
@@ -120,15 +124,16 @@ metadata:
      - `make_high_play_covers.py` and `make_low_play_covers.py` as reference implementations for typography, layout, avatar, K mark, category chips, and output manifests.
    - For a new single cover, create a narrowly scoped script or reuse existing drawing functions; save to `/Users/k/Documents/SNS/generated-covers/ad-hoc/` unless the user asks for a batch folder.
    - If AI background generation is needed, generate the background first from the `background_prompt`, then composite the fixed Mr.K overlay. The background must serve the title, not compete with it.
+   - For `motion_intro`, use the Web Studio's `片头动效` template: 1080x1920 canvas, optional image/video media background, animated Chinese title, English subtitle, summary, category chip, K mark, and code. Export WebM locally; for MP4/server rendering, mirror the HTML-animation-to-video approach used by `KevPH2026/web2-render-service`.
    - If the user asks to update the web product/material library, update the relevant manifest/local storage/cloud asset path when available, then open the page or folder for inspection.
 
 9. **Local page deployment**
    - If the user asks to deploy, preview, open, or use a local page, run this skill's local launcher:
      ```bash
-     scripts/launch_local_studio.sh
+     scripts/run_local_studio.sh
      ```
    - The script serves `/Users/k/Documents/SNS/mrk-cover-studio.html` through `cover_studio_server.py`, chooses the next free port starting at `8765`, prints the local URL, then keeps the server running in the foreground.
-   - In Codex, keep the returned dev-server session alive while the user is using the page. If the user is running it manually in Terminal and wants background mode, use `launch_local_studio.sh --background`.
+   - In Codex, keep the returned dev-server session alive while the user is using the page. If the user is running it manually in Terminal and wants background mode, use `scripts/run_local_studio.sh --background`.
    - Open the printed URL in the in-app browser when the user wants to operate the page directly.
    - For full AI workflow, preserve any available `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `KV_REST_API_URL`, and `KV_REST_API_TOKEN` environment variables. Without them, the page still works for local editing and local asset storage.
 
@@ -148,6 +153,7 @@ metadata:
    - no accidental play count or private-work marker;
    - category, ID, and code are correct;
    - background feels specific to the copy, not generic AI wallpaper.
+   - for motion intros, preview the animation and confirm the main title appears clearly within the first 1-2 seconds.
 
 12. **Hand off**
    - Show the generated image with a Markdown image tag when possible.

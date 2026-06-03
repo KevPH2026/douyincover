@@ -16,7 +16,7 @@ ALLOWED_DOUYIN_HOSTS = (
 )
 
 CATEGORY_KEYS = {"ai", "strong", "road"}
-TEMPLATE_KEYS = {"work", "collection", "profile"}
+TEMPLATE_KEYS = {"work", "collection", "profile", "intro"}
 STYLE_KEYS = {"cinematic", "terminal", "field", "minimal"}
 DENSITY_KEYS = {"low", "medium", "high"}
 DEFAULT_CHAT_ENDPOINT = "https://api.deepseek.com/chat/completions"
@@ -707,6 +707,21 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
         if item
     )
     category = infer_category(source_text)
+    template_source = normalize_space(
+        " ".join(
+            [
+                str(current.get("template") or ""),
+                trim(incoming.get("message"), 500),
+                trim(incoming.get("goal"), 500),
+                source_text,
+            ]
+        )
+    ).lower()
+    wants_intro = current.get("template") == "intro" or any(
+        token in template_source
+        for token in ["片头", "动效", "视频开头", "前1秒", "前2秒", "1-2秒", "intro", "motion"]
+    )
+    template = "intro" if wants_intro else "work"
     clean = URL_PATTERN.sub(" ", source_text).strip(" /，。")
     readable_clean = strip_hashtags(clean).strip(" /，。#")
     title = trim(fallback_title(clean, current.get("title")), 24)
@@ -721,7 +736,7 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
 
     return {
         "reply": "我先按现有账号规则生成了一版封面方案；LLM 未配置或不可用时会走本地判断。",
-        "template": "work",
+        "template": template,
         "category": category,
         "fields": {
             "categoryTitle": category_defaults[0],
@@ -730,7 +745,7 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
             "title": title,
             "enTitle": en_title,
             "summary": summary,
-            "code": category_defaults[3],
+            "code": "M-01" if template == "intro" else category_defaults[3],
         },
         "image": {
             "theme": trim(fallback_image_theme(clean, category, current.get("imageTheme")), 180),
@@ -748,16 +763,19 @@ SYSTEM_PROMPT = """
 账号固定规则：
 - 账号：MR.K 在路上；ID：KevPH2026。
 - 只使用三类栏目：ai=AI下半场，strong=强者恒强，road=在路上。
+- 输出形态：work=单条静态封面，collection=合集封面，profile=主页背景，intro=覆盖视频前 1-2 秒的片头动效。
 - 单条作品封面要服务点击：中文标题必须短、狠、好读，建议 2-8 个汉字一行，用 \\n 控制换行，最多 3 行。
+- 片头动效也要服务点击：主干观点必须在 1-2 秒内大字出现，可以比静态封面更像开场 punchline。
 - 摘要是点击理由，不要流水账，控制在 12-28 个中文字符。
 - 图片只做背景，不要把标题文字写进生成图里；标题由前端固定版式叠加。
+- 如果用户提到“片头、动效、视频开头、覆盖前 1-2 秒、intro、motion”，优先选择 template=intro。
 - 如果用户只粘贴抖音分享文案或短链，优先使用 douyin_context.clean_without_tags、hashtags 和 douyin_meta 来判断主题；忽略复制口令、时间、随机码、"复制此链接" 这类噪声。
 - 如果用户上传图片，你不能声称自己看到了图片细节；只把它作为生图参考图使用，并在 image.promptHints 中说明如何利用参考图的气质、颜色或场景。
 
 只输出合法 JSON，不要 markdown，不要解释。JSON 结构：
 {
   "reply": "给用户看的简短说明",
-  "template": "work|collection|profile",
+  "template": "work|collection|profile|intro",
   "category": "ai|strong|road",
   "fields": {
     "categoryTitle": "...",

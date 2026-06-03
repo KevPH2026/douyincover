@@ -6,14 +6,14 @@
 
 Mr.K Cover Studio is not a generic poster maker. It is a production system for one repeatable creator identity: fixed brand assets, fixed content categories, flexible titles, flexible backgrounds.
 
-Give it a Douyin share snippet, short link, screenshot, image reference, or plain topic. The system extracts the angle, proposes the cover copy, generates a matching background, and renders a cover inside the Mr.K visual system.
+Give it a Douyin share snippet, short link, screenshot, image/video reference, or plain topic. The system extracts the angle, proposes the copy, generates a matching background, and renders either a static cover or a 1-2 second motion intro inside the Mr.K visual system.
 
 ## Two Delivery Modes
 
 | Mode | Use It When | Command |
 | --- | --- | --- |
 | Agent Skill | You want to send a Douyin link to an Agent and let it ask the missing questions | `scripts/install_agent_skill.sh` |
-| Local Web Studio | You want a browser workspace for previewing, tuning, saving, and exporting covers | `scripts/run_local_studio.sh` |
+| Local Web Studio | You want a browser workspace for previewing, tuning, saving, and exporting covers/intros | `scripts/run_local_studio.sh` |
 
 ## Conversational Agent Workflow
 
@@ -22,10 +22,10 @@ The Agent asks before it generates:
 Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.md).
 
 1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
-2. Task type: single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
+2. Task type: single-work cover, motion intro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.
-4. Material: one link/caption/screenshot for a single work; at least 10 public samples for DNA decode.
-5. Final brief: Chinese title, English subtitle, background direction, ratio, and code. After confirmation, generate and save the asset.
+4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro when available; at least 10 public samples for DNA decode.
+5. Final brief: Chinese title, English subtitle, background direction, ratio/duration, and code. After confirmation, generate and save the asset.
 
 Starter prompt:
 
@@ -51,6 +51,10 @@ Refresh high-performing historical works with consistent covers so the profile f
 
 Turn AI model updates, founder quotes, company moves, and market signals into judgment-driven titles and topic-specific backgrounds.
 
+### Add Motion Intros
+
+Use an image or video as the base layer, then cover the first 1-2 seconds with animated main-viewpoint text, subtitle, category, K mark, and code.
+
 ### Lock A Personal IP
 
 Account name, WeChat ID, avatar stamp, K mark, category color, and title hierarchy stay fixed across outputs.
@@ -61,7 +65,7 @@ New users choose Agent/Web workflow, starter template, and content category befo
 
 ### Quick Templates
 
-Built-in starters cover AI news analysis, strong quotes, field notes, collection covers, profile banners, and custom columns.
+Built-in starters cover AI news analysis, strong quotes, field notes, motion intros, collection covers, profile banners, and custom columns.
 
 ### Manage Generated Assets
 
@@ -97,7 +101,7 @@ Fixed categories:
 2. The configured LLM extracts the angle and proposes title, category, summary, and background direction.
 3. The configured image model creates a realistic editorial background matched to the copy.
 4. The fixed template adds avatar, K mark, category chip, title, subtitle, and code.
-5. Save to the material library or export PNG.
+5. Save to the material library or export PNG/WebM.
 
 DNA Decode workflow:
 
@@ -109,6 +113,7 @@ DNA Decode workflow:
 ## Output Sizes
 
 - Single work cover: `1080x1920`
+- Motion intro overlay: `1080x1920`, `1.2-2s`, browser WebM export
 - Collection cover: `1080x1080`
 - Profile background: `1920x640`
 - Material library: local by default, KV-backed in production

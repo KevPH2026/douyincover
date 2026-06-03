@@ -2048,7 +2048,7 @@
             </button>
             <button class="onboarding-choice" data-onboarding-path="local">
               <strong>Local Web Studio</strong>
-              <span>打开本地页面手动调图，适合预览封面、保存素材库和导出 PNG。</span>
+              <span>打开本地页面手动调图，适合预览封面/片头、保存素材库和导出 PNG/WebM。</span>
             </button>
             <button class="onboarding-choice" data-onboarding-path="both">
               <strong>Agent + Web</strong>
@@ -2275,6 +2275,7 @@
           <button data-template="work" class="active">单条作品封面</button>
           <button data-template="collection">合集封面</button>
           <button data-template="profile">主页背景</button>
+          <button data-template="intro">片头动效</button>
         </div>
       </section>
 
@@ -2296,6 +2297,10 @@
           <button class="quick-template" data-quick-template="collection-ai">
             <strong>系列合集</strong>
             <span>把内容收束成栏目资产</span>
+          </button>
+          <button class="quick-template" data-quick-template="motion-intro">
+            <strong>片头动效</strong>
+            <span>覆盖视频前 1-2 秒的观点动画</span>
           </button>
         </div>
       </section>
@@ -2338,9 +2343,9 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
           <div class="ai-command-grid">
-            <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面</button>
+            <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/片头</button>
             <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA</button>
           </div>
         </div>
@@ -2365,7 +2370,7 @@
         </div>
 
         <div class="agent-actions">
-          <button class="export-btn" id="agentRunBtn">对话生成封面</button>
+          <button class="export-btn" id="agentRunBtn">对话生成资产</button>
           <button class="ghost-btn" id="agentClearBtn">清空</button>
         </div>
         <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。</div>
@@ -2386,7 +2391,7 @@
               <span class="agent-flow-index">02</span>
               <div class="agent-flow-copy">
                 <strong>这次要做什么</strong>
-                <span>单条封面、解码 DNA、批量换封面、合集封面或主页背景。</span>
+                <span>单条封面、片头动效、解码 DNA、批量换封面、合集封面或主页背景。</span>
               </div>
             </li>
             <li>
@@ -2400,14 +2405,14 @@
               <span class="agent-flow-index">04</span>
               <div class="agent-flow-copy">
                 <strong>素材和样本</strong>
-                <span>单条给链接/文案/截图；解码 DNA 至少给 10 条公开作品样本。</span>
+                <span>单条给链接/文案/截图；片头动效可补图片或视频素材；解码 DNA 至少给 10 条公开作品样本。</span>
               </div>
             </li>
             <li>
               <span class="agent-flow-index">05</span>
               <div class="agent-flow-copy">
                 <strong>确认后生成</strong>
-                <span>Agent 给标题、英文副题、背景方向、编号；确认后生成并保存到素材库。</span>
+                <span>Agent 给标题、英文副题、背景方向、比例/时长、编号；确认后生成并保存到素材库。</span>
               </div>
             </li>
           </ol>
@@ -2494,6 +2499,31 @@
           <div class="hint">只在本地浏览器读取，不上传服务器。</div>
         </div>
 
+        <div class="field" data-field="motionMedia">
+          <label for="motionMedia">片头素材</label>
+          <input id="motionMedia" type="file" accept="image/*,video/*">
+          <div class="hint">支持图片或动效视频，用作前 1-2 秒覆盖层底图。</div>
+        </div>
+
+        <div class="row" data-field="motionSettings">
+          <div class="field">
+            <label for="motionDuration">片头时长</label>
+            <select id="motionDuration">
+              <option value="1.2">1.2 秒</option>
+              <option value="1.5" selected>1.5 秒</option>
+              <option value="2">2 秒</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="motionStyle">文字动效</label>
+            <select id="motionStyle">
+              <option value="web2">Web2 扫描进场</option>
+              <option value="kinetic">观点推入</option>
+              <option value="glitch">轻故障切入</option>
+            </select>
+          </div>
+        </div>
+
         <div class="field">
           <label for="imageTheme">文字主题生成配图</label>
           <textarea id="imageTheme" style="min-height:72px;">AI吞噬SaaS，深夜机场，代码屏幕，商业判断</textarea>
@@ -2527,6 +2557,8 @@
       <section class="group">
         <p class="group-title">导出</p>
         <button class="export-btn" id="exportBtn">导出 PNG</button>
+        <button class="ghost-btn" id="previewMotionBtn">预览片头动效</button>
+        <button class="ghost-btn" id="exportMotionBtn">导出片头 WebM</button>
         <button class="ghost-btn" id="saveAssetBtn">保存到素材库</button>
         <button class="ghost-btn" id="advancedOpenSmallBtn">手动编辑</button>
         <button class="ghost-btn utility-hidden" id="resetBtn">恢复当前栏目默认文案</button>
@@ -2691,6 +2723,15 @@
         category: "ai",
         imageTheme: "Mr.K主页背景，城市夜景，安全区留白，Deep thoughts on AI"
       },
+      "motion-intro": {
+        template: "intro",
+        category: "strong",
+        title: "判断\n不能外包",
+        enTitle: "Judgment Moves First",
+        summary: "片头 1-2 秒先把观点打到屏幕上。",
+        code: "M-01",
+        imageTheme: "深夜工作台，观点动画，扫描光，黑底高对比，商业判断"
+      },
       "custom-column": {
         template: "work",
         category: "custom",
@@ -2702,7 +2743,7 @@
       }
     };
 
-    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景方案。
+    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效方案。
 
 默认账号：
 - 账号名：MR.K 在路上
@@ -2713,27 +2754,30 @@
 
 对话工作流：
 1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
-2. 再问任务类型：单条封面、解码 DNA、批量换封面、合集封面、主页背景。
+2. 再问任务类型：单条封面、片头动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
-4. 再收素材：单条作品需要链接/文案/截图/主题；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
-5. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例、编号、栏目。
+4. 再收素材：单条作品需要链接/文案/截图/主题；片头动效还要确认是否有图片或视频素材；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
+5. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
 - 不要声称看到了没有提供的抖音内容。
 - 链接打不开时，让用户提供截图、标题、封面文字或分享文案。
 - 私密作品默认不参与。
-- 单条封面默认 1:1 / 1080x1080。
+- 单条封面默认 9:16 / 1080x1920；用户指定方图时才用 1:1 / 1080x1080。
+- 片头动效默认 9:16 / 1080x1920 / 1.5 秒，用于覆盖视频前 1-2 秒。
 - 封面必须有大号中文标题；可搭配英文副题。
+- 片头动效必须让主干观点和文字在 1-2 秒内动态出现，背景只做氛围和语义，不把文字烧进图里。
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
 
 输出 brief JSON：
 {
   "account": "MR.K 在路上 / KevPH2026",
-  "task": "single_cover|dna_decode|batch_refresh|collection|profile",
+  "task": "single_cover|motion_intro|dna_decode|batch_refresh|collection|profile",
   "source_url": "",
   "category": "ai|strong|road|custom",
-  "ratio": "1:1",
+  "ratio": "9:16|1:1",
+  "duration": "1.2s|1.5s|2s",
   "title_cn": "",
   "title_en": "",
   "summary": "",
@@ -2743,7 +2787,7 @@
 }
 
 推荐开场：
-“先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、解码 DNA、批量换封面、合集封面，还是主页背景？”`;
+“先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、片头动效、解码 DNA、批量换封面、合集封面，还是主页背景？”`;
 
     const state = {
       template: "work",
@@ -2757,6 +2801,11 @@
       agentPromptHint: "",
       agentMessages: [],
       modelConfig: null,
+      motionMedia: null,
+      motionMediaType: "",
+      motionMediaUrl: "",
+      motionPlaying: false,
+      motionRecording: false,
       authToken: localStorage.getItem("mrk.authToken") || "",
       user: null,
       storageMode: "local",
@@ -2841,12 +2890,17 @@
       code: document.getElementById("code"),
       bgPreset: document.getElementById("bgPreset"),
       bgUpload: document.getElementById("bgUpload"),
+      motionMedia: document.getElementById("motionMedia"),
+      motionDuration: document.getElementById("motionDuration"),
+      motionStyle: document.getElementById("motionStyle"),
       imageTheme: document.getElementById("imageTheme"),
       imageStyle: document.getElementById("imageStyle"),
       imageDensity: document.getElementById("imageDensity"),
       generateBgBtn: document.getElementById("generateBgBtn"),
       aiStatus: document.getElementById("aiStatus"),
       exportBtn: document.getElementById("exportBtn"),
+      previewMotionBtn: document.getElementById("previewMotionBtn"),
+      exportMotionBtn: document.getElementById("exportMotionBtn"),
       saveAssetBtn: document.getElementById("saveAssetBtn"),
       saveAssetSmallBtn: document.getElementById("saveAssetSmallBtn"),
       refreshAssetsBtn: document.getElementById("refreshAssetsBtn"),
@@ -3341,12 +3395,13 @@
       const sizes = {
         work: [1080, 1920],
         collection: [1080, 1080],
-        profile: [1920, 640]
+        profile: [1920, 640],
+        intro: [1080, 1920]
       };
       const [w, h] = sizes[state.template];
       el.canvas.width = w;
       el.canvas.height = h;
-      el.sizeMeta.innerHTML = `${w} x ${h}<br>PNG`;
+      el.sizeMeta.innerHTML = `${w} x ${h}<br>${state.template === "intro" ? "WebM / PNG frame" : "PNG"}`;
     }
 
     function drawCoverImage(img, x, y, w, h) {
@@ -3356,6 +3411,26 @@
       const sx = (img.width - sw) / 2;
       const sy = (img.height - sh) / 2;
       ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+    }
+
+    function drawCoverMedia(media, x, y, w, h, zoom = 1) {
+      const mw = media.videoWidth || media.naturalWidth || media.width || w;
+      const mh = media.videoHeight || media.naturalHeight || media.height || h;
+      const scale = Math.max(w / mw, h / mh) * zoom;
+      const dw = mw * scale;
+      const dh = mh * scale;
+      const dx = x + (w - dw) / 2;
+      const dy = y + (h - dh) / 2;
+      ctx.drawImage(media, dx, dy, dw, dh);
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - Math.max(0, Math.min(1, t)), 3);
+    }
+
+    function easeInOut(t) {
+      t = Math.max(0, Math.min(1, t));
+      return t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
     }
 
     function lineGradient(x1, y1, x2, y2, stops) {
@@ -3555,7 +3630,7 @@
       ].filter(Boolean).join(" / ");
       const seed = hashText(theme);
       const rand = randomFromSeed(seed);
-      const size = state.template === "profile" ? [1920, 640] : [1600, 1600];
+      const size = state.template === "profile" ? [1920, 640] : state.template === "intro" ? [1080, 1920] : [1600, 1600];
       const c = document.createElement("canvas");
       c.width = size[0];
       c.height = size[1];
@@ -3652,7 +3727,8 @@
       return {
         work: "vertical 9:16 Douyin work cover background",
         collection: "square 1:1 Douyin series cover background",
-        profile: "wide 3:1 Douyin profile banner background"
+        profile: "wide 3:1 Douyin profile banner background",
+        intro: "vertical 9:16 short video intro overlay background"
       }[state.template];
     }
 
@@ -3679,7 +3755,9 @@
       const theme = el.imageTheme.value.trim() || [v.title, v.summary].filter(Boolean).join(" / ");
       const safeArea = state.template === "profile"
         ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
-        : "Keep the left half dark and readable for large Chinese title text. Put the main visual object on the right third or lower right.";
+        : state.template === "intro"
+          ? "Keep the left and center-left title animation area dark, clean and readable for kinetic Chinese typography. Put motion-friendly visual interest on the right third or lower right."
+          : "Keep the left half dark and readable for large Chinese title text. Put the main visual object on the right third or lower right.";
       const noText = "Do not include readable text, letters, logos, watermarks, UI labels, QR codes, captions, or faces looking at camera.";
       return [
         `Create a high-end background image for ${templateLabel()}.`,
@@ -3756,7 +3834,9 @@
         code: el.code.value,
         imageTheme: el.imageTheme.value,
         imageStyle: el.imageStyle.value,
-        imageDensity: el.imageDensity.value
+        imageDensity: el.imageDensity.value,
+        motionDuration: el.motionDuration.value,
+        motionStyle: el.motionStyle.value
       };
     }
 
@@ -3770,7 +3850,7 @@
       if (plan.category && categories[plan.category]) {
         setCategory(plan.category);
       }
-      if (["work", "collection", "profile"].includes(plan.template)) {
+      if (["work", "collection", "profile", "intro"].includes(plan.template)) {
         setTemplate(plan.template);
       }
 
@@ -3850,7 +3930,8 @@
         const sourceNote = agentSourceNote(payload.source);
         setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
         await generateAiBackground({ fromAgent: true });
-        setAgentStatus(`${payload.fallback ? "已用本地方案完成" : `已用 ${payload.model || "LLM"} 方案完成`}，可以直接导出 PNG。`, payload.fallback ? "error" : "success");
+        const outputLabel = state.template === "intro" ? "导出 WebM 或封面帧 PNG" : "导出 PNG";
+        setAgentStatus(`${payload.fallback ? "已用本地方案完成" : `已用 ${payload.model || "LLM"} 方案完成`}，可以直接${outputLabel}。`, payload.fallback ? "error" : "success");
         el.status.textContent = "Agent cover generated";
       } catch (error) {
         setAgentStatus(`对话生成失败：${error.message}`, "error");
@@ -3920,7 +4001,9 @@
         enTitle: el.enTitle.value.trim(),
         summary: el.summary.value.trim(),
         code: el.code.value.trim(),
-        profileVariant: el.profileVariant.value
+        profileVariant: el.profileVariant.value,
+        motionDuration: Number(el.motionDuration.value || 1.5),
+        motionStyle: el.motionStyle.value
       };
     }
 
@@ -3997,6 +4080,112 @@
       ctx.fillRect(1248, 468, 290, 10);
     }
 
+    function activeMotionBackground() {
+      if (state.motionMediaType === "video" && state.motionMedia && state.motionMedia.readyState >= 2) return state.motionMedia;
+      if (state.motionMediaType === "image" && state.motionMedia) return state.motionMedia;
+      return activeBg();
+    }
+
+    function drawIntroLine(line, x, y, size, progress, cat, style, maxWidth) {
+      const reveal = easeOutCubic(progress);
+      ctx.save();
+      ctx.font = font(size, 800);
+      ctx.textBaseline = "top";
+      ctx.globalAlpha = Math.max(0, Math.min(1, reveal));
+      if (style === "web2") {
+        const width = Math.min(maxWidth, ctx.measureText(line).width + 20);
+        ctx.beginPath();
+        ctx.rect(x - 6, y - 6, width * reveal, size * 1.12);
+        ctx.clip();
+        ctx.fillStyle = "rgba(252,252,246,1)";
+        ctx.fillText(line, x, y, maxWidth);
+      } else if (style === "glitch") {
+        const shift = (1 - reveal) * 36;
+        ctx.fillStyle = rgba(cat.color, .5);
+        ctx.fillText(line, x + shift, y - 3, maxWidth);
+        ctx.fillStyle = "rgba(80,216,255,.42)";
+        ctx.fillText(line, x - shift * .7, y + 4, maxWidth);
+        ctx.fillStyle = "rgba(252,252,246,1)";
+        ctx.fillText(line, x, y, maxWidth);
+      } else {
+        ctx.fillStyle = "rgba(252,252,246,1)";
+        ctx.fillText(line, x - (1 - reveal) * 88, y, maxWidth);
+      }
+      ctx.restore();
+    }
+
+    function drawIntro(v, cat, progress = 1) {
+      const w = 1080;
+      const h = 1920;
+      const p = Math.max(0, Math.min(1, progress));
+      const style = el.motionStyle.value || "web2";
+      const media = activeMotionBackground();
+      drawCoverMedia(media, 0, 0, w, h, 1 + .035 * easeInOut(p));
+
+      drawOverlay(w, h, "work");
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,.34)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalAlpha = .22;
+      ctx.strokeStyle = "rgba(255,255,255,.16)";
+      ctx.lineWidth = 1;
+      for (let y = 0; y < h; y += 48) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      drawBrand(cat.color, 1);
+      drawCutK(668, 1210, 390, cat.color, .13 + .13 * p);
+
+      const chipIn = easeOutCubic((p - .06) / .28);
+      ctx.save();
+      ctx.globalAlpha = chipIn;
+      fillRoundRect(82, 238, 190, 54, 27, cat.color);
+      drawCenteredText(v.categoryTitle, 82, 238, 190, 54, 30, 700, "#080a0d");
+      ctx.restore();
+
+      const titleLines = wrapText(v.title, 6).slice(0, 3);
+      const maxLen = Math.max(...titleLines.map(line => line.length), 1);
+      const titleSize = maxLen <= 4 ? 150 : 136;
+      const titleProgress = (p - .12) / .54;
+      let y = 430 - (1 - easeOutCubic(titleProgress)) * 46;
+      titleLines.forEach((line, index) => {
+        drawIntroLine(line, 82, y, titleSize, titleProgress - index * .08, cat, style, 920);
+        y += titleSize * .98;
+      });
+
+      const subIn = easeOutCubic((p - .56) / .22);
+      ctx.save();
+      ctx.globalAlpha = subIn;
+      drawText(v.enTitle.toUpperCase(), 82, y + 28, 38, 700, "rgba(248,248,242,.78)", 900);
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(82, y + 92, 300 * subIn, 11);
+      drawText(v.summary, 82, y + 142, 40, 400, "rgba(248,248,242,.9)", 900);
+      ctx.restore();
+
+      const scan = style === "kinetic" ? easeInOut(p) : p;
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+      ctx.globalAlpha = style === "glitch" ? .42 : .34;
+      const scanY = 260 + scan * 1080;
+      ctx.fillStyle = lineGradient(0, scanY - 28, 0, scanY + 28, [
+        [0, "rgba(178,255,82,0)"],
+        [.48, rgba(cat.color, .82)],
+        [1, "rgba(80,216,255,0)"]
+      ]);
+      ctx.fillRect(0, scanY - 28, w, 56);
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = .72;
+      drawText("INTRO / 1-2 SEC", 82, 1716, 26, 700, "rgba(248,248,242,.62)");
+      drawText(v.code || "M-01", 858, 1716, 30, 700, cat.color);
+      ctx.restore();
+    }
+
     function draw() {
       setCanvasSize();
       const v = values();
@@ -4006,13 +4195,15 @@
       el.modeTitle.textContent = {
         work: "单条作品封面",
         collection: "合集封面",
-        profile: "主页背景"
+        profile: "主页背景",
+        intro: "片头动效"
       }[state.template];
 
       ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
       if (state.template === "work") drawWork(v, cat);
       if (state.template === "collection") drawCollection(v, cat);
       if (state.template === "profile") drawProfile(v, cat);
+      if (state.template === "intro") drawIntro(v, cat, 1);
       updateVisibility();
       updateFileName();
     }
@@ -4024,16 +4215,21 @@
         categoryEn: state.template !== "profile",
         categorySub: state.template === "collection",
         categoryColor: state.template !== "profile",
-        title: state.template === "work",
-        enTitle: state.template === "work",
-        summary: state.template === "work",
-        code: state.template === "work"
+        title: state.template === "work" || state.template === "intro",
+        enTitle: state.template === "work" || state.template === "intro",
+        summary: state.template === "work" || state.template === "intro",
+        code: state.template === "work" || state.template === "intro",
+        motionMedia: state.template === "intro",
+        motionSettings: state.template === "intro"
       };
       Object.entries(visible).forEach(([name, show]) => {
         document.querySelectorAll(`[data-field="${name}"]`).forEach(node => {
           node.style.display = show ? "" : "none";
         });
       });
+      el.previewMotionBtn.style.display = state.template === "intro" ? "" : "none";
+      el.exportMotionBtn.style.display = state.template === "intro" ? "" : "none";
+      el.exportBtn.textContent = state.template === "intro" ? "导出封面帧 PNG" : "导出 PNG";
     }
 
     function updateFileName() {
@@ -4043,7 +4239,8 @@
       const names = {
         work: `work-${cat.slug}-${safeCode}.png`,
         collection: `collection-${cat.slug}.png`,
-        profile: `mrk-profile-background-${v.profileVariant}.png`
+        profile: `mrk-profile-background-${v.profileVariant}.png`,
+        intro: `intro-${cat.slug}-${safeCode}.webm`
       };
       el.fileNameHint.textContent = names[state.template];
     }
@@ -4182,9 +4379,128 @@
     function exportPng() {
       const link = document.createElement("a");
       link.download = el.fileNameHint.textContent;
+      if (state.template === "intro") {
+        link.download = el.fileNameHint.textContent.replace(/\.webm$/i, ".png");
+      }
       link.href = el.canvas.toDataURL("image/png");
       link.click();
       el.status.textContent = `Exported ${link.download}`;
+    }
+
+    function resetMotionVideo() {
+      if (state.motionMediaType !== "video" || !state.motionMedia) return;
+      const video = state.motionMedia;
+      video.pause();
+      try {
+        video.currentTime = 0;
+      } catch {}
+    }
+
+    async function startMotionVideoPlayback() {
+      if (state.motionMediaType !== "video" || !state.motionMedia) return;
+      const video = state.motionMedia;
+      video.muted = true;
+      video.loop = false;
+      video.playsInline = true;
+      try {
+        video.currentTime = 0;
+      } catch {}
+      try {
+        await video.play();
+      } catch {}
+    }
+
+    function drawMotionFrame(progress) {
+      setCanvasSize();
+      ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
+      drawIntro(values(), activeCategory(), progress);
+    }
+
+    async function previewMotionIntro() {
+      if (state.template !== "intro") setTemplate("intro");
+      if (state.motionPlaying || state.motionRecording) return;
+      const durationMs = Math.max(1, Number(el.motionDuration.value || 1.5)) * 1000;
+      state.motionPlaying = true;
+      el.previewMotionBtn.disabled = true;
+      el.status.textContent = "Previewing intro";
+      await startMotionVideoPlayback();
+      const startedAt = performance.now();
+      function tick(now) {
+        const progress = Math.min(1, (now - startedAt) / durationMs);
+        drawMotionFrame(progress);
+        if (progress < 1 && state.motionPlaying) {
+          requestAnimationFrame(tick);
+          return;
+        }
+        state.motionPlaying = false;
+        el.previewMotionBtn.disabled = false;
+        resetMotionVideo();
+        drawMotionFrame(1);
+        updateFileName();
+        el.status.textContent = "Intro preview complete";
+      }
+      requestAnimationFrame(tick);
+    }
+
+    async function exportMotionWebm() {
+      if (state.template !== "intro") setTemplate("intro");
+      if (!el.canvas.captureStream || !window.MediaRecorder) {
+        setAiStatus("当前浏览器不支持直接导出 WebM。可以用 web2-render-service 走服务端渲染。", "error");
+        return;
+      }
+      if (state.motionRecording) return;
+      const durationMs = Math.max(1, Number(el.motionDuration.value || 1.5)) * 1000;
+      const filename = el.fileNameHint.textContent.replace(/\.png$/i, ".webm");
+      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+        ? "video/webm;codecs=vp9"
+        : "video/webm";
+      const stream = el.canvas.captureStream(30);
+      const chunks = [];
+      const recorder = new MediaRecorder(stream, { mimeType });
+      recorder.ondataavailable = event => {
+        if (event.data && event.data.size) chunks.push(event.data);
+      };
+      const finished = new Promise(resolve => {
+        recorder.onstop = resolve;
+      });
+
+      state.motionRecording = true;
+      el.exportMotionBtn.disabled = true;
+      el.previewMotionBtn.disabled = true;
+      el.status.textContent = "Recording intro WebM";
+      setAiStatus("正在录制片头动效 WebM，本地浏览器完成，不上传素材。", "working");
+      await startMotionVideoPlayback();
+      recorder.start();
+
+      const startedAt = performance.now();
+      function tick(now) {
+        const progress = Math.min(1, (now - startedAt) / durationMs);
+        drawMotionFrame(progress);
+        if (progress < 1 && state.motionRecording) {
+          requestAnimationFrame(tick);
+          return;
+        }
+        setTimeout(() => recorder.stop(), 80);
+      }
+      requestAnimationFrame(tick);
+      await finished;
+      stream.getTracks().forEach(track => track.stop());
+      resetMotionVideo();
+      state.motionRecording = false;
+      el.exportMotionBtn.disabled = false;
+      el.previewMotionBtn.disabled = false;
+
+      const blob = new Blob(chunks, { type: "video/webm" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1200);
+      drawMotionFrame(1);
+      updateFileName();
+      setAiStatus(`片头 WebM 已导出：${filename}。如需 MP4，可接 web2-render-service 服务端渲染。`, "success");
+      el.status.textContent = "Intro WebM exported";
     }
 
     function canvasPreview(maxWidth = 720, quality = .82) {
@@ -4213,6 +4529,8 @@
         imageTheme: el.imageTheme.value,
         imageStyle: el.imageStyle.value,
         imageDensity: el.imageDensity.value,
+        motionDuration: el.motionDuration.value,
+        motionStyle: el.motionStyle.value,
         customBgDataUrl: state.customBgDataUrl && state.customBgDataUrl.length < 900000 ? state.customBgDataUrl : ""
       };
     }
@@ -4246,7 +4564,7 @@
     }
 
     function templateName(template) {
-      return { work: "作品", collection: "合集", profile: "主页" }[template] || "素材";
+      return { work: "作品", collection: "合集", profile: "主页", intro: "片头" }[template] || "素材";
     }
 
     function renderAssets() {
@@ -4362,7 +4680,7 @@
     async function loadAsset(asset) {
       const snap = asset.editable || {};
       if (snap.category && categories[snap.category]) setCategory(snap.category);
-      if (["work", "collection", "profile"].includes(snap.template)) setTemplate(snap.template);
+      if (["work", "collection", "profile", "intro"].includes(snap.template)) setTemplate(snap.template);
       setValue(el.categoryTitle, snap.categoryTitle);
       setValue(el.categoryEn, snap.categoryEn);
       setValue(el.categorySub, snap.categorySub);
@@ -4376,6 +4694,8 @@
       setValue(el.imageTheme, snap.imageTheme);
       if (["cinematic", "terminal", "field", "minimal"].includes(snap.imageStyle)) el.imageStyle.value = snap.imageStyle;
       if (["low", "medium", "high"].includes(snap.imageDensity)) el.imageDensity.value = snap.imageDensity;
+      if (snap.motionDuration) el.motionDuration.value = String(snap.motionDuration);
+      if (["web2", "kinetic", "glitch"].includes(snap.motionStyle)) el.motionStyle.value = snap.motionStyle;
       state.customBg = null;
       state.customBgDataUrl = "";
       if (snap.customBgDataUrl) {
@@ -4410,7 +4730,7 @@
       if (btn) setCategory(btn.dataset.category);
     });
 
-    ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "categoryColor", "categoryColorText", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity"].forEach(id => {
+    ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "categoryColor", "categoryColorText", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity", "motionDuration", "motionStyle"].forEach(id => {
       el[id].addEventListener("input", draw);
       el[id].addEventListener("change", draw);
     });
@@ -4509,6 +4829,41 @@
       }));
     });
 
+    el.motionMedia.addEventListener("change", async event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (state.motionMediaUrl) {
+        URL.revokeObjectURL(state.motionMediaUrl);
+        state.motionMediaUrl = "";
+      }
+      setTemplate("intro");
+      if (file.type.startsWith("video/")) {
+        const url = URL.createObjectURL(file);
+        const video = document.createElement("video");
+        video.src = url;
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        state.motionMedia = video;
+        state.motionMediaType = "video";
+        state.motionMediaUrl = url;
+        video.addEventListener("loadeddata", () => {
+          el.status.textContent = `Using intro video: ${file.name}`;
+          draw();
+        }, { once: true });
+        video.load();
+        setAiStatus("已加入片头视频素材，可预览或导出前 1-2 秒动效。", "success");
+      } else {
+        const url = await readFileAsDataUrl(file);
+        state.motionMedia = await loadImage(url);
+        state.motionMediaType = "image";
+        state.motionMediaUrl = "";
+        el.status.textContent = `Using intro image: ${file.name}`;
+        setAiStatus("已加入片头图片素材，可预览或导出 1-2 秒动效。", "success");
+        draw();
+      }
+    });
+
     el.agentImage.addEventListener("change", async event => {
       const file = event.target.files && event.target.files[0];
       if (!file) return;
@@ -4559,6 +4914,8 @@
     el.logoutBtn.addEventListener("click", logoutAccount);
 
     el.exportBtn.addEventListener("click", exportPng);
+    el.previewMotionBtn.addEventListener("click", previewMotionIntro);
+    el.exportMotionBtn.addEventListener("click", exportMotionWebm);
     el.saveAssetBtn.addEventListener("click", saveCurrentAsset);
     el.saveAssetSmallBtn.addEventListener("click", saveCurrentAsset);
     el.refreshAssetsBtn.addEventListener("click", refreshAssets);
