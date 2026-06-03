@@ -66,7 +66,7 @@
       color: var(--lime);
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: .1em;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
 
@@ -980,6 +980,488 @@
       background: var(--active-color);
     }
 
+    /* AI-native command center skin */
+    body {
+      min-height: 100vh;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(115deg, rgba(178,255,82,.12) 0 12%, transparent 12% 100%),
+        linear-gradient(72deg, transparent 0 68%, rgba(80,216,255,.09) 68% 76%, transparent 76% 100%),
+        #07090d;
+      background-size: 34px 34px, 34px 34px, auto, auto, auto;
+      color: #e8edf2;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--lime);
+      outline-offset: 2px;
+    }
+
+    .product-shell {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(7, 9, 13, .82);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .launch-hero {
+      grid-template-columns: minmax(360px, 1fr) minmax(360px, 500px);
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border: 0;
+      background:
+        linear-gradient(90deg, rgba(178,255,82,.13), transparent 38%),
+        linear-gradient(135deg, rgba(255,96,82,.09), transparent 42%),
+        #080b10;
+      color: #f5f8fa;
+    }
+
+    .hero-main {
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      align-self: center;
+      align-content: center;
+      column-gap: 12px;
+      row-gap: 6px;
+    }
+
+    .hero-kicker {
+      grid-row: 1 / span 2;
+      display: inline-grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border: 1px solid rgba(178,255,82,.58);
+      border-radius: 8px;
+      background: #b2ff52;
+      color: #050608;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .hero-main h1 {
+      max-width: none;
+      font-size: 24px;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .hero-main p {
+      max-width: none;
+      color: rgba(232,237,242,.66);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .hero-meta {
+      grid-column: 2 / 3;
+      gap: 6px;
+      margin-top: 0;
+      display: none;
+    }
+
+    .hero-chip {
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 7px;
+      background: rgba(255,255,255,.06);
+      color: rgba(232,237,242,.76);
+      font-size: 11px;
+    }
+
+    .hero-actions {
+      grid-column: 3 / 4;
+      grid-row: 1 / span 2;
+      justify-content: flex-end;
+      align-content: center;
+      margin-top: 0;
+    }
+
+    .hero-btn,
+    .seg button,
+    .category button,
+    .preset button,
+    .export-btn,
+    .ghost-btn,
+    .tiny-btn,
+    .onboarding-btn {
+      border-radius: 8px;
+      font-weight: 850;
+    }
+
+    .hero-btn {
+      height: 38px;
+      border-color: rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: #edf4f8;
+    }
+
+    .hero-btn.primary,
+    .export-btn,
+    .onboarding-btn.primary {
+      border-color: #b2ff52;
+      background: #b2ff52;
+      color: #050608;
+    }
+
+    .delivery-board {
+      grid-template-columns: 1fr 1fr;
+      align-self: center;
+      align-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delivery-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      align-self: center;
+      min-height: 54px;
+      padding: 8px 10px;
+      border-color: rgba(255,255,255,.12);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        rgba(10,13,18,.7);
+      box-shadow: none;
+    }
+
+    .delivery-card > div:first-child {
+      min-width: 0;
+    }
+
+    .delivery-card strong {
+      color: var(--lime);
+      font-size: 12px;
+    }
+
+    .delivery-card span,
+    .delivery-status {
+      color: rgba(232,237,242,.62);
+    }
+
+    .delivery-command {
+      display: none;
+      flex: 0 0 auto;
+      max-width: 170px;
+      padding: 7px 8px;
+      border-color: rgba(255,255,255,.12);
+      background: rgba(0,0,0,.36);
+      color: #f4f7fb;
+    }
+
+    .delivery-status {
+      display: none;
+    }
+
+    .app {
+      grid-template-columns: 244px minmax(440px, 1fr) 392px;
+      gap: 12px;
+      height: calc(100vh - 81px);
+      min-height: 680px;
+      padding: 12px;
+    }
+
+    .side,
+    .workspace,
+    .inspector {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, .9);
+      box-shadow: 0 18px 44px rgba(0,0,0,.28);
+    }
+
+    .side,
+    .inspector {
+      padding: 16px;
+    }
+
+    .workspace {
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)),
+        rgba(9, 12, 17, .92);
+    }
+
+    .brand-head {
+      margin-bottom: 18px;
+    }
+
+    .brand-head h1,
+    .topbar h2 {
+      color: #f6f8fb;
+    }
+
+    .brand-head p,
+    .hint,
+    .meta,
+    .group-title,
+    .material-meta,
+    .quick-template span,
+    .scene-item span,
+    .delivery-mini-item span,
+    .owner-card span {
+      color: rgba(232,237,242,.58);
+    }
+
+    .domain,
+    .owner-card,
+    .scene-item,
+    .delivery-mini-item,
+    .quick-template,
+    .account-card,
+    .agent-line,
+    .ai-status,
+    .material-item,
+    .model-panel,
+    .empty-state {
+      border-color: rgba(255,255,255,.1);
+      background: rgba(255,255,255,.055);
+      color: rgba(232,237,242,.72);
+    }
+
+    .owner-card strong,
+    .owner-card a,
+    .quick-template strong,
+    .scene-item strong,
+    .delivery-mini-item strong,
+    .delivery-mini-item a,
+    .account-card strong,
+    .material-title,
+    .model-head strong,
+    label {
+      color: #f4f7fb;
+    }
+
+    .group {
+      margin-top: 18px;
+    }
+
+    .group-title {
+      margin-bottom: 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .seg,
+    .category,
+    .quick-template-list {
+      gap: 7px;
+    }
+
+    .seg button,
+    .category button,
+    .preset button,
+    .ghost-btn,
+    .tiny-btn {
+      border-color: rgba(255,255,255,.11);
+      background: rgba(255,255,255,.055);
+      color: #e8edf2;
+    }
+
+    .seg button.active,
+    .category button.active,
+    .preset button.active,
+    .quick-template.active {
+      border-color: rgba(178,255,82,.9);
+      background: rgba(178,255,82,.13);
+      color: #f7ffe8;
+      box-shadow: inset 3px 0 0 #b2ff52;
+    }
+
+    .quick-template {
+      padding: 9px;
+    }
+
+    .topbar {
+      min-height: 70px;
+      border-bottom-color: rgba(255,255,255,.09);
+      background: rgba(7, 9, 13, .48);
+      backdrop-filter: blur(14px);
+    }
+
+    .stage {
+      background:
+        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px),
+        #0a0d12;
+      background-size: 28px 28px;
+    }
+
+    canvas {
+      border: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 30px 80px rgba(0,0,0,.48), 0 0 0 1px rgba(178,255,82,.08);
+    }
+
+    .footbar {
+      border-top-color: rgba(255,255,255,.09);
+      background: rgba(7,9,13,.74);
+      color: rgba(232,237,242,.58);
+    }
+
+    input,
+    textarea,
+    select {
+      border-color: rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color: #f4f7fb;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(232,237,242,.35);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: rgba(178,255,82,.92);
+      box-shadow: 0 0 0 3px rgba(178,255,82,.11);
+    }
+
+    .agent-actions {
+      grid-template-columns: 1fr 90px;
+    }
+
+    .agent-line.assistant {
+      border-color: rgba(178,255,82,.38);
+      background: rgba(178,255,82,.1);
+      color: #f7ffe8;
+    }
+
+    .ai-status.working {
+      color: #f7ffe8;
+      border-color: rgba(178,255,82,.8);
+      background: rgba(178,255,82,.11);
+    }
+
+    .ai-status.success {
+      color: #dfffe8;
+      border-color: rgba(75, 221, 147, .45);
+      background: rgba(75, 221, 147, .1);
+    }
+
+    .ai-status.error {
+      color: #ffe6df;
+      border-color: rgba(255,96,82,.48);
+      background: rgba(255,96,82,.1);
+    }
+
+    .material-thumb {
+      background: #07090d;
+    }
+
+    .model-head {
+      border-bottom-color: rgba(255,255,255,.08);
+    }
+
+    .settings-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      justify-items: end;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(12px);
+    }
+
+    .settings-panel {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      width: min(640px, 100%);
+      height: 100vh;
+      border-left: 1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(180deg, rgba(178,255,82,.09), transparent 24%),
+        #0b0f15;
+      box-shadow: -28px 0 80px rgba(0,0,0,.48);
+      overflow: hidden;
+    }
+
+    .settings-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .settings-head .hero-kicker {
+      width: auto;
+      height: auto;
+      display: block;
+      border: 0;
+      background: transparent;
+      color: var(--lime);
+      font-size: 11px;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .settings-head h2 {
+      margin: 5px 0 0;
+      color: #f4f7fb;
+      font-size: 24px;
+      line-height: 1.12;
+    }
+
+    .settings-body {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .onboarding-panel {
+      background: #0b0f15;
+      color: #e8edf2;
+    }
+
+    .onboarding-head {
+      border-bottom-color: rgba(255,255,255,.1);
+    }
+
+    .onboarding-body,
+    .onboarding-foot {
+      background: #0b0f15;
+    }
+
+    .onboarding-choice {
+      border-color: rgba(255,255,255,.1);
+      background: rgba(255,255,255,.055);
+      color: #f4f7fb;
+    }
+
+    .onboarding-choice.active {
+      border-color: var(--lime);
+      box-shadow: inset 0 0 0 1px rgba(178,255,82,.8);
+    }
+
+    .onboarding-progress span {
+      background: rgba(255,255,255,.12);
+    }
+
+    .onboarding-progress span.active {
+      background: var(--lime);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+      }
+    }
+
     @media (max-width: 1100px) {
       .launch-hero {
         grid-template-columns: 1fr;
@@ -987,6 +1469,7 @@
 
       .app {
         grid-template-columns: 210px 1fr;
+        height: auto;
         min-height: 0;
       }
 
@@ -1002,8 +1485,22 @@
         padding: 18px;
       }
 
+      .hero-main {
+        grid-template-columns: auto 1fr;
+      }
+
       .hero-main h1 {
         font-size: 26px;
+      }
+
+      .hero-actions {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        justify-content: stretch;
+      }
+
+      .hero-btn {
+        flex: 1 1 120px;
       }
 
       .delivery-board {
@@ -1033,9 +1530,9 @@
   <div class="product-shell">
     <header class="launch-hero">
       <div class="hero-main">
-        <span class="hero-kicker">MR.K Content Operating System</span>
-        <h1>抖音链接进来，统一风格封面出去。</h1>
-        <p>把 Mr.K 在路上的账号视觉固定成一套可安装、可本地运行的生成系统。Agent 负责理解内容和追问，Web Studio 负责预览、导出和素材管理。</p>
+        <span class="hero-kicker">MR.K DNA OS</span>
+        <h1>AI Cover Command</h1>
+        <p>链接、截图、文案进来，标题、背景、封面资产出去。</p>
         <div class="hero-meta">
           <span class="hero-chip">dna.superk.ai</span>
           <span class="hero-chip">Douyin ID: KevPH2026</span>
@@ -1043,27 +1540,28 @@
           <a class="hero-chip" href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">GitHub: dna-superk-ai</a>
         </div>
         <div class="hero-actions">
-          <button class="hero-btn primary" id="onboardingOpenBtn">开始 Onboarding</button>
-          <button class="hero-btn" id="scrollToStudioBtn">直接进入工作台</button>
+          <button class="hero-btn primary" id="scrollToStudioBtn">进入工作台</button>
+          <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
+          <button class="hero-btn" id="onboardingOpenBtn">Onboarding</button>
         </div>
       </div>
 
       <div class="delivery-board" aria-label="Deployment options">
         <div class="delivery-card">
           <div>
-            <strong>Agent Skill</strong>
-            <span>安装到 Codex / Agent 后，直接发送抖音链接、截图或文案，由 Agent 追问关键变量并生成封面 brief。</span>
+            <strong>01 INPUT</strong>
+            <span>抖音链接 / 分享文案 / 参考图</span>
           </div>
-          <div class="delivery-command">scripts/install_agent_skill.sh</div>
-          <div class="delivery-status"><span>For Agent</span><span>Skill Source</span></div>
+          <div class="delivery-command">content → brief → background</div>
+          <div class="delivery-status"><span>Agent</span><span>LLM</span></div>
         </div>
         <div class="delivery-card">
           <div>
-            <strong>Local Web Studio</strong>
-            <span>本地启动工作台，完成封面预览、AI 背景、素材库保存和 PNG 导出。</span>
+            <strong>02 OUTPUT</strong>
+            <span>统一封面 / 素材库 / PNG 导出</span>
           </div>
-          <div class="delivery-command">scripts/run_local_studio.sh</div>
-          <div class="delivery-status"><span>For Browser</span><span>127.0.0.1</span></div>
+          <div class="delivery-command">render → save → publish</div>
+          <div class="delivery-status"><span>Canvas</span><span>Local</span></div>
         </div>
       </div>
     </header>
@@ -1168,6 +1666,119 @@
     </section>
   </div>
 
+  <div class="settings-backdrop" id="settingsDrawer" hidden>
+    <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <header class="settings-head">
+        <div>
+          <span class="hero-kicker">SYSTEM MENU</span>
+          <h2 id="settingsTitle">模型、账号和部署</h2>
+        </div>
+        <button class="onboarding-close" id="settingsCloseBtn" aria-label="关闭">×</button>
+      </header>
+
+      <div class="settings-body">
+        <section class="group" style="margin-top:0;">
+          <p class="group-title">本地模型配置</p>
+          <div class="model-panel">
+            <div class="model-head">
+              <strong>分析、文案和生图服务</strong>
+              <span>配置只保存在本机浏览器，用于本地服务单次请求；不会写入 Git、素材库或云端。</span>
+            </div>
+
+            <div class="field">
+              <label for="llmEndpoint">LLM 接口地址</label>
+              <input id="llmEndpoint" placeholder="http://127.0.0.1:11434/v1/chat/completions">
+              <div class="hint">支持 OpenAI 兼容 Chat Completions；不填则使用环境变量 DeepSeek。</div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="llmModel">LLM 模型</label>
+                <input id="llmModel" placeholder="deepseek-chat / qwen3:14b">
+              </div>
+              <div class="field">
+                <label for="llmApiKey">LLM Key</label>
+                <input id="llmApiKey" type="password" autocomplete="off" placeholder="本地模型可留空">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="imageEndpoint">生图接口地址</label>
+              <input id="imageEndpoint" placeholder="http://127.0.0.1:7860/v1/images/generations">
+              <div class="hint">支持 OpenAI 兼容 Images API；不填则使用环境变量 OpenAI Image。</div>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="imageModel">生图模型</label>
+                <input id="imageModel" placeholder="gpt-image-2 / local-image-model">
+              </div>
+              <div class="field">
+                <label for="imageApiKey">生图 Key</label>
+                <input id="imageApiKey" type="password" autocomplete="off" placeholder="本地模型可留空">
+              </div>
+            </div>
+
+            <div class="auth-actions">
+              <button class="ghost-btn" id="saveModelConfigBtn" style="margin-top:0;">保存本地配置</button>
+              <button class="ghost-btn" id="clearModelConfigBtn" style="margin-top:0;">清空配置</button>
+            </div>
+            <div class="ai-status" id="modelConfigStatus">未配置时会使用服务环境变量；接口不可用时仍会回退到本地规则。</div>
+          </div>
+        </section>
+
+        <section class="group">
+          <p class="group-title">账号空间</p>
+          <div id="authLoggedOut">
+            <div class="field">
+              <label for="authEmail">邮箱</label>
+              <input id="authEmail" type="email" autocomplete="email" placeholder="you@company.com">
+            </div>
+            <div class="field">
+              <label for="authPassword">密码</label>
+              <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 6 位">
+            </div>
+            <div class="field">
+              <label for="authName">昵称</label>
+              <input id="authName" autocomplete="name" placeholder="Mr.K">
+            </div>
+            <div class="auth-actions">
+              <button class="ghost-btn" id="loginBtn" style="margin-top:0;">登录</button>
+              <button class="ghost-btn" id="registerBtn" style="margin-top:0;">注册</button>
+            </div>
+          </div>
+          <div id="authLoggedIn" hidden>
+            <div class="account-card">
+              <strong id="accountName">未登录</strong>
+              <span id="accountEmail">本地访客空间</span>
+              <div class="pill" id="storageMode">Local</div>
+            </div>
+            <button class="ghost-btn" id="logoutBtn">退出登录</button>
+          </div>
+          <div class="hint" id="authStatus">未登录也可以保存到本机。</div>
+        </section>
+
+        <section class="group">
+          <p class="group-title">部署和代码</p>
+          <div class="delivery-mini">
+            <div class="delivery-mini-item">
+              <strong>Agent Skill</strong>
+              <span>scripts/install_agent_skill.sh</span>
+            </div>
+            <div class="delivery-mini-item">
+              <strong>Local Web Studio</strong>
+              <span>scripts/run_local_studio.sh</span>
+            </div>
+            <div class="delivery-mini-item">
+              <strong>GitHub</strong>
+              <a href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">github.com/KevPH2026/dna-superk-ai</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
   <div class="app">
     <aside class="side">
       <div class="brand-head">
@@ -1182,37 +1793,6 @@
       </div>
 
       <section class="group" style="margin-top:0;">
-        <p class="group-title">账号空间</p>
-        <div id="authLoggedOut">
-          <div class="field">
-            <label for="authEmail">邮箱</label>
-            <input id="authEmail" type="email" autocomplete="email" placeholder="you@company.com">
-          </div>
-          <div class="field">
-            <label for="authPassword">密码</label>
-            <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 6 位">
-          </div>
-          <div class="field">
-            <label for="authName">昵称</label>
-            <input id="authName" autocomplete="name" placeholder="Mr.K">
-          </div>
-          <div class="auth-actions">
-            <button class="ghost-btn" id="loginBtn" style="margin-top:0;">登录</button>
-            <button class="ghost-btn" id="registerBtn" style="margin-top:0;">注册</button>
-          </div>
-        </div>
-        <div id="authLoggedIn" hidden>
-          <div class="account-card">
-            <strong id="accountName">未登录</strong>
-            <span id="accountEmail">本地访客空间</span>
-            <div class="pill" id="storageMode">Local</div>
-          </div>
-          <button class="ghost-btn" id="logoutBtn">退出登录</button>
-        </div>
-        <div class="hint" id="authStatus">未登录也可以保存到本机。</div>
-      </section>
-
-      <section class="group">
         <p class="group-title">模板</p>
         <div class="seg" id="templateButtons">
           <button data-template="work" class="active">单条作品封面</button>
@@ -1244,20 +1824,6 @@
       </section>
 
       <section class="group">
-        <p class="group-title">部署形态</p>
-        <div class="delivery-mini">
-          <div class="delivery-mini-item">
-            <strong>Agent 直接安装</strong>
-            <span>Skill 作为知识和流程包，适合把抖音链接丢给 Agent 自动处理。</span>
-          </div>
-          <div class="delivery-mini-item">
-            <strong>本地页面运行</strong>
-            <span>Web Studio 作为可视化工作台，适合手动调图、导出和管理素材。</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="group">
         <p class="group-title">栏目</p>
         <div class="category" id="categoryButtons">
           <button data-category="ai" class="active" style="--dot: var(--lime);">AI下半场</button>
@@ -1265,37 +1831,6 @@
           <button data-category="road" style="--dot: var(--red);">在路上</button>
           <button data-category="custom" style="--dot: #f5d76e;">自定义栏目</button>
         </div>
-      </section>
-
-      <section class="group">
-        <p class="group-title">适用场景</p>
-        <div class="scene-list">
-          <div class="scene-item">
-            <strong>爆款复盘</strong>
-            <span>给过万播放作品统一换封面，让主页从散乱素材变成内容资产。</span>
-          </div>
-          <div class="scene-item">
-            <strong>热点追踪</strong>
-            <span>把模型、公司、人物事件快速提炼成判断型标题和对应背景。</span>
-          </div>
-          <div class="scene-item">
-            <strong>个人 IP</strong>
-            <span>固定账号名、微信、头像、K 字标和栏目色，长期沉淀辨识度。</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="group">
-        <p class="group-title">固定资产</p>
-        <ul class="fixed-list">
-          <li>账号名：MR.K 在路上</li>
-          <li>ID：KevPH2026</li>
-          <li>微信 ID：Kevph2026</li>
-          <li>头像印章已锁定</li>
-          <li>K 字标已锁定</li>
-          <li>口号：少和人对话，多和AI对话</li>
-          <li>Git：github.com/KevPH2026/dna-superk-ai</li>
-        </ul>
       </section>
     </aside>
 
@@ -1355,56 +1890,6 @@
         </div>
         <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。</div>
         <div class="agent-transcript" id="agentTranscript"></div>
-      </section>
-
-      <section class="group">
-        <p class="group-title">本地模型配置</p>
-        <div class="model-panel">
-          <div class="model-head">
-            <strong>分析、文案和生图服务</strong>
-            <span>配置只保存在本机浏览器，用于本地服务单次请求；不会写入 Git、素材库或云端。</span>
-          </div>
-
-          <div class="field">
-            <label for="llmEndpoint">LLM 接口地址</label>
-            <input id="llmEndpoint" placeholder="http://127.0.0.1:11434/v1/chat/completions">
-            <div class="hint">支持 OpenAI 兼容 Chat Completions；不填则使用环境变量 DeepSeek。</div>
-          </div>
-
-          <div class="row">
-            <div class="field">
-              <label for="llmModel">LLM 模型</label>
-              <input id="llmModel" placeholder="deepseek-chat / qwen3:14b">
-            </div>
-            <div class="field">
-              <label for="llmApiKey">LLM Key</label>
-              <input id="llmApiKey" type="password" autocomplete="off" placeholder="本地模型可留空">
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="imageEndpoint">生图接口地址</label>
-            <input id="imageEndpoint" placeholder="http://127.0.0.1:7860/v1/images/generations">
-            <div class="hint">支持 OpenAI 兼容 Images API；不填则使用环境变量 OpenAI Image。</div>
-          </div>
-
-          <div class="row">
-            <div class="field">
-              <label for="imageModel">生图模型</label>
-              <input id="imageModel" placeholder="gpt-image-2 / local-image-model">
-            </div>
-            <div class="field">
-              <label for="imageApiKey">生图 Key</label>
-              <input id="imageApiKey" type="password" autocomplete="off" placeholder="本地模型可留空">
-            </div>
-          </div>
-
-          <div class="auth-actions">
-            <button class="ghost-btn" id="saveModelConfigBtn" style="margin-top:0;">保存本地配置</button>
-            <button class="ghost-btn" id="clearModelConfigBtn" style="margin-top:0;">清空配置</button>
-          </div>
-          <div class="ai-status" id="modelConfigStatus">未配置时会使用服务环境变量；接口不可用时仍会回退到本地规则。</div>
-        </div>
       </section>
 
       <section class="group">
@@ -1667,6 +2152,9 @@
       canvas: document.getElementById("coverCanvas"),
       onboardingOpenBtn: document.getElementById("onboardingOpenBtn"),
       scrollToStudioBtn: document.getElementById("scrollToStudioBtn"),
+      settingsOpenBtn: document.getElementById("settingsOpenBtn"),
+      settingsDrawer: document.getElementById("settingsDrawer"),
+      settingsCloseBtn: document.getElementById("settingsCloseBtn"),
       onboardingOverlay: document.getElementById("onboardingOverlay"),
       onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
       onboardingSkipBtn: document.getElementById("onboardingSkipBtn"),
@@ -2919,6 +3407,11 @@
       if (done) localStorage.setItem("mrk.onboardingDone", "1");
     }
 
+    function setSettingsOpen(open) {
+      el.settingsDrawer.hidden = !open;
+      document.body.classList.toggle("settings-open", open);
+    }
+
     function syncOnboardingCategoryFromCurrent() {
       const cat = activeCategory();
       el.onboardCategoryTitle.value = cat.label;
@@ -3209,6 +3702,18 @@
 
     el.scrollToStudioBtn.addEventListener("click", () => {
       document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    el.settingsOpenBtn.addEventListener("click", () => setSettingsOpen(true));
+    el.settingsCloseBtn.addEventListener("click", () => setSettingsOpen(false));
+    el.settingsDrawer.addEventListener("click", event => {
+      if (event.target === el.settingsDrawer) setSettingsOpen(false);
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape") return;
+      if (!el.settingsDrawer.hidden) setSettingsOpen(false);
+      if (!el.onboardingOverlay.hidden) closeOnboarding();
     });
 
     el.onboardingCloseBtn.addEventListener("click", () => closeOnboarding());
