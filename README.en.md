@@ -53,9 +53,9 @@ Covers can be saved into a material library. It works locally by default and can
 
 The Web Studio includes a local-only model panel for OpenAI-compatible LLM and image endpoints. Use it for content analysis, cover copywriting, and background generation. The settings stay in the browser and are never committed to Git or saved to the material library.
 
-### Diagnose Client DNA
+### Decode DNA
 
-For a new creator/client, send the Agent a Douyin profile/work link and at least 10 public content samples: titles, cover text, captions, or screenshot OCR. The Agent extracts the account DNA first, then proposes design directions.
+For a new creator/account, send the Agent a Douyin profile/work link and at least 10 public content samples: titles, cover text, captions, or screenshot OCR. The Agent extracts the account DNA first, then proposes design directions.
 
 If fewer than 10 usable samples are available, the Agent asks for the missing samples instead of inventing a strategy from one link.
 
@@ -81,7 +81,7 @@ Fixed categories:
 4. The fixed template adds avatar, K mark, category chip, title, subtitle, and code.
 5. Save to the material library or export PNG.
 
-Client DNA workflow:
+DNA Decode workflow:
 
 1. Paste a Douyin link and at least 10 work samples.
 2. The Agent analyzes themes, voice, title patterns, and visual cues.

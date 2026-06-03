@@ -27,8 +27,8 @@ metadata:
    - If the link cannot be opened because of auth, anti-bot, or app restrictions, do not get stuck; ask for the caption, screenshot, or key text.
    - Private works are excluded by default unless the user explicitly asks to process them.
 
-2. **Client DNA diagnosis mode**
-   Use this mode when the user asks to analyze a creator/client account, read multiple Douyin works, extract `客户DNA`, or produce a design direction before generating individual covers.
+2. **DNA decode mode**
+   Use this mode when the user asks to analyze a creator/account, read multiple Douyin works, extract `账号DNA`, or produce a design direction before generating individual covers.
    - Require at least 10 public work samples before making a full DNA conclusion. Samples can be titles, cover text, captions, copied share text, or OCR from screenshots.
    - If a Douyin profile/work link is blocked by login, anti-bot, or the in-app browser, say that clearly and ask for the missing samples instead of guessing.
    - Exclude private works by default.
@@ -44,7 +44,7 @@ metadata:
        "douyin_url": "",
        "source_text": "10+ work samples",
        "content_samples": [],
-       "goal": "提炼客户DNA并输出设计方向"
+       "goal": "提炼账号DNA并输出设计方向"
      }
      ```
 

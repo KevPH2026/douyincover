@@ -482,7 +482,7 @@ def local_client_dna(samples, douyin_context, reason="local_dna"):
 
 
 DNA_SYSTEM_PROMPT = """
-你是一个短视频账号视觉 DNA 诊断顾问。用户会提供抖音主页/作品链接、至少 10 条作品样本、截图转文字或分享文案。你的任务不是生成单张封面，而是为该客户提炼账号 DNA，并输出可执行的封面/主页/合集设计方向。
+你是一个短视频账号视觉 DNA 解码顾问。用户会提供抖音主页/作品链接、至少 10 条作品样本、截图转文字或分享文案。你的任务不是生成单张封面，而是为该账号提炼账号 DNA，并输出可执行的封面/主页/合集设计方向。
 
 硬规则：
 - 不得声称看到了没有提供的作品。
@@ -528,7 +528,7 @@ def need_more_samples_response(samples, douyin_context):
         "min_required": DNA_MIN_SAMPLE_COUNT,
         "missing_count": max(0, DNA_MIN_SAMPLE_COUNT - len(samples)),
         "source_url": url,
-        "reply": f"目前只拿到 {len(samples)} 条可用内容样本。客户 DNA 诊断至少需要 {DNA_MIN_SAMPLE_COUNT} 条公开作品样本，还差 {max(0, DNA_MIN_SAMPLE_COUNT - len(samples))} 条。",
+        "reply": f"目前只拿到 {len(samples)} 条可用内容样本。解码 DNA 至少需要 {DNA_MIN_SAMPLE_COUNT} 条公开作品样本，还差 {max(0, DNA_MIN_SAMPLE_COUNT - len(samples))} 条。",
         "collection_guide": [
             "粘贴抖音主页链接，并补充最近 10-20 条作品标题/文案。",
             "如果链接受登录或反爬限制，发主页作品列表截图或复制作品标题。",
@@ -551,7 +551,7 @@ def analyze_client_dna(incoming):
     model = llm_config["model"] or os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
     if not api_key and not has_custom_llm:
         dna = local_client_dna(samples, douyin_context, "missing_llm_api_key")
-        dna.update({"reply": "已基于样本生成本地 DNA 诊断；配置 LLM 后可获得更细的设计方向。", "model": "local-fallback", "fallback": True})
+        dna.update({"reply": "已基于样本生成本地 DNA 解码；配置 LLM 后可获得更细的设计方向。", "model": "local-fallback", "fallback": True})
         return dna
 
     user_payload = {
@@ -590,7 +590,7 @@ def analyze_client_dna(incoming):
                 "sample_count": len(samples),
                 "min_required": DNA_MIN_SAMPLE_COUNT,
                 "samples": samples[:12],
-                "reply": f"已读取并整理 {len(samples)} 条内容样本，生成客户 DNA 和设计方向。",
+                "reply": f"已读取并整理 {len(samples)} 条内容样本，生成账号 DNA 和设计方向。",
                 "model": model,
                 "provider": "local-config" if has_custom_llm else "deepseek-env",
                 "fallback": False,
@@ -600,7 +600,7 @@ def analyze_client_dna(incoming):
         return dna
     except Exception as exc:
         dna = local_client_dna(samples, douyin_context, "llm_failed")
-        dna.update({"reply": "LLM 暂不可用，已基于样本生成本地 DNA 诊断。", "model": "local-fallback", "fallback": True, "error": str(exc)})
+        dna.update({"reply": "LLM 暂不可用，已基于样本生成本地 DNA 解码。", "model": "local-fallback", "fallback": True, "error": str(exc)})
         return dna
 
 

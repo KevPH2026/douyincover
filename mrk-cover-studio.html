@@ -2033,10 +2033,10 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面：粘贴抖音链接/分享文案/主题。诊断客户 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
           <div class="ai-command-grid">
             <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面</button>
-            <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">诊断客户 DNA</button>
+            <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA</button>
           </div>
         </div>
 
@@ -2546,7 +2546,7 @@
       }
       const dna = payload.client_dna || {};
       const style = payload.style_signals || {};
-      appendDnaCard("客户 DNA", [
+      appendDnaCard("账号 DNA", [
         `定位：${dna.positioning || "待确认"}`,
         `受众：${dna.audience || "待确认"}`,
         `声音：${dna.voice || "待确认"}`,
@@ -3429,10 +3429,10 @@
         return;
       }
 
-      addAgentMessage("user", `客户 DNA 诊断\n${sourceText || message || extractedUrl}`);
+      addAgentMessage("user", `解码 DNA\n${sourceText || message || extractedUrl}`);
       setAgentButtonsDisabled(true);
-      setAgentStatus("正在整理作品样本，至少需要 10 条内容来判断客户 DNA。", "working");
-      el.status.textContent = "Analyzing client DNA";
+      setAgentStatus("正在整理作品样本，至少需要 10 条内容来判断账号 DNA。", "working");
+      el.status.textContent = "Decoding DNA";
       el.dnaResult.hidden = true;
       el.dnaResult.innerHTML = "";
 
@@ -3445,7 +3445,7 @@
             source_text: sourceText,
             douyin_url: extractedUrl,
             douyin_share_text: sourceText,
-            goal: "读取不少于 10 条内容和风格，提炼客户 DNA，并输出封面/主页/合集设计方向。",
+            goal: "读取不少于 10 条内容和风格，提炼账号 DNA，并输出封面/主页/合集设计方向。",
             model_config: modelConfigPayload()
           })
         });
@@ -3456,15 +3456,15 @@
         renderDnaResult(payload);
         if (payload.status === "need_samples") {
           setAgentStatus(payload.reply || "样本不足，先补足至少 10 条公开作品内容。", "error");
-          addAgentMessage("assistant", payload.reply || "样本不足，无法生成完整客户 DNA。");
+          addAgentMessage("assistant", payload.reply || "样本不足，无法生成完整账号 DNA。");
         } else {
-          setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成客户 DNA 和设计方向。`, payload.fallback ? "error" : "success");
-          addAgentMessage("assistant", payload.reply || "客户 DNA 和设计方向已生成。");
+          setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成账号 DNA 和设计方向。`, payload.fallback ? "error" : "success");
+          addAgentMessage("assistant", payload.reply || "账号 DNA 和设计方向已生成。");
         }
-        el.status.textContent = "Client DNA analyzed";
+        el.status.textContent = "DNA decoded";
       } catch (error) {
-        setAgentStatus(`客户 DNA 诊断失败：${error.message}`, "error");
-        el.status.textContent = "DNA analysis failed";
+        setAgentStatus(`解码 DNA 失败：${error.message}`, "error");
+        el.status.textContent = "DNA decode failed";
       } finally {
         setAgentButtonsDisabled(false);
       }

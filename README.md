@@ -21,7 +21,7 @@ This project fixes that problem for `MR.K 在路上`.
 
 - One visual language across single posts, collections, and profile background
 - AI-assisted title, summary, category, and background direction
-- Client DNA diagnosis from at least 10 content samples before proposing a design direction
+- DNA decode from at least 10 content samples before proposing a design direction
 - First-run onboarding for choosing Agent/Web workflow, starter template, and content category
 - Quick templates for AI news, strong quotes, field notes, collections, profile banners, and custom columns
 - Custom categories with editable Chinese name, English name, subtitle, and accent color
@@ -46,9 +46,9 @@ This project fixes that problem for `MR.K 在路上`.
 4. The fixed Mr.K overlay system renders the final cover.
 5. Save to material library or export PNG.
 
-## Client DNA Diagnosis
+## DNA Decode
 
-For a new creator or client, paste a Douyin profile/work link plus at least 10 public work samples: titles, cover text, captions, or screenshot OCR. The Agent then extracts:
+For a new creator or account, paste a Douyin profile/work link plus at least 10 public work samples: titles, cover text, captions, or screenshot OCR. The Agent then extracts:
 
 - account positioning, audience, voice, and content pillars
 - style signals and visual taboos
