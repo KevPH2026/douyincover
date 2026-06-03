@@ -21,6 +21,9 @@ This project fixes that problem for `MR.K 在路上`.
 
 - One visual language across single posts, collections, and profile background
 - AI-assisted title, summary, category, and background direction
+- First-run onboarding for choosing Agent/Web workflow, starter template, and content category
+- Quick templates for AI news, strong quotes, field notes, collections, profile banners, and custom columns
+- Custom categories with editable Chinese name, English name, subtitle, and accent color
 - Realistic editorial backgrounds instead of generic AI wallpaper
 - Local material management for generated covers
 - A deployable Skill for Agent workflows

@@ -37,6 +37,14 @@ Turn AI model updates, founder quotes, company moves, and market signals into ju
 
 Account name, WeChat ID, avatar stamp, K mark, category color, and title hierarchy stay fixed across outputs.
 
+### First-run Onboarding
+
+New users choose Agent/Web workflow, starter template, and content category before entering the workspace. Default categories stay available, and custom categories can define Chinese name, English name, subtitle, and accent color.
+
+### Quick Templates
+
+Built-in starters cover AI news analysis, strong quotes, field notes, collection covers, profile banners, and custom columns.
+
 ### Manage Generated Assets
 
 Covers can be saved into a material library. It works locally by default and can use KV storage in production.

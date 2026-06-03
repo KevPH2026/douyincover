@@ -107,6 +107,31 @@
       font-weight: 700;
     }
 
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .hero-btn {
+      height: 36px;
+      padding: 0 14px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 8px;
+      background: rgba(255,255,255,.1);
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-btn.primary {
+      border-color: var(--lime);
+      background: var(--lime);
+      color: #080a0d;
+    }
+
     .delivery-board {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -695,6 +720,216 @@
       color: var(--muted);
     }
 
+    .quick-template-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-template {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .quick-template strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .quick-template span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .quick-template.active {
+      border-color: #15191f;
+      box-shadow: inset 0 0 0 1px #15191f;
+    }
+
+    .color-row {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      height: 40px;
+      padding: 4px;
+      cursor: pointer;
+    }
+
+    .onboarding-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(5, 7, 10, .72);
+      backdrop-filter: blur(14px);
+    }
+
+    .onboarding-panel {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      width: min(980px, 100%);
+      max-height: min(760px, calc(100vh - 48px));
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      background: #f7f8fa;
+      box-shadow: 0 32px 90px rgba(0,0,0,.36);
+      overflow: hidden;
+    }
+
+    .onboarding-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      background: #090b0f;
+      color: #fff;
+    }
+
+    .onboarding-head h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.12;
+    }
+
+    .onboarding-head p {
+      margin: 8px 0 0;
+      color: rgba(255,255,255,.68);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .onboarding-close {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .onboarding-body {
+      padding: 20px;
+      overflow: auto;
+    }
+
+    .onboarding-progress {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .onboarding-progress span {
+      height: 5px;
+      border-radius: 999px;
+      background: #dde3ea;
+    }
+
+    .onboarding-progress span.active {
+      background: #15191f;
+    }
+
+    .onboarding-step {
+      display: none;
+    }
+
+    .onboarding-step.active {
+      display: grid;
+      gap: 14px;
+    }
+
+    .onboarding-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .onboarding-choice {
+      min-height: 150px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .onboarding-choice.active {
+      border-color: #15191f;
+      box-shadow: inset 0 0 0 1px #15191f;
+    }
+
+    .onboarding-choice strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .onboarding-choice span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .onboarding-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .onboarding-foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .onboarding-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .onboarding-btn {
+      height: 38px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .onboarding-btn.primary {
+      border-color: #15191f;
+      background: #15191f;
+      color: #fff;
+    }
+
     .swatch {
       display: inline-block;
       width: 11px;
@@ -735,6 +970,11 @@
         grid-template-columns: 1fr;
       }
 
+      .onboarding-grid,
+      .onboarding-form {
+        grid-template-columns: 1fr;
+      }
+
       .app {
         display: block;
       }
@@ -761,6 +1001,10 @@
           <span class="hero-chip">Douyin ID: KevPH2026</span>
           <span class="hero-chip">WeChat: Kevph2026</span>
         </div>
+        <div class="hero-actions">
+          <button class="hero-btn primary" id="onboardingOpenBtn">开始 Onboarding</button>
+          <button class="hero-btn" id="scrollToStudioBtn">直接进入工作台</button>
+        </div>
       </div>
 
       <div class="delivery-board" aria-label="Deployment options">
@@ -782,6 +1026,105 @@
         </div>
       </div>
     </header>
+  </div>
+
+  <div class="onboarding-backdrop" id="onboardingOverlay" hidden>
+    <section class="onboarding-panel" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+      <header class="onboarding-head">
+        <div>
+          <h2 id="onboardingTitle">3 步完成 Mr.K 封面系统初始化</h2>
+          <p>先选使用方式，再选常用模板，最后确认栏目。完成后直接进入工作台。</p>
+        </div>
+        <button class="onboarding-close" id="onboardingCloseBtn" aria-label="关闭">×</button>
+      </header>
+
+      <div class="onboarding-body">
+        <div class="onboarding-progress" aria-hidden="true">
+          <span data-onboarding-progress="0" class="active"></span>
+          <span data-onboarding-progress="1"></span>
+          <span data-onboarding-progress="2"></span>
+        </div>
+
+        <div class="onboarding-step active" data-onboarding-step="0">
+          <div class="onboarding-grid">
+            <button class="onboarding-choice active" data-onboarding-path="agent">
+              <strong>Agent Skill</strong>
+              <span>把抖音链接、截图或文案发给 Agent，由 Agent 追问标题、分类、背景方向，再生成封面方案。</span>
+            </button>
+            <button class="onboarding-choice" data-onboarding-path="local">
+              <strong>Local Web Studio</strong>
+              <span>打开本地页面手动调图，适合预览封面、保存素材库和导出 PNG。</span>
+            </button>
+            <button class="onboarding-choice" data-onboarding-path="both">
+              <strong>Agent + Web</strong>
+              <span>Agent 负责理解内容，Web Studio 负责最终视觉和素材管理。推荐日常使用。</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="onboarding-step" data-onboarding-step="1">
+          <div class="onboarding-grid">
+            <button class="onboarding-choice" data-quick-template="ai-news">
+              <strong>AI 热点拆解</strong>
+              <span>适合模型、公司、API、估值和商业重构类内容。</span>
+            </button>
+            <button class="onboarding-choice" data-quick-template="strong-quote">
+              <strong>强者金句</strong>
+              <span>适合乔布斯、高手、认知、判断力和强者恒强内容。</span>
+            </button>
+            <button class="onboarding-choice" data-quick-template="road-note">
+              <strong>一线观察</strong>
+              <span>适合出差、客户拜访、行业现场和在路上的思考。</span>
+            </button>
+            <button class="onboarding-choice" data-quick-template="collection-ai">
+              <strong>合集封面</strong>
+              <span>适合把同类内容收束成系列，让主页结构更清楚。</span>
+            </button>
+            <button class="onboarding-choice" data-quick-template="profile-safe">
+              <strong>主页背景</strong>
+              <span>适合更新抖音主页背景，保留移动端安全区。</span>
+            </button>
+            <button class="onboarding-choice" data-quick-template="custom-column">
+              <strong>自定义栏目</strong>
+              <span>适合新栏目、新业务线或临时专题，颜色和文案都可以改。</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="onboarding-step" data-onboarding-step="2">
+          <div class="onboarding-form">
+            <div class="field">
+              <label for="onboardCategoryTitle">栏目中文</label>
+              <input id="onboardCategoryTitle" value="AI下半场">
+            </div>
+            <div class="field">
+              <label for="onboardCategoryEn">栏目英文</label>
+              <input id="onboardCategoryEn" value="AI SECOND HALF">
+            </div>
+            <div class="field">
+              <label for="onboardCategorySub">栏目副文案</label>
+              <input id="onboardCategorySub" value="模型 / Agent / 商业重构">
+            </div>
+            <div class="field">
+              <label for="onboardCategoryColor">栏目颜色</label>
+              <div class="color-row">
+                <input id="onboardCategoryColor" type="color" value="#b2ff52">
+                <input id="onboardCategoryColorText" value="#b2ff52">
+              </div>
+            </div>
+          </div>
+          <div class="ai-status">默认三类栏目会保留；如果你填了新栏目，就会作为“自定义栏目”进入当前工作台。</div>
+        </div>
+      </div>
+
+      <footer class="onboarding-foot">
+        <button class="onboarding-btn" id="onboardingSkipBtn">跳过</button>
+        <div class="onboarding-actions">
+          <button class="onboarding-btn" id="onboardingBackBtn">上一步</button>
+          <button class="onboarding-btn primary" id="onboardingNextBtn">下一步</button>
+        </div>
+      </footer>
+    </section>
   </div>
 
   <div class="app">
@@ -837,6 +1180,28 @@
       </section>
 
       <section class="group">
+        <p class="group-title">快速模板</p>
+        <div class="quick-template-list" id="quickTemplateButtons">
+          <button class="quick-template" data-quick-template="ai-news">
+            <strong>AI 热点拆解</strong>
+            <span>模型 / 公司 / 商业变化</span>
+          </button>
+          <button class="quick-template" data-quick-template="strong-quote">
+            <strong>强者金句</strong>
+            <span>认知 / 判断 / 人物观点</span>
+          </button>
+          <button class="quick-template" data-quick-template="road-note">
+            <strong>一线观察</strong>
+            <span>出差 / 客户 / 现场笔记</span>
+          </button>
+          <button class="quick-template" data-quick-template="collection-ai">
+            <strong>系列合集</strong>
+            <span>把内容收束成栏目资产</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="group">
         <p class="group-title">部署形态</p>
         <div class="delivery-mini">
           <div class="delivery-mini-item">
@@ -856,6 +1221,7 @@
           <button data-category="ai" class="active" style="--dot: var(--lime);">AI下半场</button>
           <button data-category="strong" style="--dot: var(--cyan);">强者恒强</button>
           <button data-category="road" style="--dot: var(--red);">在路上</button>
+          <button data-category="custom" style="--dot: #f5d76e;">自定义栏目</button>
         </div>
       </section>
 
@@ -972,6 +1338,14 @@
         <div class="field" data-field="categorySub">
           <label for="categorySub">栏目副文案</label>
           <input id="categorySub" value="模型 / Agent / 商业重构">
+        </div>
+
+        <div class="field" data-field="categoryColor">
+          <label for="categoryColor">栏目颜色</label>
+          <div class="color-row">
+            <input id="categoryColor" type="color" value="#b2ff52">
+            <input id="categoryColorText" value="#b2ff52">
+          </div>
         </div>
 
         <div class="field" data-field="title">
@@ -1110,12 +1484,77 @@
         theme: "出差在路上，机场候机，客户现场，一线观察，雨夜城市",
         color: "#ff6052",
         slug: "road"
+      },
+      custom: {
+        label: "自定义栏目",
+        en: "CUSTOM COLUMN",
+        sub: "主题 / 场景 / 业务线",
+        code: "K-NEW",
+        title: "你的判断\n写在这里",
+        enTitle: "Your Point Of View",
+        summary: "把新栏目固定成可持续复用的视觉资产。",
+        theme: "自定义栏目，深夜工作台，清晰标题，内容资产系统",
+        color: "#f5d76e",
+        slug: "custom",
+        bg: "ai"
+      }
+    };
+
+    const quickTemplates = {
+      "ai-news": {
+        template: "work",
+        category: "ai",
+        title: "这不是热点\n这是重新定价",
+        enTitle: "Not News, Repricing",
+        summary: "模型更新背后，是应用层和商业模式的重新分配。",
+        code: "AI-01",
+        imageTheme: "AI公司新闻，产品屏幕，市场重定价，深夜办公室"
+      },
+      "strong-quote": {
+        template: "work",
+        category: "strong",
+        title: "多和聪明的人\n交往",
+        enTitle: "Stay With Smart People",
+        summary: "强者不是独自聪明，而是长期站在聪明人中间。",
+        code: "K-01",
+        imageTheme: "乔布斯，聪明人，深夜办公室，白板讨论，判断力"
+      },
+      "road-note": {
+        template: "work",
+        category: "road",
+        title: "在路上\n才有答案",
+        enTitle: "Field Notes Win",
+        summary: "真正的变化不在屏幕里，而在客户现场和一线反馈里。",
+        code: "ROAD-01",
+        imageTheme: "出差路上，机场，车窗，客户现场，一线观察"
+      },
+      "collection-ai": {
+        template: "collection",
+        category: "ai",
+        categorySub: "模型 / Agent / 商业重构",
+        imageTheme: "AI下半场合集，深色编辑感，科技商业，清晰系列封面"
+      },
+      "profile-safe": {
+        template: "profile",
+        category: "ai",
+        imageTheme: "Mr.K主页背景，城市夜景，安全区留白，Deep thoughts on AI"
+      },
+      "custom-column": {
+        template: "work",
+        category: "custom",
+        title: "新栏目\n新判断",
+        enTitle: "New Column",
+        summary: "先把主题固定下来，再持续生产内容资产。",
+        code: "K-NEW",
+        imageTheme: "自定义栏目，内容资产系统，深色工作台，品牌视觉"
       }
     };
 
     const state = {
       template: "work",
       category: "ai",
+      onboardingStep: 0,
+      onboardingPath: "agent",
       customBg: null,
       customBgDataUrl: "",
       agentReference: null,
@@ -1132,7 +1571,20 @@
 
     const el = {
       canvas: document.getElementById("coverCanvas"),
+      onboardingOpenBtn: document.getElementById("onboardingOpenBtn"),
+      scrollToStudioBtn: document.getElementById("scrollToStudioBtn"),
+      onboardingOverlay: document.getElementById("onboardingOverlay"),
+      onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
+      onboardingSkipBtn: document.getElementById("onboardingSkipBtn"),
+      onboardingBackBtn: document.getElementById("onboardingBackBtn"),
+      onboardingNextBtn: document.getElementById("onboardingNextBtn"),
+      onboardCategoryTitle: document.getElementById("onboardCategoryTitle"),
+      onboardCategoryEn: document.getElementById("onboardCategoryEn"),
+      onboardCategorySub: document.getElementById("onboardCategorySub"),
+      onboardCategoryColor: document.getElementById("onboardCategoryColor"),
+      onboardCategoryColorText: document.getElementById("onboardCategoryColorText"),
       templateButtons: document.getElementById("templateButtons"),
+      quickTemplateButtons: document.getElementById("quickTemplateButtons"),
       categoryButtons: document.getElementById("categoryButtons"),
       authEmail: document.getElementById("authEmail"),
       authPassword: document.getElementById("authPassword"),
@@ -1166,6 +1618,8 @@
       categoryTitle: document.getElementById("categoryTitle"),
       categoryEn: document.getElementById("categoryEn"),
       categorySub: document.getElementById("categorySub"),
+      categoryColor: document.getElementById("categoryColor"),
+      categoryColorText: document.getElementById("categoryColorText"),
       title: document.getElementById("title"),
       enTitle: document.getElementById("enTitle"),
       summary: document.getElementById("summary"),
@@ -1234,6 +1688,44 @@
       state.agentMessages.push({ role, content: clean });
       state.agentMessages = state.agentMessages.slice(-8);
       renderAgentTranscript();
+    }
+
+    function slugify(text, fallback = "custom") {
+      const value = String(text || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\u4e00-\u9fff-]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+      return value || fallback;
+    }
+
+    function normalizedColor(value, fallback = "#b2ff52") {
+      const text = String(value || "").trim();
+      return /^#[0-9a-f]{6}$/i.test(text) ? text : fallback;
+    }
+
+    function syncColorInputs(value, source = "") {
+      const color = normalizedColor(value);
+      if (source !== "picker" && el.categoryColor) el.categoryColor.value = color;
+      if (source !== "text" && el.categoryColorText) el.categoryColorText.value = color;
+      if (source !== "onboardPicker" && el.onboardCategoryColor) el.onboardCategoryColor.value = color;
+      if (source !== "onboardText" && el.onboardCategoryColorText) el.onboardCategoryColorText.value = color;
+    }
+
+    function activeCategory() {
+      const base = categories[state.category] || categories.ai;
+      const label = el.categoryTitle ? el.categoryTitle.value.trim() : "";
+      const en = el.categoryEn ? el.categoryEn.value.trim() : "";
+      const sub = el.categorySub ? el.categorySub.value.trim() : "";
+      const color = normalizedColor(el.categoryColor ? el.categoryColor.value : base.color, base.color);
+      return {
+        ...base,
+        label: label || base.label,
+        en: en || base.en,
+        sub: sub || base.sub,
+        color,
+        slug: state.category === "custom" ? slugify(label, "custom") : base.slug
+      };
     }
 
     function renderAgentTranscript() {
@@ -1690,7 +2182,7 @@
 
     function makeThemeBackground() {
       const v = values();
-      const cat = categories[state.category];
+      const cat = activeCategory();
       const theme = [
         el.imageTheme.value.trim(),
         v.categoryTitle,
@@ -1790,8 +2282,8 @@
     function activeBg() {
       if (state.customBg) return state.customBg;
       if (state.template === "profile") return state.images.profile;
-      const preset = el.bgPreset.value === "auto" ? state.category : el.bgPreset.value;
-      return state.images[preset];
+      const preset = el.bgPreset.value === "auto" ? (categories[state.category] && categories[state.category].bg ? categories[state.category].bg : state.category) : el.bgPreset.value;
+      return state.images[preset] || state.images.ai;
     }
 
     function templateLabel() {
@@ -1821,7 +2313,7 @@
 
     function buildAiPrompt() {
       const v = values();
-      const cat = categories[state.category];
+      const cat = activeCategory();
       const theme = el.imageTheme.value.trim() || [v.title, v.summary].filter(Boolean).join(" / ");
       const safeArea = state.template === "profile"
         ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
@@ -2009,6 +2501,7 @@
         categoryTitle: el.categoryTitle.value.trim(),
         categoryEn: el.categoryEn.value.trim(),
         categorySub: el.categorySub.value.trim(),
+        categoryColor: el.categoryColor.value.trim(),
         title: el.title.value.trim(),
         enTitle: el.enTitle.value.trim(),
         summary: el.summary.value.trim(),
@@ -2093,7 +2586,7 @@
     function draw() {
       setCanvasSize();
       const v = values();
-      const cat = categories[state.category];
+      const cat = activeCategory();
       document.documentElement.style.setProperty("--active-color", cat.color);
       el.categoryLabel.textContent = v.categoryTitle || cat.label;
       el.modeTitle.textContent = {
@@ -2116,6 +2609,7 @@
         categoryTitle: state.template !== "profile",
         categoryEn: state.template !== "profile",
         categorySub: state.template === "collection",
+        categoryColor: state.template !== "profile",
         title: state.template === "work",
         enTitle: state.template === "work",
         summary: state.template === "work",
@@ -2130,7 +2624,7 @@
 
     function updateFileName() {
       const v = values();
-      const cat = categories[state.category];
+      const cat = activeCategory();
       const safeCode = (v.code || "draft").replace(/[^\w-]+/g, "-");
       const names = {
         work: `work-${cat.slug}-${safeCode}.png`,
@@ -2145,6 +2639,7 @@
       el.categoryTitle.value = cat.label;
       el.categoryEn.value = cat.en;
       el.categorySub.value = cat.sub;
+      syncColorInputs(cat.color);
       el.title.value = cat.title;
       el.enTitle.value = cat.enTitle;
       el.summary.value = cat.summary;
@@ -2166,6 +2661,75 @@
         btn.classList.toggle("active", btn.dataset.category === category);
       });
       applyCategoryDefaults(category);
+      draw();
+    }
+
+    function setValueIfDefined(input, value) {
+      if (input && value !== undefined) input.value = value;
+    }
+
+    function applyQuickTemplate(key) {
+      const preset = quickTemplates[key];
+      if (!preset) return;
+      if (preset.category && categories[preset.category]) setCategory(preset.category);
+      if (preset.template) setTemplate(preset.template);
+      setValueIfDefined(el.title, preset.title);
+      setValueIfDefined(el.enTitle, preset.enTitle);
+      setValueIfDefined(el.summary, preset.summary);
+      setValueIfDefined(el.code, preset.code);
+      setValueIfDefined(el.imageTheme, preset.imageTheme);
+      if (preset.categoryTitle) setValueIfDefined(el.categoryTitle, preset.categoryTitle);
+      if (preset.categoryEn) setValueIfDefined(el.categoryEn, preset.categoryEn);
+      if (preset.categorySub) setValueIfDefined(el.categorySub, preset.categorySub);
+      if (preset.categoryColor) syncColorInputs(preset.categoryColor);
+      document.querySelectorAll("[data-quick-template]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.quickTemplate === key);
+      });
+      draw();
+      el.status.textContent = `Applied template: ${key}`;
+    }
+
+    function setOnboardingStep(step) {
+      state.onboardingStep = Math.max(0, Math.min(2, step));
+      document.querySelectorAll("[data-onboarding-step]").forEach(node => {
+        node.classList.toggle("active", Number(node.dataset.onboardingStep) === state.onboardingStep);
+      });
+      document.querySelectorAll("[data-onboarding-progress]").forEach(node => {
+        node.classList.toggle("active", Number(node.dataset.onboardingProgress) <= state.onboardingStep);
+      });
+      el.onboardingBackBtn.disabled = state.onboardingStep === 0;
+      el.onboardingNextBtn.textContent = state.onboardingStep === 2 ? "完成并进入工作台" : "下一步";
+    }
+
+    function openOnboarding(force = false) {
+      if (!force && localStorage.getItem("mrk.onboardingDone") === "1") return;
+      el.onboardingOverlay.hidden = false;
+      setOnboardingStep(0);
+    }
+
+    function closeOnboarding(done = false) {
+      el.onboardingOverlay.hidden = true;
+      if (done) localStorage.setItem("mrk.onboardingDone", "1");
+    }
+
+    function syncOnboardingCategoryFromCurrent() {
+      const cat = activeCategory();
+      el.onboardCategoryTitle.value = cat.label;
+      el.onboardCategoryEn.value = cat.en;
+      el.onboardCategorySub.value = cat.sub;
+      syncColorInputs(cat.color);
+    }
+
+    function applyOnboardingCategory() {
+      const title = el.onboardCategoryTitle.value.trim();
+      const en = el.onboardCategoryEn.value.trim();
+      const sub = el.onboardCategorySub.value.trim();
+      const color = normalizedColor(el.onboardCategoryColor.value || el.onboardCategoryColorText.value, "#f5d76e");
+      if (title && title !== categories[state.category].label) setCategory("custom");
+      setValueIfDefined(el.categoryTitle, title || categories[state.category].label);
+      setValueIfDefined(el.categoryEn, en || categories[state.category].en);
+      setValueIfDefined(el.categorySub, sub || categories[state.category].sub);
+      syncColorInputs(color);
       draw();
     }
 
@@ -2210,6 +2774,7 @@
         categoryTitle: el.categoryTitle.value,
         categoryEn: el.categoryEn.value,
         categorySub: el.categorySub.value,
+        categoryColor: el.categoryColor.value,
         title: el.title.value,
         enTitle: el.enTitle.value,
         summary: el.summary.value,
@@ -2371,6 +2936,7 @@
       setValue(el.categoryTitle, snap.categoryTitle);
       setValue(el.categoryEn, snap.categoryEn);
       setValue(el.categorySub, snap.categorySub);
+      if (snap.categoryColor) syncColorInputs(snap.categoryColor);
       setValue(el.title, snap.title);
       setValue(el.enTitle, snap.enTitle);
       setValue(el.summary, snap.summary);
@@ -2404,14 +2970,82 @@
       if (btn) setTemplate(btn.dataset.template);
     });
 
+    el.quickTemplateButtons.addEventListener("click", event => {
+      const btn = event.target.closest("[data-quick-template]");
+      if (btn) applyQuickTemplate(btn.dataset.quickTemplate);
+    });
+
     el.categoryButtons.addEventListener("click", event => {
       const btn = event.target.closest("[data-category]");
       if (btn) setCategory(btn.dataset.category);
     });
 
-    ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity"].forEach(id => {
+    ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "categoryColor", "categoryColorText", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity"].forEach(id => {
       el[id].addEventListener("input", draw);
       el[id].addEventListener("change", draw);
+    });
+
+    el.categoryColor.addEventListener("input", () => {
+      syncColorInputs(el.categoryColor.value, "picker");
+      draw();
+    });
+
+    el.categoryColorText.addEventListener("input", () => {
+      syncColorInputs(el.categoryColorText.value, "text");
+      draw();
+    });
+
+    el.onboardingOpenBtn.addEventListener("click", () => {
+      syncOnboardingCategoryFromCurrent();
+      openOnboarding(true);
+    });
+
+    el.scrollToStudioBtn.addEventListener("click", () => {
+      document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    el.onboardingCloseBtn.addEventListener("click", () => closeOnboarding());
+    el.onboardingSkipBtn.addEventListener("click", () => closeOnboarding(true));
+    el.onboardingBackBtn.addEventListener("click", () => setOnboardingStep(state.onboardingStep - 1));
+    el.onboardingNextBtn.addEventListener("click", () => {
+      if (state.onboardingStep === 2) {
+        applyOnboardingCategory();
+        closeOnboarding(true);
+        document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (state.onboardingStep === 1) syncOnboardingCategoryFromCurrent();
+      setOnboardingStep(state.onboardingStep + 1);
+    });
+
+    el.onboardingOverlay.addEventListener("click", event => {
+      if (event.target === el.onboardingOverlay) closeOnboarding();
+    });
+
+    document.querySelectorAll("[data-onboarding-path]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.onboardingPath = btn.dataset.onboardingPath;
+        document.querySelectorAll("[data-onboarding-path]").forEach(item => {
+          item.classList.toggle("active", item === btn);
+        });
+      });
+    });
+
+    document.querySelectorAll("#onboardingOverlay [data-quick-template]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        applyQuickTemplate(btn.dataset.quickTemplate);
+        document.querySelectorAll("#onboardingOverlay [data-quick-template]").forEach(item => {
+          item.classList.toggle("active", item === btn);
+        });
+      });
+    });
+
+    el.onboardCategoryColor.addEventListener("input", () => {
+      syncColorInputs(el.onboardCategoryColor.value, "onboardPicker");
+    });
+
+    el.onboardCategoryColorText.addEventListener("input", () => {
+      syncColorInputs(el.onboardCategoryColorText.value, "onboardText");
     });
 
     el.bgUpload.addEventListener("change", event => {
@@ -2490,6 +3124,8 @@
 
     preload();
     initAuth();
+    syncColorInputs(categories[state.category].color);
+    openOnboarding();
   </script>
 </body>
 </html>
