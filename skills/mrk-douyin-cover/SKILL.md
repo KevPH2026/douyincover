@@ -45,10 +45,12 @@ metadata:
 
 3. **DNA decode mode**
    Use this mode when the user asks to analyze a creator/account, read multiple Douyin works, extract `账号DNA`, or produce a design direction before generating individual covers.
-   - Require at least 10 public work samples before making a full DNA conclusion. Samples can be titles, cover text, captions, copied share text, or OCR from screenshots.
+   - If the user provides only one Douyin work link, first try to crawl the rendered public page, discover the author profile, pull nickname, Douyin/profile ID, avatar URL, profile URL, and additional public works from the same account.
+   - Require at least 10 public work samples before making a full DNA conclusion. Samples can be automatically discovered from the linked work/profile, titles, cover text, captions, copied share text, or OCR from screenshots.
    - If a Douyin profile/work link is blocked by login, anti-bot, or the in-app browser, say that clearly and ask for the missing samples instead of guessing.
    - Exclude private works by default.
    - Output:
+     - crawled account identity: nickname, Douyin/profile ID, avatar URL, and profile URL when publicly available;
      - account positioning, audience, voice, and content pillars;
      - title patterns and recurring content angles;
      - style signals and visual taboos;
@@ -57,11 +59,11 @@ metadata:
      - operating rules for future cover generation.
    - If using the local Web Studio, call `/api/dna-agent` with:
      ```json
-     {
-       "douyin_url": "",
-       "source_text": "10+ work samples",
-	     "content_samples": [],
-	     "goal": "提炼账号DNA并输出可应用的账号Style和设计方向"
+	     {
+	       "douyin_url": "",
+	       "source_text": "10+ work samples",
+	       "content_samples": [],
+	     "goal": "先从抖音链接自动拉取账号身份和公开作品样本，再提炼账号DNA并输出可应用的账号Style和设计方向"
 	   }
 	   ```
 

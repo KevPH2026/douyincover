@@ -2,6 +2,7 @@ import html
 import json
 import os
 import re
+import shutil
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -21,6 +22,8 @@ STYLE_KEYS = {"cinematic", "terminal", "field", "minimal"}
 DENSITY_KEYS = {"low", "medium", "high"}
 DEFAULT_CHAT_ENDPOINT = "https://api.deepseek.com/chat/completions"
 DNA_MIN_SAMPLE_COUNT = 10
+DOUYIN_FETCH_LIMIT = 1_500_000
+DOUYIN_PROFILE_SAMPLE_LIMIT = 8
 
 
 class ServiceError(Exception):
@@ -114,6 +117,56 @@ def extract_page_content_samples(page_text):
     return samples
 
 
+def extract_visible_content_samples(visible_text):
+    samples = []
+    seen = set()
+    ignored_exact = {
+        "开启读屏标签",
+        "读屏标签已关闭",
+        "精选",
+        "推荐",
+        "搜索",
+        "关注",
+        "朋友",
+        "我的",
+        "直播",
+        "放映厅",
+        "短剧",
+        "通知",
+        "投稿",
+        "登录",
+        "客户端",
+        "壁纸",
+        "打开声音",
+        "相关推荐",
+    }
+
+    def add(line):
+        clean = clean_sample_line(line)
+        clean = re.sub(r"^第\s*\d+\s*集\s*[:：]\s*", "", clean)
+        clean = re.sub(r"^发布时间\s*[:：].*$", "", clean)
+        clean = normalize_space(clean).strip(" -_/｜|，。#")
+        compact = re.sub(r"\s+", "", clean.lower())
+        if len(compact) < 8 or compact in seen or clean in ignored_exact:
+            return
+        if re.fullmatch(r"[\d.,万wW]+", compact):
+            return
+        seen.add(compact)
+        samples.append(clean)
+
+    for raw in re.split(r"[\n\r]+", str(visible_text or "")):
+        line = normalize_space(raw)
+        if not line:
+            continue
+        if re.match(r"^第\s*\d+\s*集\s*[:：]", line) or "#" in line:
+            add(line)
+        elif 8 <= len(line) <= 180 and any(token in line.lower() for token in ["ai", "模型", "强者", "人生", "客户", "商业", "判断", "saas"]):
+            add(line)
+        if len(samples) >= 30:
+            break
+    return samples
+
+
 def trim(value, limit):
     text = str(value or "").strip()
     return text[:limit]
@@ -180,6 +233,447 @@ def is_allowed_douyin_url(url):
     return any(host == item or host.endswith("." + item) for item in ALLOWED_DOUYIN_HOSTS)
 
 
+def read_url_text(url, timeout=8, limit=DOUYIN_FETCH_LIMIT):
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/125 Safari/537.36",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.7",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Referer": "https://www.douyin.com/",
+        },
+        method="GET",
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        body = response.read(limit)
+        charset = response.headers.get_content_charset() or "utf-8"
+        final_url = response.geturl()
+    try:
+        decoded = body.decode(charset, errors="replace")
+    except Exception:
+        decoded = body.decode("utf-8", errors="replace")
+    return final_url, decoded
+
+
+def normalize_douyin_absolute_url(url, base_url="https://www.douyin.com"):
+    raw = html.unescape(str(url or "")).replace("\\/", "/").strip()
+    raw = raw.rstrip("\\")
+    if raw.startswith("//"):
+        raw = "https:" + raw
+    if raw.startswith("/"):
+        raw = urllib.parse.urljoin(base_url, raw)
+    raw = raw.split("#")[0]
+    if is_allowed_douyin_url(raw):
+        return raw
+    return ""
+
+
+def normalize_sec_uid(value):
+    text = unescape_json_text(value).replace("\\/", "/").strip()
+    match = re.search(r"(MS4wLj[A-Za-z0-9_.-]{20,})", text)
+    if match:
+        return match.group(1)
+    if re.fullmatch(r"[A-Za-z0-9_.-]{20,220}", text):
+        return text
+    return ""
+
+
+def extract_douyin_aweme_id(url, page_text=""):
+    for source in [str(url or ""), str(page_text or "")]:
+        decoded = html.unescape(source).replace("\\/", "/")
+        match = re.search(r"/(?:video|note)/(\d{10,30})", decoded)
+        if match:
+            return match.group(1)
+        for pattern in [
+            r'"aweme_id"\s*:\s*"(\d{10,30})"',
+            r'"awemeId"\s*:\s*"(\d{10,30})"',
+            r'"item_id"\s*:\s*"(\d{10,30})"',
+            r'"note_id"\s*:\s*"(\d{10,30})"',
+        ]:
+            match = re.search(pattern, decoded, flags=re.I)
+            if match:
+                return match.group(1)
+    return ""
+
+
+def clean_identity_value(value, limit=120):
+    text = unescape_json_text(value)
+    text = normalize_space(text).strip(" ｜|_-，。:：")
+    if not text or "http://" in text or "https://" in text:
+        return ""
+    if any(token in text.lower() for token in ["douyin.com", "iesdouyin.com", "undefined", "null"]):
+        return ""
+    if any(token in text.lower() for token in ["middleware", "perf_timing", "router_data", "render"]):
+        return ""
+    return trim(text, limit)
+
+
+def invalid_nickname(value):
+    text = str(value or "").strip()
+    if not text:
+        return True
+    if len(text) > 36:
+        return True
+    return any(token in text for token in ["#", "发布在抖音", "来抖音", "第", "集：", "集 |"])
+
+
+def first_json_field(page_text, keys, limit=120):
+    sources = [str(page_text or ""), html.unescape(str(page_text or "")).replace("\\/", "/")]
+    for source in sources:
+        for key in keys:
+            patterns = [
+                rf'"{re.escape(key)}"\s*:\s*"((?:\\.|[^"\\]){{1,{limit * 4}}})"',
+                rf'\\"{re.escape(key)}\\"\s*:\s*\\"((?:\\.|[^"\\]){{1,{limit * 4}}})\\"',
+            ]
+            for pattern in patterns:
+                match = re.search(pattern, source, flags=re.I)
+                if match:
+                    clean = clean_identity_value(match.group(1), limit)
+                    if clean:
+                        return clean
+    return ""
+
+
+def extract_avatar_url(page_text):
+    decoded = html.unescape(str(page_text or "")).replace("\\/", "/")
+    candidates = []
+    for pattern in [
+        r'"avatar[^"]*"\s*:\s*\{[^{}]{0,900}?"url_list"\s*:\s*\[\s*"([^"]+)"',
+        r'"avatar[^"]*"\s*:\s*"([^"]+)"',
+        r'(https?://[^"\'\s<>\\]+(?:avatar|aweme-avatar)[^"\'\s<>\\]+\.(?:webp|jpg|jpeg|png)[^"\'\s<>\\]*)',
+    ]:
+        candidates.extend(re.findall(pattern, decoded, flags=re.I))
+
+    for candidate in candidates:
+        url = html.unescape(str(candidate or "")).replace("\\/", "/").replace("\\u002F", "/").strip()
+        if url.startswith("//"):
+            url = "https:" + url
+        if not url.startswith("http"):
+            continue
+        if "avatar" in url.lower() and any(host in url for host in ["douyinpic.com", "douyinstatic.com", "byteimg.com", "pstatp.com", "toutiaoimg.com"]):
+            return trim(url, 1000)
+    return ""
+
+
+def extract_douyin_identity(page_text, final_url="", meta=None):
+    meta = meta or {}
+    text = str(page_text or "")
+    decoded = html.unescape(text).replace("\\/", "/")
+    nickname = first_json_field(decoded, ["nickname", "nick_name", "author_name", "user_name"], 80)
+    douyin_id = first_json_field(decoded, ["unique_id", "uniqueId", "douyin_id", "douyinId", "display_id"], 80)
+    short_id = first_json_field(decoded, ["short_id", "shortId"], 80)
+    sec_uid = normalize_sec_uid(first_json_field(decoded, ["sec_uid", "secUid"], 220))
+    signature = first_json_field(decoded, ["signature", "desc", "description"], 220)
+    avatar_url = extract_avatar_url(decoded)
+
+    visible_name = ""
+    for pattern in [
+        r"(?:^|\n)\s*([^\n]{2,40}?)\s*\n+\s*粉丝\s*[\d.万wW]+",
+        r"(?:^|\n)\s*([^\n]{2,40}?)\s*\n+\s*获赞\s*[\d.万wW]+",
+        r"([A-Za-z0-9_.\-\u4e00-\u9fff]{2,40})的抖音主页",
+    ]:
+        match = re.search(pattern, decoded)
+        if match:
+            visible_name = clean_identity_value(match.group(1), 80)
+            if visible_name and visible_name not in {"抖音", "精选", "推荐"}:
+                break
+
+    meta_title = clean_identity_value(meta.get("og_title") or meta.get("title") or "", 120)
+    meta_desc = clean_identity_value(meta.get("og_description") or meta.get("description") or "", 220)
+    profile_desc_name = ""
+    if meta_desc:
+        match = re.search(r"([A-Za-z0-9_.\-\u4e00-\u9fff]{2,40})的抖音主页", meta_desc)
+        if match:
+            profile_desc_name = clean_identity_value(match.group(1), 80)
+    if not nickname and meta_title:
+        for separator in ["的抖音", " - 抖音", " | 抖音", "抖音"]:
+            if separator in meta_title:
+                nickname = clean_identity_value(meta_title.split(separator)[0], 80)
+                break
+    if invalid_nickname(nickname) and visible_name:
+        nickname = visible_name
+    if invalid_nickname(nickname) and profile_desc_name:
+        nickname = profile_desc_name
+    if invalid_nickname(nickname) and signature:
+        signature_head = clean_identity_value(re.split(r"[。,.，\s]", signature)[0], 80)
+        if signature_head and signature_head not in {"抖音", "精选", "推荐"} and not invalid_nickname(signature_head):
+            nickname = signature_head
+    if invalid_nickname(nickname):
+        nickname = ""
+    if not signature and meta_desc:
+        signature = meta_desc
+    if not avatar_url and meta.get("cover_image_url"):
+        avatar_url = meta.get("cover_image_url")
+
+    parsed = urllib.parse.urlparse(str(final_url or ""))
+    profile_url = extract_douyin_profile_url(decoded, final_url)
+    if parsed.path.startswith("/user/") and not profile_url:
+        profile_url = final_url
+
+    if not sec_uid and profile_url:
+        match = re.search(r"/user/([^/?#]+)", profile_url)
+        if match:
+            sec_uid = normalize_sec_uid(urllib.parse.unquote(match.group(1)))
+
+    return {
+        "nickname": nickname,
+        "douyin_id": douyin_id,
+        "short_id": short_id,
+        "sec_uid": sec_uid,
+        "signature": signature,
+        "avatar_url": avatar_url,
+        "profile_url": profile_url,
+        "aweme_id": extract_douyin_aweme_id(final_url, decoded),
+    }
+
+
+def merge_identity(*identities):
+    merged = {}
+    for identity in identities:
+        if not isinstance(identity, dict):
+            continue
+        for key in ["nickname", "douyin_id", "short_id", "sec_uid", "signature", "avatar_url", "profile_url", "aweme_id"]:
+            value = identity.get(key)
+            if value and not merged.get(key):
+                merged[key] = value
+    return merged
+
+
+def extract_douyin_profile_url(page_text, final_url=""):
+    candidates = []
+    parsed_final = urllib.parse.urlparse(str(final_url or ""))
+    if parsed_final.path.startswith("/user/"):
+        candidates.append(final_url)
+
+    text = str(page_text or "")
+    decoded = html.unescape(text).replace("\\/", "/")
+    patterns = [
+        r'https?:\\/\\/(?:www\\.)?douyin\\.com\\/user\\/([^"\'\\\s<>?#]{8,220})',
+        r'https?://(?:www\.)?douyin\.com/user/([^"\'\\\s<>?#]{8,220})',
+        r'(?<![\w/])/(?:user)/([^"\'\\\s<>?#]{8,220})',
+    ]
+    for source in [text, decoded]:
+        for pattern in patterns:
+            for match in re.findall(pattern, source, flags=re.I):
+                candidate = match[0] if isinstance(match, tuple) else match
+                if candidate.startswith("http"):
+                    candidates.append(candidate)
+                else:
+                    candidates.append(f"https://www.douyin.com/user/{candidate}")
+
+        for pattern in [
+            r'"sec_uid"\s*:\s*"((?:\\.|[^"\\]){10,220})"',
+            r'"secUid"\s*:\s*"((?:\\.|[^"\\]){10,220})"',
+            r'\\"sec_uid\\"\s*:\s*\\"((?:\\.|[^"\\]){10,220})\\"',
+            r'\\"secUid\\"\s*:\s*\\"((?:\\.|[^"\\]){10,220})\\"',
+        ]:
+            for raw in re.findall(pattern, source):
+                sec_uid = normalize_sec_uid(raw)
+                if not sec_uid or "/" in sec_uid or "<" in sec_uid:
+                    continue
+                candidates.append(f"https://www.douyin.com/user/{urllib.parse.quote(sec_uid, safe='-_')}")
+
+    seen = set()
+    for candidate in candidates:
+        clean = normalize_douyin_absolute_url(candidate)
+        key = clean.split("?")[0]
+        if clean and key not in seen:
+            return clean
+        seen.add(key)
+    return ""
+
+
+def extract_douyin_work_urls(page_text, base_url="https://www.douyin.com"):
+    text = html.unescape(str(page_text or "")).replace("\\/", "/")
+    candidates = []
+    for pattern in [
+        r'https?://(?:www\.)?douyin\.com/(?:video|note)/\d{10,30}',
+        r'(?<![\w/])/(?:video|note)/\d{10,30}',
+    ]:
+        candidates.extend(re.findall(pattern, text, flags=re.I))
+
+    seen = set()
+    urls = []
+    for candidate in candidates:
+        clean = normalize_douyin_absolute_url(candidate, base_url)
+        key = clean.split("?")[0]
+        if not clean or key in seen:
+            continue
+        seen.add(key)
+        urls.append(clean)
+        if len(urls) >= 20:
+            break
+    return urls
+
+
+def fetch_douyin_page(url, timeout=8, limit=DOUYIN_FETCH_LIMIT):
+    try:
+        final_url, decoded = read_url_text(url, timeout=timeout, limit=limit)
+    except Exception as exc:
+        return {"status": "failed", "url": url, "message": str(exc)}
+
+    parser = PageMetaParser()
+    parser.feed(decoded)
+    data = parser.data()
+    data["content_samples"] = extract_page_content_samples(decoded)
+    data["profile_url"] = extract_douyin_profile_url(decoded, final_url)
+    data["work_urls"] = extract_douyin_work_urls(decoded, final_url)
+    data["aweme_id"] = extract_douyin_aweme_id(final_url, decoded)
+    data["identity"] = extract_douyin_identity(decoded, final_url, data)
+    data.update({"status": "ok", "url": url, "final_url": final_url})
+    return data
+
+
+def browser_executable_path():
+    env_path = os.environ.get("MRK_BROWSER_EXECUTABLE", "").strip()
+    if env_path and os.path.exists(env_path):
+        return env_path
+    for candidate in [
+        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+        shutil.which("google-chrome"),
+        shutil.which("chromium"),
+        shutil.which("chromium-browser"),
+    ]:
+        if candidate and os.path.exists(candidate):
+            return candidate
+    return ""
+
+
+def fetch_douyin_rendered_page(url, timeout_ms=18000):
+    if os.environ.get("MRK_DISABLE_DOUYIN_RENDER", "").lower() in {"1", "true", "yes"}:
+        return {"status": "skipped", "url": url, "message": "Rendered Douyin fetch disabled."}
+    executable = browser_executable_path()
+    if not executable:
+        return {"status": "skipped", "url": url, "message": "No local Chrome/Chromium executable available."}
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as exc:
+        return {"status": "skipped", "url": url, "message": f"Playwright unavailable: {exc}"}
+
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True, executable_path=executable)
+            page = browser.new_page(
+                locale="zh-CN",
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/125 Safari/537.36",
+                viewport={"width": 1440, "height": 1100},
+            )
+            page.goto(url, wait_until="domcontentloaded", timeout=timeout_ms)
+            page.wait_for_timeout(3500)
+            rendered = page.evaluate(
+                """() => ({
+                    url: location.href,
+                    title: document.title || "",
+                    bodyText: document.body ? document.body.innerText : "",
+                    html: document.documentElement ? document.documentElement.innerHTML : "",
+                    links: Array.from(document.querySelectorAll("a[href]")).map(a => a.href).filter(Boolean).slice(0, 120),
+                    metas: Array.from(document.querySelectorAll("meta")).map(m => ({
+                        name: m.getAttribute("name") || m.getAttribute("property") || "",
+                        content: m.getAttribute("content") || ""
+                    })).filter(item => item.name || item.content).slice(0, 80)
+                })"""
+            )
+            browser.close()
+    except Exception as exc:
+        return {"status": "failed", "url": url, "message": str(exc)}
+
+    final_url = rendered.get("url") or url
+    body_text = rendered.get("bodyText") or ""
+    html_text = rendered.get("html") or ""
+    links_text = "\n".join(rendered.get("links") or [])
+    combined = "\n".join([html_text[:DOUYIN_FETCH_LIMIT], body_text[:120_000], links_text])
+    parser = PageMetaParser()
+    parser.feed(html_text)
+    data = parser.data()
+    meta_from_dom = {str(item.get("name", "")).lower(): item.get("content", "") for item in rendered.get("metas") or []}
+    for key, value in meta_from_dom.items():
+        if value and key in {"og:title", "description", "og:description", "og:image", "twitter:image"}:
+            if key == "og:image" or key == "twitter:image":
+                data["cover_image_url"] = data.get("cover_image_url") or value
+            else:
+                data[key.replace(":", "_")] = data.get(key.replace(":", "_")) or value
+    data["title"] = data.get("title") or rendered.get("title", "")
+    data["content_samples"] = []
+    seen = set()
+    for sample in extract_visible_content_samples(body_text) + extract_page_content_samples(combined):
+        compact = re.sub(r"\s+", "", sample.lower())
+        if compact and compact not in seen:
+            seen.add(compact)
+            data["content_samples"].append(sample)
+        if len(data["content_samples"]) >= 40:
+            break
+    data["profile_url"] = extract_douyin_profile_url(combined, final_url)
+    data["work_urls"] = extract_douyin_work_urls(combined, final_url)
+    data["aweme_id"] = extract_douyin_aweme_id(final_url, combined)
+    data["identity"] = extract_douyin_identity(combined, final_url, data)
+    data.update(
+        {
+            "status": "ok",
+            "rendered": True,
+            "url": url,
+            "final_url": final_url,
+            "visible_text": trim(body_text, 4000),
+            "link_count": len(rendered.get("links") or []),
+        }
+    )
+    return data
+
+
+def merge_sample_lists(*lists, limit=40):
+    samples = []
+    seen = set()
+    for items in lists:
+        for item in items or []:
+            clean = clean_sample_line(item)
+            compact = re.sub(r"\s+", "", clean.lower())
+            if len(compact) < 6 or compact in seen:
+                continue
+            seen.add(compact)
+            samples.append(clean)
+            if len(samples) >= limit:
+                return samples
+    return samples
+
+
+def merge_url_lists(*lists, limit=20):
+    urls = []
+    seen = set()
+    for items in lists:
+        for item in items or []:
+            clean = normalize_douyin_absolute_url(item)
+            key = clean.split("?")[0]
+            if not clean or key in seen:
+                continue
+            seen.add(key)
+            urls.append(clean)
+            if len(urls) >= limit:
+                return urls
+    return urls
+
+
+def merge_page_metadata(static_data, rendered_data):
+    if not rendered_data or rendered_data.get("status") != "ok":
+        if rendered_data:
+            static_data["rendered_status"] = rendered_data.get("status")
+            static_data["rendered_message"] = rendered_data.get("message", "")
+        return static_data
+    merged = dict(static_data)
+    merged["rendered_status"] = "ok"
+    merged["rendered_final_url"] = rendered_data.get("final_url", "")
+    for key in ["title", "og_title", "description", "og_description", "cover_image_url", "profile_url", "aweme_id", "visible_text"]:
+        if rendered_data.get(key) and not merged.get(key):
+            merged[key] = rendered_data[key]
+    merged["content_samples"] = merge_sample_lists(
+        merged.get("content_samples") or [],
+        rendered_data.get("content_samples") or [],
+        limit=40,
+    )
+    merged["work_urls"] = merge_url_lists(merged.get("work_urls") or [], rendered_data.get("work_urls") or [], limit=30)
+    merged["identity"] = merge_identity(rendered_data.get("identity"), merged.get("identity"))
+    return merged
+
+
 def fetch_douyin_metadata(url):
     url = str(url or "").strip()
     if not url:
@@ -191,32 +685,77 @@ def fetch_douyin_metadata(url):
             "message": "Only Douyin share links are fetched by the server.",
         }
 
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/125 Safari/537.36",
-            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.7",
-        },
-        method="GET",
+    data = fetch_douyin_page(url)
+    if data.get("status") != "ok":
+        return data
+    needs_rendered = not (
+        data.get("profile_url")
+        and (data.get("content_samples") or data.get("work_urls"))
+        and any((data.get("identity") or {}).get(key) for key in ["nickname", "douyin_id", "avatar_url"])
     )
-    try:
-        with urllib.request.urlopen(request, timeout=8) as response:
-            body = response.read(1_000_000)
-            charset = response.headers.get_content_charset() or "utf-8"
-            final_url = response.geturl()
-    except Exception as exc:
-        return {"status": "failed", "url": url, "message": str(exc)}
+    if needs_rendered:
+        data = merge_page_metadata(data, fetch_douyin_rendered_page(data.get("final_url") or url))
 
-    parser = PageMetaParser()
-    try:
-        decoded = body.decode(charset, errors="replace")
-    except Exception:
-        decoded = body.decode("utf-8", errors="replace")
-    parser.feed(decoded)
+    main_final_url = data.get("final_url") or url
+    profile_url = data.get("profile_url") or ""
+    profile_samples = []
+    related_samples = []
+    related_pages = []
+    profile_work_urls = []
 
-    data = parser.data()
-    data["content_samples"] = extract_page_content_samples(decoded)
-    data.update({"status": "ok", "url": url, "final_url": final_url})
+    if profile_url:
+        profile = fetch_douyin_page(profile_url, timeout=8, limit=DOUYIN_FETCH_LIMIT)
+        if profile.get("status") == "ok" and not (profile.get("content_samples") or profile.get("work_urls")):
+            profile = merge_page_metadata(profile, fetch_douyin_rendered_page(profile.get("final_url") or profile_url, timeout_ms=14000))
+        data["profile_status"] = profile.get("status")
+        data["profile_url"] = profile_url
+        data["profile_final_url"] = profile.get("final_url", "")
+        data["profile_message"] = profile.get("message", "")
+        data["profile_identity"] = profile.get("identity") or {}
+        profile_samples = profile.get("content_samples") or []
+        profile_work_urls = profile.get("work_urls") or []
+
+        main_key = main_final_url.split("?")[0]
+        for work_url in profile_work_urls[:DOUYIN_PROFILE_SAMPLE_LIMIT]:
+            if work_url.split("?")[0] == main_key:
+                continue
+            work = fetch_douyin_page(work_url, timeout=6, limit=900_000)
+            page_samples = work.get("content_samples") or []
+            related_pages.append(
+                {
+                    "url": work_url,
+                    "status": work.get("status"),
+                    "final_url": work.get("final_url", ""),
+                    "identity": work.get("identity") or {},
+                    "sample_count": len(page_samples),
+                    "samples": page_samples[:5],
+                    "message": work.get("message", ""),
+                }
+            )
+            related_samples.extend(page_samples[:5])
+            if len(related_samples) >= 24:
+                break
+
+    related_identities = [item.get("identity") for item in related_pages if item.get("identity")]
+    account_identity = merge_identity(data.get("profile_identity"), data.get("identity"), *related_identities)
+    if (data.get("identity") or {}).get("aweme_id"):
+        account_identity["aweme_id"] = data["identity"]["aweme_id"]
+    data["account_identity"] = account_identity
+    data["profile_content_samples"] = profile_samples
+    data["profile_work_urls"] = profile_work_urls[:20]
+    data["related_work_pages"] = related_pages
+    data["related_content_samples"] = related_samples[:30]
+    data["discovery"] = {
+        "input_url": url,
+        "final_url": main_final_url,
+        "profile_url": profile_url,
+        "profile_status": data.get("profile_status", "not_found" if not profile_url else ""),
+        "profile_sample_count": len(profile_samples),
+        "profile_work_url_count": len(profile_work_urls),
+        "related_page_count": len(related_pages),
+        "related_sample_count": len(related_samples),
+        "identity_fields": [key for key, value in (data.get("account_identity") or {}).items() if value],
+    }
     return data
 
 
@@ -318,6 +857,8 @@ def build_douyin_context(incoming):
         "hashtags": hashtags,
         "source_text": trim(source_text, 1600),
         "cover_image_url": meta.get("cover_image_url", ""),
+        "account_identity": meta.get("account_identity") or meta.get("identity") or {},
+        "discovery": meta.get("discovery") or {},
         "meta": meta,
     }
 
@@ -387,6 +928,10 @@ def extract_content_samples(incoming, douyin_context=None):
         meta = douyin_context.get("meta") or {}
         for sample in meta.get("content_samples") or []:
             add(sample, "douyin_page")
+        for sample in meta.get("profile_content_samples") or []:
+            add(sample, "douyin_profile")
+        for sample in meta.get("related_content_samples") or []:
+            add(sample, "douyin_related_work")
         add(meta.get("og_title") or meta.get("title") or "", "douyin_meta")
         add(meta.get("og_description") or meta.get("description") or "", "douyin_meta")
 
@@ -521,6 +1066,8 @@ def local_client_dna(samples, douyin_context, reason="local_dna"):
         "sample_count": len(samples),
         "min_required": DNA_MIN_SAMPLE_COUNT,
         "source_url": douyin_context.get("url", "") if douyin_context else "",
+        "account_identity": douyin_context.get("account_identity", {}) if douyin_context else {},
+        "discovery": douyin_context.get("discovery", {}) if douyin_context else {},
         "client_dna": {
             "positioning": "AI 时代的商业判断与个人系统内容账号",
             "audience": "关注 AI、商业变化、个人成长和判断力的创业者/知识工作者",
@@ -586,10 +1133,18 @@ DNA_SYSTEM_PROMPT = """
 - 设计方向必须来自样本中的内容主题、表达方式、标题气质、视觉/场景线索。
 - 输出要能直接指导封面系统：栏目、字体气质、配色、背景类型、版式、禁忌。
 - 必须额外输出一个可直接应用到页面控件的 style_profile；字段名必须稳定，不能只写自然语言建议。
+- 如果 douyin_context.account_identity 里有昵称、抖音号、头像或主页链接，可以引用；没有抓到时不得编造。
 
 只输出合法 JSON，不要 markdown，不要解释。JSON 结构：
 {
   "status": "complete",
+  "account_identity": {
+    "nickname": "...",
+    "douyin_id": "...",
+    "short_id": "...",
+    "avatar_url": "...",
+    "profile_url": "..."
+  },
   "client_dna": {
     "positioning": "...",
     "audience": "...",
@@ -635,16 +1190,29 @@ DNA_SYSTEM_PROMPT = """
 
 def need_more_samples_response(samples, douyin_context):
     url = douyin_context.get("url", "") if douyin_context else ""
+    discovery = douyin_context.get("discovery", {}) if douyin_context else {}
+    identity = douyin_context.get("account_identity", {}) if douyin_context else {}
+    auto_note = ""
+    if url:
+        profile_url = discovery.get("profile_url") or identity.get("profile_url")
+        related_count = discovery.get("related_sample_count", 0)
+        profile_count = discovery.get("profile_sample_count", 0)
+        if profile_url:
+            auto_note = f"已自动尝试从作品链接追到作者主页，并抓取主页/相关作品样本：主页样本 {profile_count} 条，相关作品样本 {related_count} 条。"
+        else:
+            auto_note = "已自动尝试从作品链接解析作者主页、头像和抖音号，但当前页面没有暴露足够信息，可能被登录或反爬限制。"
     return {
         "status": "need_samples",
         "sample_count": len(samples),
         "min_required": DNA_MIN_SAMPLE_COUNT,
         "missing_count": max(0, DNA_MIN_SAMPLE_COUNT - len(samples)),
         "source_url": url,
-        "reply": f"目前只拿到 {len(samples)} 条可用内容样本。解码 DNA 至少需要 {DNA_MIN_SAMPLE_COUNT} 条公开作品样本，还差 {max(0, DNA_MIN_SAMPLE_COUNT - len(samples))} 条。",
+        "reply": f"目前只拿到 {len(samples)} 条可用内容样本。{auto_note} 解码 DNA 至少需要 {DNA_MIN_SAMPLE_COUNT} 条公开作品样本，还差 {max(0, DNA_MIN_SAMPLE_COUNT - len(samples))} 条。",
+        "account_identity": identity,
+        "discovery": discovery,
         "collection_guide": [
-            "粘贴抖音主页链接，并补充最近 10-20 条作品标题/文案。",
-            "如果链接受登录或反爬限制，发主页作品列表截图或复制作品标题。",
+            "只给 1 个作品链接时，系统会先自动找作者主页、头像、抖音号和其它公开作品。",
+            "如果抖音页面受登录或反爬限制，发主页作品列表截图或复制作品标题。",
             "每条样本最好包含：标题、口播核心句、封面文字、发布时间或播放表现。",
         ],
         "samples": samples,
@@ -667,9 +1235,11 @@ def analyze_client_dna(incoming):
         dna.update({"reply": "已基于样本生成本地 DNA 解码；配置 LLM 后可获得更细的设计方向。", "model": "local-fallback", "fallback": True})
         return dna
 
-    user_payload = {
+        user_payload = {
         "douyin_url": douyin_context.get("url", ""),
         "douyin_context": douyin_context,
+        "account_identity": douyin_context.get("account_identity", {}),
+        "discovery": douyin_context.get("discovery", {}),
         "sample_count": len(samples),
         "samples": samples[:30],
         "user_goal": trim(incoming.get("goal") or incoming.get("message"), 1200),
@@ -696,7 +1266,8 @@ def analyze_client_dna(incoming):
                 raise
         parsed = safe_json_loads(result["choices"][0]["message"]["content"])
         dna = local_client_dna(samples, douyin_context, "llm_normalized")
-        dna.update({k: v for k, v in parsed.items() if k in {"client_dna", "style_signals", "style_profile", "design_directions", "operating_rules", "next_questions"}})
+        dna.update({k: v for k, v in parsed.items() if k in {"account_identity", "client_dna", "style_signals", "style_profile", "design_directions", "operating_rules", "next_questions"}})
+        dna["account_identity"] = merge_identity(douyin_context.get("account_identity", {}), parsed.get("account_identity", {}))
         dna.update(
             {
                 "status": "complete",

@@ -2,7 +2,7 @@
 
 **A fixed visual cover system for Douyin creators who publish AI, business, judgment, and field-note content.**
 
-[中文](./README.zh-CN.md) | [English](./README.en.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/dna-superk-ai)
+[中文](./README.zh-CN.md) | [English](./README.en.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/douyincover)
 
 Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content idea into an on-brand cover. It is not a general poster editor. It is a repeatable content asset system for one account style: fixed identity, fixed categories, flexible titles and backgrounds.
 
@@ -22,8 +22,8 @@ Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.m
 1. Ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Ask for the task: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Choose the category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only when needed.
-4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public work samples for DNA decode and Style generation.
-5. For a new creator or client account, generate an applicable `style_profile` before producing individual covers.
+4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; for DNA decode, one public Douyin work link is enough to start because the crawler will try to discover the creator profile, avatar, ID, and more public works.
+5. For a new creator or client account, crawl `account_identity` and at least 10 public samples before generating an applicable `style_profile`.
 6. Confirm the brief: Chinese title, English subtitle, background direction, ratio/duration, and code. Then generate and save to the material library.
 
 Starter prompt:
@@ -41,6 +41,7 @@ This project fixes that problem for `MR.K 在路上`.
 - One visual language across single posts, 1-2 second motion intros/outros, collections, and profile background
 - AI-assisted title, summary, category, and background direction
 - DNA decode from at least 10 content samples before proposing a design direction
+- One-link account discovery: from a single public Douyin work link, try to pull creator profile, avatar, ID, and related public works
 - Account Style generation that can be applied to category, accent color, image style, density, and background prompt controls
 - First-run onboarding for choosing Agent/Web workflow, starter template, and content category
 - Quick templates for AI news, strong quotes, field notes, motion intros/outros, collections, profile banners, and custom columns
@@ -70,8 +71,9 @@ This project fixes that problem for `MR.K 在路上`.
 
 ## DNA Decode
 
-For a new creator or account, paste a Douyin profile/work link plus at least 10 public work samples: titles, cover text, captions, or screenshot OCR. The Agent then extracts:
+For a new creator or account, paste one public Douyin profile/work link. The crawler first tries to discover the author profile, avatar, ID, and related public works. If Douyin blocks the public page, paste titles, cover text, captions, or screenshot OCR as fallback. The Agent then extracts:
 
+- crawled account identity: nickname, Douyin/profile ID, avatar URL, and profile URL when available
 - account positioning, audience, voice, and content pillars
 - style signals and visual taboos
 - an applicable `style_profile`: category, column labels, accent color, image style, density, background direction, and cover rules

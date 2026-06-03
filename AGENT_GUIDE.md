@@ -9,14 +9,14 @@ Mr.K Cover Studio 支持两种 Agent 接入方式：
 
 Skill 文件夹：
 
-- [GitHub Skill 目录](https://github.com/KevPH2026/dna-superk-ai/tree/main/skills/mrk-douyin-cover)
-- [下载仓库 ZIP](https://github.com/KevPH2026/dna-superk-ai/archive/refs/heads/main.zip)
+- [GitHub Skill 目录](https://github.com/KevPH2026/douyincover/tree/main/skills/mrk-douyin-cover)
+- [下载仓库 ZIP](https://github.com/KevPH2026/douyincover/archive/refs/heads/main.zip)
 
 1. 下载仓库：
 
 ```bash
-git clone https://github.com/KevPH2026/dna-superk-ai.git
-cd dna-superk-ai
+git clone https://github.com/KevPH2026/douyincover.git
+cd douyincover
 ```
 
 2. 安装 Skill 到本机 Agent：
@@ -63,8 +63,8 @@ Skill 会默认使用 Mr.K 的视觉系统，并按顺序追问：
 1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
 2. 再问任务类型：单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
-4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
-5. 如果是新账号或客户账号，先解码 DNA，再生成可应用的 `style_profile`：栏目、栏目英文、副标题、栏目色、配图风格、信息密度、背景方向、标题规则和封面规则。
+4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 优先从 1 个作品链接自动追作者主页、头像、ID 和其它公开作品；批量任务需要作品清单和优先级规则。
+5. 如果是新账号或客户账号，先爬取 `account_identity` 和不少于 10 条公开内容样本，再解码 DNA，生成可应用的 `style_profile`：栏目、栏目英文、副标题、栏目色、配图风格、信息密度、背景方向、标题规则和封面规则。
 6. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
@@ -80,12 +80,19 @@ Skill 会默认使用 Mr.K 的视觉系统，并按顺序追问：
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
 - 给客户账号做解码时，必须输出能被页面应用的 `style_profile`，不要只写审美建议。
+- 用户只给 1 个抖音作品链接时，先自动拉取作者昵称、抖音号/主页 ID、头像、主页链接和其它公开作品；抓不到再让用户补截图或作品标题。
 
 输出 brief JSON：
 {
   "account": "MR.K 在路上 / KevPH2026",
   "task": "single_cover|motion_intro|motion_outro|dna_decode|batch_refresh|collection|profile",
   "source_url": "",
+  "account_identity": {
+    "nickname": "",
+    "douyin_id": "",
+    "avatar_url": "",
+    "profile_url": ""
+  },
   "category": "ai|strong|road|custom",
   "ratio": "9:16|1:1",
   "duration": "1.2s|1.5s|2s",

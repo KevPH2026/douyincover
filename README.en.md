@@ -2,7 +2,7 @@
 
 **A fixed visual cover system for Douyin creators working in AI, business judgment, personal leverage, and field notes.**
 
-[中文](./README.zh-CN.md) | [Default README](./README.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/dna-superk-ai)
+[中文](./README.zh-CN.md) | [Default README](./README.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/douyincover)
 
 Mr.K Cover Studio is not a generic poster maker. It is a production system for one repeatable creator identity: fixed brand assets, fixed content categories, flexible titles, flexible backgrounds.
 
@@ -24,8 +24,8 @@ Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.m
 1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Task type: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.
-4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public samples for DNA decode and Style generation.
-5. For a new creator or client account, generate an applicable `style_profile` before producing individual covers.
+4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; for DNA decode, one public Douyin work link is enough to start because the crawler will try to discover the creator profile, avatar, ID, and more public works.
+5. For a new creator or client account, crawl `account_identity` and at least 10 public samples before generating an applicable `style_profile`.
 6. Final brief: Chinese title, English subtitle, background direction, ratio/duration, and code. After confirmation, generate and save the asset.
 
 Starter prompt:
@@ -82,7 +82,7 @@ The Web Studio includes a local-only model panel for OpenAI-compatible LLM and i
 
 ### Decode DNA
 
-For a new creator/account, send the Agent a Douyin profile/work link and at least 10 public content samples: titles, cover text, captions, or screenshot OCR. The Agent extracts the account DNA first, then proposes design directions and an applicable account Style.
+For a new creator/account, send the Agent one public Douyin profile/work link. The crawler first tries to discover the author profile, avatar, ID, and related public works. If Douyin blocks the public page, paste titles, cover text, captions, or screenshot OCR as fallback. The Agent extracts the account DNA first, then proposes design directions and an applicable account Style.
 
 The generated Style can be applied to the Web Studio controls: category labels, accent color, image style, density, background direction, and cover rules.
 
@@ -112,9 +112,10 @@ Fixed categories:
 
 DNA Decode workflow:
 
-1. Paste a Douyin link and at least 10 work samples.
-2. The Agent analyzes themes, voice, title patterns, and visual cues.
-3. It returns positioning, audience, content pillars, visual taboos, design directions, and an applicable `style_profile`.
+1. Paste one public Douyin work/profile link.
+2. The crawler tries to pull account identity, avatar, profile URL, and more public works from the same creator.
+3. The Agent analyzes themes, voice, title patterns, and visual cues.
+4. It returns positioning, audience, content pillars, visual taboos, design directions, and an applicable `style_profile`.
 4. Apply the Style, then use that DNA for single covers, collection covers, and profile backgrounds.
 
 ## Output Sizes

@@ -363,7 +363,9 @@
 
     .stage {
       display: grid;
-      place-items: center;
+      justify-items: center;
+      align-items: start;
+      align-content: start;
       min-height: 0;
       padding: 28px;
       overflow: auto;
@@ -1923,6 +1925,43 @@
       font-size: 12px;
     }
 
+    .dna-identity-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dna-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(178,255,82,.42);
+      background: rgba(255,255,255,.08);
+    }
+
+    .dna-identity-copy {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .dna-identity-copy strong {
+      margin: 0;
+    }
+
+    .dna-identity-copy span,
+    .dna-identity-copy a {
+      min-width: 0;
+      overflow: hidden;
+      color: rgba(232,237,242,.68);
+      font-size: 11px;
+      text-decoration: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .agent-line.assistant {
       border-color: rgba(178,255,82,.38);
       background: rgba(178,255,82,.1);
@@ -2545,7 +2584,7 @@
           <span class="hero-chip">dna.superk.ai</span>
           <span class="hero-chip">Douyin ID: KevPH2026</span>
           <span class="hero-chip">WeChat: kevph2026</span>
-          <a class="hero-chip" href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">GitHub: dna-superk-ai</a>
+          <a class="hero-chip" href="https://github.com/KevPH2026/douyincover" target="_blank" rel="noreferrer">GitHub: douyincover</a>
         </div>
         <div class="hero-actions">
           <button class="hero-btn primary utility-hidden" id="scrollToStudioBtn">进入工作台</button>
@@ -2832,7 +2871,7 @@
             </div>
             <div class="delivery-mini-item">
               <strong>GitHub</strong>
-              <a href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">github.com/KevPH2026/dna-superk-ai</a>
+              <a href="https://github.com/KevPH2026/douyincover" target="_blank" rel="noreferrer">github.com/KevPH2026/douyincover</a>
             </div>
           </div>
         </section>
@@ -3021,7 +3060,7 @@
         <div class="owner-card" aria-label="Owner contact">
           <strong>Mr.K 在路上</strong>
           <span>微信 ID：kevph2026</span>
-          <a href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">github.com/KevPH2026/dna-superk-ai</a>
+          <a href="https://github.com/KevPH2026/douyincover" target="_blank" rel="noreferrer">github.com/KevPH2026/douyincover</a>
         </div>
       </div>
 
@@ -3104,7 +3143,7 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA / 生成 Style：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA / 生成 Style：给 1 个抖音作品链接也可以，系统会自动找作者主页、头像、ID 和其它公开作品。"></textarea>
           <div class="ai-command-grid">
             <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/动效</button>
             <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA / Style</button>
@@ -3166,7 +3205,7 @@
               <span class="agent-flow-index">04</span>
               <div class="agent-flow-copy">
                 <strong>素材和样本</strong>
-                <span>单条给链接/文案/截图；片头/片尾动效可补图片或视频素材；解码 DNA 至少给 10 条公开作品样本。</span>
+                  <span>单条给链接/文案/截图；片头/片尾动效可补图片或视频素材；解码 DNA 会先从 1 个作品链接自动找主页、头像、ID 和其它公开作品。</span>
               </div>
             </li>
             <li>
@@ -3360,7 +3399,7 @@
         </svg>
         <span>KevPH2026</span>
       </a>
-      <a class="social-link" href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer" title="GitHub：KevPH2026/dna-superk-ai" aria-label="打开 GitHub 项目">
+      <a class="social-link" href="https://github.com/KevPH2026/douyincover" target="_blank" rel="noreferrer" title="GitHub：KevPH2026/douyincover" aria-label="打开 GitHub 项目">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path>
           <path d="M8 9h8"></path>
@@ -3526,8 +3565,8 @@
 1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
 2. 再问任务类型：单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
-4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
-5. 如果是新账号或客户账号，先解码 DNA，再生成可应用的 style_profile：栏目、栏目英文、副标题、栏目色、配图风格、信息密度、背景方向、标题规则和封面规则。
+4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 优先从 1 个作品链接自动追作者主页、头像、ID 和其它公开作品；批量任务需要作品清单和优先级规则。
+5. 如果是新账号或客户账号，先爬取 account_identity 和不少于 10 条公开内容样本，再解码 DNA，生成可应用的 style_profile：栏目、栏目英文、副标题、栏目色、配图风格、信息密度、背景方向、标题规则和封面规则。
 6. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
@@ -3543,12 +3582,19 @@
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
 - 给客户账号做解码时，必须输出能被页面应用的 style_profile，不要只写审美建议。
+- 用户只给 1 个抖音作品链接时，先自动拉取作者昵称、抖音号/主页 ID、头像、主页链接和其它公开作品；抓不到再让用户补截图或作品标题。
 
 输出 brief JSON：
 {
   "account": "MR.K 在路上 / KevPH2026",
   "task": "single_cover|motion_intro|motion_outro|dna_decode|batch_refresh|collection|profile",
   "source_url": "",
+  "account_identity": {
+    "nickname": "",
+    "douyin_id": "",
+    "avatar_url": "",
+    "profile_url": ""
+  },
   "category": "ai|strong|road|custom",
   "ratio": "9:16|1:1",
   "duration": "1.2s|1.5s|2s",
@@ -3961,11 +4007,61 @@
       el.dnaResult.appendChild(card);
     }
 
+    function appendIdentityCard(payload) {
+      const identity = (payload && payload.account_identity) || {};
+      const discovery = (payload && payload.discovery) || {};
+      const hasIdentity = ["nickname", "douyin_id", "short_id", "avatar_url", "profile_url"].some(key => identity[key]);
+      const hasDiscovery = discovery.profile_url || discovery.related_sample_count || discovery.profile_sample_count || discovery.identity_fields;
+      if (!hasIdentity && !hasDiscovery) return;
+
+      const card = document.createElement("div");
+      card.className = "dna-card dna-identity-card";
+      if (identity.avatar_url) {
+        const img = document.createElement("img");
+        img.className = "dna-avatar";
+        img.alt = "抖音头像";
+        img.src = identity.avatar_url;
+        card.appendChild(img);
+      } else {
+        const avatar = document.createElement("span");
+        avatar.className = "dna-avatar";
+        avatar.setAttribute("aria-hidden", "true");
+        card.appendChild(avatar);
+      }
+
+      const copy = document.createElement("div");
+      copy.className = "dna-identity-copy";
+      const title = document.createElement("strong");
+      title.textContent = identity.nickname ? `自动识别账号：${identity.nickname}` : "自动识别账号";
+      copy.appendChild(title);
+      const idLine = document.createElement("span");
+      idLine.textContent = [
+        identity.douyin_id ? `抖音号 ${identity.douyin_id}` : "",
+        identity.short_id ? `短号 ${identity.short_id}` : "",
+        identity.sec_uid ? "已识别主页 ID" : ""
+      ].filter(Boolean).join(" / ") || "未在公开页面里识别到抖音号";
+      copy.appendChild(idLine);
+      const discoveryLine = document.createElement("span");
+      discoveryLine.textContent = `自动抓取：主页样本 ${Number(discovery.profile_sample_count || 0)} 条 / 相关作品样本 ${Number(discovery.related_sample_count || 0)} 条`;
+      copy.appendChild(discoveryLine);
+      if (identity.profile_url || discovery.profile_url) {
+        const link = document.createElement("a");
+        link.href = identity.profile_url || discovery.profile_url;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.textContent = identity.profile_url || discovery.profile_url;
+        copy.appendChild(link);
+      }
+      card.appendChild(copy);
+      el.dnaResult.appendChild(card);
+    }
+
     function renderDnaResult(payload) {
       el.dnaResult.hidden = false;
       el.dnaResult.innerHTML = "";
       state.generatedStyle = null;
       if (payload.status === "need_samples") {
+        appendIdentityCard(payload);
         appendDnaCard("样本不足", payload.reply || `还差 ${payload.missing_count || 0} 条作品样本。`);
         appendDnaCard("补样方式", payload.collection_guide || []);
         if (payload.samples && payload.samples.length) appendDnaCard("已识别样本", payload.samples.map(item => item.text));
@@ -3973,6 +4069,7 @@
       }
       const dna = payload.client_dna || {};
       const style = payload.style_signals || {};
+      appendIdentityCard(payload);
       appendStyleProfileCard(payload.style_profile);
       appendDnaCard("账号 DNA", [
         `定位：${dna.positioning || "待确认"}`,
