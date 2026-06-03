@@ -12,7 +12,7 @@ import urllib.request
 
 PREFIX = os.environ.get("ACCOUNT_KV_PREFIX", "mrkcover")
 SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
-MAX_ASSETS = 80
+MAX_ASSETS = 200
 
 
 class ServiceError(Exception):

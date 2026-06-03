@@ -1078,7 +1078,7 @@
     }
 
     function setLocalAssets(assets) {
-      writeJson(localAssetKey(), assets.slice(0, 80));
+      writeJson(localAssetKey(), assets.slice(0, 200));
     }
 
     function renderAuth() {
@@ -2048,7 +2048,7 @@
           setAssetStatus(`云端保存失败，已保存到本机。原因：${error.message}`, "error");
         }
       }
-      const assets = [asset, ...localAssets().filter(item => item.id !== asset.id)].slice(0, 80);
+      const assets = [asset, ...localAssets().filter(item => item.id !== asset.id)].slice(0, 200);
       setLocalAssets(assets);
       state.assets = assets;
       setAssetStatus("已保存到本机素材库。", "success");

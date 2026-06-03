@@ -1,0 +1,5 @@
+interface:
+  display_name: "Mr.K Douyin Cover"
+  short_description: "从抖音链接生成 Mr.K 固定风格的作品封面与素材"
+  brand_color: "#b2ff52"
+  default_prompt: "Use $mrk-douyin-cover to generate a Mr.K style Douyin cover from this link."

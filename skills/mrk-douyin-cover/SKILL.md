@@ -1,0 +1,111 @@
+---
+name: mrk-douyin-cover
+description: Use when the user sends a Douyin/TikTok China share link, copied Douyin share text, screenshot, caption, image, or topic and wants to generate or revise an on-brand cover for the Mr.K在路上 account. Guides Codex to ask a few focused questions, extract the core idea, choose one of the fixed Mr.K content categories, generate a realistic background, compose the cover, save it into the SNS cover/material library, and help the user replace or manage the asset.
+metadata:
+  short-description: Mr.K 抖音链接封面生成
+---
+
+# Mr.K Douyin Cover
+
+## Canon
+
+- Account: `MR.K 在路上`; Douyin ID: `KevPH2026`.
+- Fixed categories:
+  - `AI下半场` (`ai`, accent `#b2ff52`)
+  - `强者恒强` (`strong`, accent `#50d6ff`)
+  - `在路上` (`road`, accent `#ff6052`)
+- New single-work covers default to `1:1`, `1080x1080`.
+- A cover must include the work's main title. Make the Chinese title large enough for Douyin grid browsing; include an uppercase English subtitle when useful.
+- Do not add play count, likes, or historical performance numbers unless the user explicitly asks.
+- Style: dark editorial, high contrast, mature technology/business mood, restrained neon accent, K mark/avatar/category chip, consistent typography.
+- Avoid generic AI-looking backgrounds: no abstract orbs, bokeh blobs, random neural-network wallpaper, or vague sci-fi gradients. Prefer realistic/editorial scenes that match the content.
+
+## Workflow
+
+1. **Collect source**
+   - If the user provides a Douyin URL or copied share text, extract the URL, caption, hashtags, visible title, and topic.
+   - If the link cannot be opened because of auth, anti-bot, or app restrictions, do not get stuck; ask for the caption, screenshot, or key text.
+   - Private works are excluded by default unless the user explicitly asks to process them.
+
+2. **Ask only missing questions**
+   Ask 2-4 concise questions when the answer is not inferable. Use defaults aggressively.
+   - `用途/比例`: single-work cover `1:1` by default; ask only if it may be a collection cover, homepage background, or image-post carousel.
+   - `主标题`: offer a recommended title and ask whether to use it. Preserve exact user-specified titles.
+   - `内容分类`: infer from the content; ask only if ambiguous among `AI下半场`, `强者恒强`, `在路上`.
+   - `背景方向`: offer 2-3 realistic options tied to the copy, such as office desk, city night, product screen, conference room, road scene, lab, market chart, or portrait-like editorial scene.
+   - `编号`: use the user's value if given, otherwise choose the next sensible `K-xx` or omit if the asset batch already has a naming rule.
+
+   Good question pattern:
+   ```text
+   我先按 1:1 单条封面处理。还差 3 个判断：
+   1. 主标题用「...」可以吗？
+   2. 分类我建议放「AI下半场 / 强者恒强 / 在路上」，你选哪个？
+   3. 背景走 A「...」、B「...」还是 C「...」？
+   ```
+
+3. **Build a cover brief**
+   Keep a compact brief before generation:
+   ```json
+   {
+     "source_url": "",
+     "category": "ai|strong|road",
+     "ratio": "1:1",
+     "title_cn": "",
+     "title_en": "",
+     "summary": "",
+     "background_direction": "",
+     "background_prompt": "",
+     "code": "K-xx"
+   }
+   ```
+
+4. **Title rules**
+   - Ideal Chinese title length: 8-18 characters, split into 2-3 strong lines.
+   - Use judgment-title forms:
+     - `X不是Y，是Z`
+     - `X死了，谁还活着？`
+     - `如果你还在X，会错过Y`
+     - `这不是热点，这是重新定价`
+     - `多和聪明的人交往`
+   - Avoid plain topic labels like `AI发展趋势` unless the user insists.
+   - For quote/cognition content, sharpen into a repeatable judgment rather than a soft slogan.
+
+5. **Background mapping**
+   - AI model/product/business news: real product screen, terminal/API console, founder desk, conference table, market chart, server room, newsroom wall.
+   - Strong people/cognition/Jobs/business judgment: late-night office, whiteboard discussion, desk lamp, book/notes, portrait-like black-and-white editorial, negotiation room.
+   - Road/field notes: city night, airport/train/car interior, client site, hotel desk, rainy street, border/cross-border scene.
+   - Use the accent color only as subtle environmental light or a small design element.
+
+6. **Generate and compose**
+   - In `/Users/k/Documents/SNS`, prefer the existing MRK cover system and drawing rules:
+     - `mrk-cover-studio.html` for interactive generation/material management.
+     - `make_high_play_covers.py` and `make_low_play_covers.py` as reference implementations for typography, layout, avatar, K mark, category chips, and output manifests.
+   - For a new single cover, create a narrowly scoped script or reuse existing drawing functions; save to `/Users/k/Documents/SNS/generated-covers/ad-hoc/` unless the user asks for a batch folder.
+   - If AI background generation is needed, generate the background first from the `background_prompt`, then composite the fixed Mr.K overlay. The background must serve the title, not compete with it.
+   - If the user asks to update the web product/material library, update the relevant manifest/local storage/cloud asset path when available, then open the page or folder for inspection.
+
+7. **Local page deployment**
+   - If the user asks to deploy, preview, open, or use a local page, run this skill's local launcher:
+     ```bash
+     scripts/launch_local_studio.sh
+     ```
+   - The script serves `/Users/k/Documents/SNS/mrk-cover-studio.html` through `cover_studio_server.py`, chooses the next free port starting at `8765`, prints the local URL, then keeps the server running in the foreground.
+   - In Codex, keep the returned dev-server session alive while the user is using the page. If the user is running it manually in Terminal and wants background mode, use `launch_local_studio.sh --background`.
+   - Open the printed URL in the in-app browser when the user wants to operate the page directly.
+   - For full AI workflow, preserve any available `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `KV_REST_API_URL`, and `KV_REST_API_TOKEN` environment variables. Without them, the page still works for local editing and local asset storage.
+
+8. **Verify**
+   Before finishing, inspect or open the generated image/contact sheet and check:
+   - ratio and pixel size match the request;
+   - title is readable in Douyin grid size;
+   - no text overlap;
+   - no accidental play count or private-work marker;
+   - category, ID, and code are correct;
+   - background feels specific to the copy, not generic AI wallpaper.
+
+9. **Hand off**
+   - Show the generated image with a Markdown image tag when possible.
+   - Give the absolute file path.
+   - If a local page was deployed, give the URL and the log path.
+   - If the user wants to upload to Douyin backend, note that the in-app browser may not support local file upload automation; open/reveal the folder so the user can select the file manually.
+
