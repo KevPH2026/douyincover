@@ -1,72 +1,54 @@
 # Mr.K Cover Studio
 
-`dna.superk.ai` 的固定视觉封面生产器。
+**A fixed visual cover system for Douyin creators who publish AI, business, judgment, and field-note content.**
 
-Mr.K Cover Studio 面向知识型短视频账号，把抖音链接、作品文案、自然语言主题和参考图，转成统一风格的主页背景、合集封面和单条作品封面。
+[中文](./README.zh-CN.md) | [English](./README.en.md) | [Live Site](https://dna.superk.ai)
 
-核心不是再做一个通用海报工具，而是把一个账号的视觉 DNA 固定下来：该固定的固定，该输入的输入，让内容团队把精力放在判断、标题和背景场景上。
+Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content idea into an on-brand cover. It is not a general poster editor. It is a repeatable content asset system for one account style: fixed identity, fixed categories, flexible titles and backgrounds.
 
-## Product Positioning
+## Two Ways To Use It
 
-一句话：把抖音内容资产变成有识别度的账号视觉系统。
+| Delivery | Best For | Command |
+| --- | --- | --- |
+| Agent Skill | Send a Douyin link to an Agent, answer a few questions, generate a cover brief and asset | `scripts/install_agent_skill.sh` |
+| Local Web Studio | Preview, tune, save to material library, export PNG locally | `scripts/run_local_studio.sh` |
 
-适合这类内容账号：
+## Why It Exists
 
-- AI、商业、认知、个人 IP 类知识账号
-- 需要批量统一历史作品封面的创作者
-- 需要把热点快速加工成判断型封面的运营者
-- 希望主页、合集、单条作品保持同一套视觉语言的账号
+Most creator homepages fail quietly. The content may be sharp, but the grid looks accidental: different crops, different fonts, different visual logic, no memory hook.
 
-## Use Cases
+This project fixes that problem for `MR.K 在路上`.
 
-### 爆款复盘
+- One visual language across single posts, collections, and profile background
+- AI-assisted title, summary, category, and background direction
+- Realistic editorial backgrounds instead of generic AI wallpaper
+- Local material management for generated covers
+- A deployable Skill for Agent workflows
 
-把播放量过万的历史作品重新生成统一封面，让主页从散乱素材变成可识别的内容资产库。
+## Brand DNA
 
-### 热点追踪
+- Account: `MR.K 在路上`
+- Douyin ID: `KevPH2026`
+- WeChat ID: `Kevph2026`
+- Domain: `dna.superk.ai`
+- Categories: `AI下半场`, `强者恒强`, `在路上`
 
-粘贴抖音链接或分享文案，自动提炼标题、栏目、摘要和背景方向，快速产出适合发布的封面。
+## Core Workflow
 
-### 个人 IP 视觉固定
-
-账号名、微信 ID、头像印章、K 字标、栏目色、标题层级都被锁定，避免每次做图都跑偏。
-
-### AI 背景生成
-
-根据作品主题生成更贴合内容的真实/编辑感背景，不使用泛泛的 AI 风抽象图。
-
-## Brand System
-
-固定资产：
-
-- 账号名：`MR.K 在路上`
-- 抖音 ID：`KevPH2026`
-- 微信 ID：`Kevph2026`
-- 域名：`dna.superk.ai`
-- 口号：`少和人对话，多和AI对话`
-
-固定栏目：
-
-- `AI下半场`：模型、Agent、商业重构
-- `强者恒强`：判断力、筹码、个体系统
-- `在路上`：出差、客户、一线观察
-
-## Workflow
-
-1. 粘贴抖音分享文案、作品链接、图片或自然语言主题。
-2. DeepSeek 提炼标题、栏目、摘要和封面方向。
-3. Image 生成贴合文案的背景图。
-4. 固定 Mr.K 视觉系统自动叠加标题、头像、K 字标和栏目标签。
-5. 保存到素材库或导出 PNG。
+1. Paste a Douyin share snippet, short link, screenshot, or topic.
+2. DeepSeek extracts the content angle and proposes title/category/summary.
+3. Image generation creates a background that matches the copy.
+4. The fixed Mr.K overlay system renders the final cover.
+5. Save to material library or export PNG.
 
 ## Outputs
 
-- 单条作品封面：`1080x1920`
-- 合集封面：`1080x1080`
-- 主页背景：`1920x640`
-- 生成素材库：本地可用，配置 KV 后支持云端保存
+- Single work cover: `1080x1920`
+- Collection cover: `1080x1080`
+- Profile background: `1920x640`
+- Material library: local by default, KV-backed in production
 
-## Local
+## Local Development
 
 ```bash
 python3 cover_studio_server.py
@@ -78,27 +60,15 @@ Open:
 http://127.0.0.1:8765/mrk-cover-studio.html
 ```
 
-Enable real AI image generation locally:
+With image generation:
 
 ```bash
 OPENAI_API_KEY=sk-... python3 cover_studio_server.py
 ```
 
-The studio can generate a cover from a full Douyin share snippet or short link. Paste the copied Douyin text into the right inspector and use `抖音链接生成封面`; the backend extracts the link, cleans copy-code noise, reads available metadata, and returns a fixed-style Mr.K cover plan.
+## Production
 
-## Skill
-
-This repo includes a Codex Skill source:
-
-```text
-skills/mrk-douyin-cover/
-```
-
-Use it when a Douyin link, share text, screenshot, or content topic should become a Mr.K-style cover. The Skill asks only the missing questions, builds the cover brief, and can launch the local studio page quickly.
-
-## Deploy
-
-Vercel serves the static app and the Python serverless functions at:
+Vercel serves the static studio and Python serverless APIs:
 
 ```text
 /api/cover-agent
@@ -107,7 +77,7 @@ Vercel serves the static app and the Python serverless functions at:
 /api/assets
 ```
 
-Required production environment variables:
+Required environment variables:
 
 ```text
 DEEPSEEK_API_KEY
