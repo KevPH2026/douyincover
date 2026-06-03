@@ -5,13 +5,18 @@ import json
 import os
 import re
 import secrets
+import smtplib
 import time
 import urllib.error
 import urllib.request
+from email.message import EmailMessage
 
 
 PREFIX = os.environ.get("ACCOUNT_KV_PREFIX", "mrkcover")
 SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
+EMAIL_CODE_TTL_SECONDS = 60 * 10
+EMAIL_CODE_RESEND_SECONDS = 60
+EMAIL_CODE_MAX_ATTEMPTS = 5
 MAX_ASSETS = 200
 
 
@@ -95,6 +100,13 @@ def normalize_email(email):
     return trim(email, 160).lower()
 
 
+def validate_email(email):
+    email = normalize_email(email)
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        raise ServiceError(400, {"error": "bad_email", "message": "请输入有效邮箱。"})
+    return email
+
+
 def public_user(user):
     return {
         "id": user["id"],
@@ -110,10 +122,8 @@ def password_digest(password, salt):
 
 
 def validate_credentials(email, password, registering=False):
-    email = normalize_email(email)
+    email = validate_email(email)
     password = str(password or "")
-    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-        raise ServiceError(400, {"error": "bad_email", "message": "请输入有效邮箱。"})
     if len(password) < 6:
         raise ServiceError(400, {"error": "weak_password", "message": "密码至少 6 位。"})
     if registering and len(password) > 128:
@@ -131,6 +141,10 @@ def user_id_key(user_id):
 
 def session_key(token):
     return f"{PREFIX}:session:{token}"
+
+
+def email_code_key(email):
+    return f"{PREFIX}:email-code:{email}"
 
 
 def asset_key(user_id, asset_id):
@@ -153,6 +167,192 @@ def create_session(user):
         SESSION_TTL_SECONDS,
     )
     return token
+
+
+def code_digest(email, code):
+    secret = os.environ.get("AUTH_CODE_SECRET") or os.environ.get("KV_REST_API_TOKEN") or PREFIX
+    raw = f"{email}:{code}:{secret}".encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def verification_email_body(code):
+    text = f"""Mr.K Cover Studio 登录验证码：{code}
+
+验证码 10 分钟内有效。若不是你本人操作，可以忽略这封邮件。
+
+dna.superk.ai
+"""
+    html = f"""
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#080a0d;color:#f8f8f2;padding:28px;">
+      <div style="max-width:520px;margin:0 auto;border:1px solid rgba(178,255,82,.28);border-radius:14px;padding:28px;background:#101317;">
+        <p style="margin:0 0 12px;color:#b2ff52;font-size:13px;letter-spacing:.12em;text-transform:uppercase;">Mr.K Cover Studio</p>
+        <h1 style="margin:0 0 18px;font-size:22px;color:#fff;">你的登录验证码</h1>
+        <div style="font-size:36px;font-weight:800;letter-spacing:.18em;color:#b2ff52;margin:18px 0;">{code}</div>
+        <p style="margin:0 0 8px;color:#d8d8d0;font-size:15px;">验证码 10 分钟内有效，用于登录或创建账号。</p>
+        <p style="margin:0;color:#8d918a;font-size:13px;">若不是你本人操作，可以忽略这封邮件。</p>
+      </div>
+    </div>
+    """
+    return text, html
+
+
+def send_resend_email(email, subject, text, html):
+    api_key = os.environ.get("RESEND_API_KEY")
+    if not api_key:
+        return False
+    sender = os.environ.get("AUTH_EMAIL_FROM") or "Mr.K Cover Studio <onboarding@resend.dev>"
+    payload = {
+        "from": sender,
+        "to": [email],
+        "subject": subject,
+        "text": text,
+        "html": html,
+    }
+    reply_to = os.environ.get("AUTH_EMAIL_REPLY_TO")
+    if reply_to:
+        payload["reply_to"] = reply_to
+    request = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=12) as response:
+            response.read()
+        return True
+    except urllib.error.HTTPError as exc:
+        message = exc.read().decode("utf-8", errors="replace")
+        raise ServiceError(exc.code, {"error": "email_failed", "message": message})
+    except Exception as exc:
+        raise ServiceError(502, {"error": "email_failed", "message": str(exc)})
+
+
+def send_smtp_email(email, subject, text, html):
+    host = os.environ.get("SMTP_HOST")
+    if not host:
+        return False
+    port = int(os.environ.get("SMTP_PORT") or "587")
+    sender = os.environ.get("SMTP_FROM") or os.environ.get("AUTH_EMAIL_FROM") or os.environ.get("SMTP_USER")
+    if not sender:
+        raise ServiceError(503, {"error": "missing_email_from", "message": "SMTP_FROM 或 AUTH_EMAIL_FROM 未配置。"})
+    message = EmailMessage()
+    message["From"] = sender
+    message["To"] = email
+    message["Subject"] = subject
+    message.set_content(text)
+    message.add_alternative(html, subtype="html")
+
+    use_ssl = os.environ.get("SMTP_USE_SSL") == "1"
+    use_tls = os.environ.get("SMTP_USE_TLS", "1") != "0"
+    smtp_class = smtplib.SMTP_SSL if use_ssl else smtplib.SMTP
+    try:
+        with smtp_class(host, port, timeout=12) as server:
+            if use_tls and not use_ssl:
+                server.starttls()
+            username = os.environ.get("SMTP_USER")
+            password = os.environ.get("SMTP_PASSWORD")
+            if username and password:
+                server.login(username, password)
+            server.send_message(message)
+        return True
+    except Exception as exc:
+        raise ServiceError(502, {"error": "email_failed", "message": str(exc)})
+
+
+def send_verification_email(email, code):
+    subject = "Mr.K Cover Studio 登录验证码"
+    text, html = verification_email_body(code)
+    if send_resend_email(email, subject, text, html):
+        return "resend"
+    if send_smtp_email(email, subject, text, html):
+        return "smtp"
+    return ""
+
+
+def auth_send_code(incoming):
+    email = validate_email(incoming.get("email"))
+    existing = kv_get_json(email_code_key(email))
+    if existing:
+        elapsed = max(0, int((now_ms() - int(existing.get("created_at", 0))) / 1000))
+        if elapsed < EMAIL_CODE_RESEND_SECONDS:
+            retry_after = EMAIL_CODE_RESEND_SECONDS - elapsed
+            raise ServiceError(
+                429,
+                {
+                    "error": "too_many_requests",
+                    "message": f"验证码已发送，请 {retry_after} 秒后再试。",
+                    "retry_after": retry_after,
+                },
+            )
+
+    code = f"{secrets.randbelow(1_000_000):06d}"
+    kv_set_json(
+        email_code_key(email),
+        {
+            "email": email,
+            "code_hash": code_digest(email, code),
+            "attempts": 0,
+            "created_at": now_ms(),
+            "expires_at": now_ms() + EMAIL_CODE_TTL_SECONDS * 1000,
+        },
+        EMAIL_CODE_TTL_SECONDS,
+    )
+    provider = send_verification_email(email, code)
+    if not provider:
+        if os.environ.get("ALLOW_DEBUG_EMAIL_CODE") == "1" or not os.environ.get("VERCEL"):
+            return {
+                "ok": True,
+                "email": email,
+                "expires_in": EMAIL_CODE_TTL_SECONDS,
+                "debug_code": code,
+                "storage": "cloud",
+                "message": "邮件服务未配置，已进入本地调试模式。",
+            }
+        raise ServiceError(503, {"error": "missing_email_provider", "message": "邮件服务未配置，请设置 RESEND_API_KEY 或 SMTP_*。"})
+    return {"ok": True, "email": email, "expires_in": EMAIL_CODE_TTL_SECONDS, "provider": provider, "storage": "cloud"}
+
+
+def auth_verify_code(incoming):
+    email = validate_email(incoming.get("email"))
+    code = re.sub(r"\D+", "", str(incoming.get("code") or ""))[:6]
+    if len(code) != 6:
+        raise ServiceError(400, {"error": "bad_code", "message": "请输入 6 位验证码。"})
+    key = email_code_key(email)
+    record = kv_get_json(key)
+    if not record:
+        raise ServiceError(401, {"error": "code_expired", "message": "验证码不存在或已过期，请重新获取。"})
+    if now_ms() > int(record.get("expires_at", 0)):
+        kv_delete(key)
+        raise ServiceError(401, {"error": "code_expired", "message": "验证码已过期，请重新获取。"})
+    if int(record.get("attempts", 0)) >= EMAIL_CODE_MAX_ATTEMPTS:
+        kv_delete(key)
+        raise ServiceError(401, {"error": "code_locked", "message": "验证码尝试次数过多，请重新获取。"})
+    expected = record.get("code_hash") or ""
+    if not hmac.compare_digest(expected, code_digest(email, code)):
+        record["attempts"] = int(record.get("attempts", 0)) + 1
+        ttl = max(1, int((int(record.get("expires_at", 0)) - now_ms()) / 1000))
+        kv_set_json(key, record, ttl)
+        raise ServiceError(401, {"error": "bad_code", "message": "验证码不正确。"})
+
+    kv_delete(key)
+    user = kv_get_json(user_email_key(email))
+    if not user:
+        user_id = secrets.token_hex(12)
+        user = {
+            "id": user_id,
+            "email": email,
+            "name": trim(incoming.get("name"), 48) or email.split("@")[0],
+            "created_at": now_ms(),
+            "login_method": "email_code",
+        }
+        kv_set_json(user_email_key(email), user)
+        kv_set_json(user_id_key(user_id), user)
+    token = create_session(user)
+    return {"token": token, "user": public_user(user), "storage": "cloud"}
 
 
 def auth_register(incoming):
@@ -181,6 +381,8 @@ def auth_login(incoming):
     user = kv_get_json(user_email_key(email))
     if not user:
         raise ServiceError(401, {"error": "bad_login", "message": "邮箱或密码不正确。"})
+    if not user.get("salt") or not user.get("password_hash"):
+        raise ServiceError(401, {"error": "password_unavailable", "message": "这个账号使用邮箱验证码登录。"})
     expected = password_digest(password, user["salt"])
     if not hmac.compare_digest(expected, user["password_hash"]):
         raise ServiceError(401, {"error": "bad_login", "message": "邮箱或密码不正确。"})
@@ -223,6 +425,10 @@ def auth_logout(headers, incoming):
 
 def handle_auth(incoming, headers):
     action = trim(incoming.get("action") or "me", 24)
+    if action == "send_code":
+        return auth_send_code(incoming)
+    if action == "verify_code":
+        return auth_verify_code(incoming)
     if action == "register":
         return auth_register(incoming)
     if action == "login":

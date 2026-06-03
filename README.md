@@ -44,6 +44,8 @@ This project fixes that problem for `MR.K 在路上`.
 - Quick templates for AI news, strong quotes, field notes, motion intros, collections, profile banners, and custom columns
 - Custom categories with editable Chinese name, English name, subtitle, and accent color
 - Local-only configuration for OpenAI-compatible LLM and image models
+- Anonymous users can try 3 AI generation actions before email-code login is required
+- Email verification login with auto-create account on first verified email
 - Realistic editorial backgrounds instead of generic AI wallpaper
 - Local material management for generated covers and intro frames
 - A deployable Skill for Agent workflows
@@ -112,6 +114,16 @@ The Web Studio includes a local-only model panel for analysis, copywriting, and 
 
 Leave these fields empty to use environment variables such as `DEEPSEEK_API_KEY` and `OPENAI_API_KEY`.
 
+## Auth And Trial Limit
+
+Logged-out visitors can use 3 AI production actions: Agent cover/intro generation, DNA decode, or manual AI background generation. After the third action, the page opens the account menu and requires email-code login.
+
+Email-code login supports:
+
+- Resend: `RESEND_API_KEY`, optional `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`
+- SMTP: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`
+- Local/dev fallback: when KV or email delivery is not configured, the browser uses a local debug code flow
+
 ## Production
 
 Vercel serves the static studio and Python serverless APIs:
@@ -141,6 +153,14 @@ OPENAI_IMAGE_MODEL=gpt-image-2
 OPENAI_IMAGE_QUALITY=medium
 OPENAI_IMAGE_INPUT_FIDELITY=high
 ACCOUNT_KV_PREFIX=mrkcover
+RESEND_API_KEY=re_...
+AUTH_EMAIL_FROM="Mr.K Cover Studio <login@your-domain.com>"
+AUTH_EMAIL_REPLY_TO=kevph2026@example.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASSWORD=...
+SMTP_FROM=login@your-domain.com
 ```
 
 When KV is not configured, the browser falls back to local-only login and local asset storage.

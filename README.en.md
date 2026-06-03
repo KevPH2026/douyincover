@@ -71,6 +71,10 @@ Built-in starters cover AI news analysis, strong quotes, field notes, motion int
 
 Covers can be saved into a material library. It works locally by default and can use KV storage in production.
 
+### Trial Limit And Email Login
+
+Logged-out visitors can use 3 AI production actions: conversational cover/intro generation, DNA decode, or manual AI background generation. After the third action, the account menu asks for email-code login. A verified new email automatically creates an account.
+
 ### Configure Local Models
 
 The Web Studio includes a local-only model panel for OpenAI-compatible LLM and image endpoints. Use it for content analysis, cover copywriting, and background generation. The settings stay in the browser and are never committed to Git or saved to the material library.
@@ -153,6 +157,15 @@ The right-side "Local Model Configuration" panel supports:
 
 Leave these fields empty to keep using environment variables such as `DEEPSEEK_API_KEY` and `OPENAI_API_KEY`. If an endpoint fails, the page falls back to local planning rules and local placeholder backgrounds.
 
+## Email-Code Login
+
+Cloud email-code login stores verification codes and sessions in KV, then sends mail through one of these providers:
+
+- Resend: `RESEND_API_KEY`, optional `AUTH_EMAIL_FROM`, `AUTH_EMAIL_REPLY_TO`
+- SMTP: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM`
+
+When KV or email delivery is missing, the browser uses a local debug-code flow for development. Configure Resend or SMTP for production email delivery.
+
 ## Install As An Agent Skill
 
 ```bash
@@ -196,6 +209,14 @@ OPENAI_IMAGE_MODEL=gpt-image-2
 OPENAI_IMAGE_QUALITY=medium
 OPENAI_IMAGE_INPUT_FIDELITY=high
 ACCOUNT_KV_PREFIX=mrkcover
+RESEND_API_KEY=re_...
+AUTH_EMAIL_FROM="Mr.K Cover Studio <login@your-domain.com>"
+AUTH_EMAIL_REPLY_TO=kevph2026@example.com
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=...
+SMTP_PASSWORD=...
+SMTP_FROM=login@your-domain.com
 ```
 
 Without KV configuration, the browser falls back to local-only auth and asset storage.

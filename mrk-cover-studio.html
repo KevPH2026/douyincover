@@ -802,6 +802,21 @@
       font-size: 13px;
     }
 
+    .usage-meter {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(178, 255, 82, .24);
+      border-radius: 8px;
+      background: rgba(178, 255, 82, .08);
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .usage-meter strong {
+      color: var(--active-color);
+    }
+
     .pill {
       display: inline-flex;
       align-items: center;
@@ -2191,16 +2206,16 @@
               <input id="authEmail" type="email" autocomplete="email" placeholder="you@company.com">
             </div>
             <div class="field">
-              <label for="authPassword">密码</label>
-              <input id="authPassword" type="password" autocomplete="current-password" placeholder="至少 6 位">
+              <label for="authCode">验证码</label>
+              <input id="authCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 位验证码">
             </div>
             <div class="field">
               <label for="authName">昵称</label>
-              <input id="authName" autocomplete="name" placeholder="Mr.K">
+              <input id="authName" autocomplete="name" placeholder="首次登录可填">
             </div>
             <div class="auth-actions">
-              <button class="ghost-btn" id="loginBtn" style="margin-top:0;">登录</button>
-              <button class="ghost-btn" id="registerBtn" style="margin-top:0;">注册</button>
+              <button class="ghost-btn" id="sendCodeBtn" style="margin-top:0;">发送验证码</button>
+              <button class="ghost-btn" id="loginBtn" style="margin-top:0;">验证码登录</button>
             </div>
           </div>
           <div id="authLoggedIn" hidden>
@@ -2211,7 +2226,8 @@
             </div>
             <button class="ghost-btn" id="logoutBtn">退出登录</button>
           </div>
-          <div class="hint" id="authStatus">未登录也可以保存到本机。</div>
+          <div class="hint" id="authStatus">未登录可免费试用 3 次。</div>
+          <div class="usage-meter" id="guestUsageStatus"></div>
         </section>
 
         <section class="group">
@@ -2840,10 +2856,10 @@
       quickTemplateButtons: document.getElementById("quickTemplateButtons"),
       categoryButtons: document.getElementById("categoryButtons"),
       authEmail: document.getElementById("authEmail"),
-      authPassword: document.getElementById("authPassword"),
+      authCode: document.getElementById("authCode"),
       authName: document.getElementById("authName"),
+      sendCodeBtn: document.getElementById("sendCodeBtn"),
       loginBtn: document.getElementById("loginBtn"),
-      registerBtn: document.getElementById("registerBtn"),
       logoutBtn: document.getElementById("logoutBtn"),
       authLoggedOut: document.getElementById("authLoggedOut"),
       authLoggedIn: document.getElementById("authLoggedIn"),
@@ -2851,6 +2867,7 @@
       accountEmail: document.getElementById("accountEmail"),
       storageMode: document.getElementById("storageMode"),
       authStatus: document.getElementById("authStatus"),
+      guestUsageStatus: document.getElementById("guestUsageStatus"),
       douyinShare: document.getElementById("douyinShare"),
       agentMessage: document.getElementById("agentMessage"),
       agentLink: document.getElementById("agentLink"),
@@ -3207,6 +3224,71 @@
       el.assetStatus.className = `ai-status ${type}`.trim();
     }
 
+    const GUEST_USE_LIMIT = 3;
+
+    function guestUsage() {
+      const saved = readJson(storageKey("guestUsage.v1"), { count: 0 });
+      return {
+        count: Math.max(0, Number(saved.count || 0)),
+        limit: GUEST_USE_LIMIT
+      };
+    }
+
+    function setGuestUsage(count) {
+      writeJson(storageKey("guestUsage.v1"), {
+        count: Math.max(0, Math.min(GUEST_USE_LIMIT, Number(count || 0))),
+        updated_at: Date.now()
+      });
+      renderGuestUsage();
+    }
+
+    function guestRemaining() {
+      const usage = guestUsage();
+      return Math.max(0, usage.limit - usage.count);
+    }
+
+    function renderGuestUsage() {
+      if (!el.guestUsageStatus) return;
+      if (state.user) {
+        el.guestUsageStatus.innerHTML = "已登录，AI 生成和素材管理不受免费次数限制。";
+        return;
+      }
+      const remaining = guestRemaining();
+      el.guestUsageStatus.innerHTML = remaining > 0
+        ? `未登录可免费使用 <strong>${remaining}</strong> 次 AI 生成；用完后邮箱验证码登录继续。`
+        : `免费 3 次已用完。请输入邮箱获取验证码后继续使用。`;
+    }
+
+    function promptLoginRequired(action) {
+      const message = `免费 3 次已用完，登录后继续${action}。`;
+      setAuthStatus(message, "error");
+      setAgentStatus(message, "error");
+      setAiStatus(message, "error");
+      renderGuestUsage();
+      setSettingsOpen(true);
+    }
+
+    function ensureGuestCanUse(action) {
+      if (state.user) return true;
+      if (guestRemaining() <= 0) {
+        promptLoginRequired(action);
+        return false;
+      }
+      return true;
+    }
+
+    function recordGuestUse(action) {
+      if (state.user) return;
+      const nextCount = guestUsage().count + 1;
+      setGuestUsage(nextCount);
+      const remaining = guestRemaining();
+      if (remaining > 0) {
+        setAuthStatus(`${action}已计入免费体验，剩余 ${remaining} 次。`);
+      } else {
+        setAuthStatus(`免费 3 次已用完。下次使用前请用邮箱验证码登录。`, "error");
+      }
+    }
+
     async function apiPost(path, body) {
       const headers = { "Content-Type": "application/json" };
       if (state.authToken) headers.Authorization = `Bearer ${state.authToken}`;
@@ -3236,6 +3318,55 @@
     function setLocalSession(user) {
       if (user) writeJson(storageKey("session"), user);
       else localStorage.removeItem(storageKey("session"));
+    }
+
+    function localEmailCodes() {
+      return readJson(storageKey("emailCodes"), {});
+    }
+
+    function setLocalEmailCodes(codes) {
+      writeJson(storageKey("emailCodes"), codes);
+    }
+
+    async function localSendCode(email) {
+      const cleanEmail = email.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) throw new Error("请输入有效邮箱。");
+      const code = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
+      const codes = localEmailCodes();
+      codes[cleanEmail] = {
+        code_hash: await digestText(`${cleanEmail}:${code}`),
+        expires_at: Date.now() + 10 * 60 * 1000
+      };
+      setLocalEmailCodes(codes);
+      return { ok: true, email: cleanEmail, debug_code: code, storage: "local" };
+    }
+
+    async function localVerifyCode(email, code, name) {
+      const cleanEmail = email.trim().toLowerCase();
+      const cleanCode = String(code || "").replace(/\D+/g, "").slice(0, 6);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(cleanEmail)) throw new Error("请输入有效邮箱。");
+      if (cleanCode.length !== 6) throw new Error("请输入 6 位验证码。");
+      const codes = localEmailCodes();
+      const record = codes[cleanEmail];
+      if (!record || Date.now() > Number(record.expires_at || 0)) throw new Error("验证码不存在或已过期，请重新获取。");
+      const hash = await digestText(`${cleanEmail}:${cleanCode}`);
+      if (hash !== record.code_hash) throw new Error("验证码不正确。");
+      delete codes[cleanEmail];
+      setLocalEmailCodes(codes);
+      const users = localUsers();
+      let user = users[cleanEmail];
+      if (!user) {
+        user = {
+          id: `local-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+          email: cleanEmail,
+          name: name.trim() || cleanEmail.split("@")[0],
+          login_method: "email_code"
+        };
+        users[cleanEmail] = user;
+        setLocalUsers(users);
+      }
+      setLocalSession({ id: user.id, email: user.email, name: user.name });
+      return { user: { id: user.id, email: user.email, name: user.name }, storage: "local" };
     }
 
     async function localRegister(email, password, name) {
@@ -3303,34 +3434,47 @@
       }
       renderAuth();
       setAuthStatus(fallbackMessage || `${state.user.name || state.user.email} 已登录。`);
+      renderGuestUsage();
       await refreshAssets();
     }
 
-    async function registerAccount() {
+    async function sendAuthCode() {
       const email = el.authEmail.value.trim();
-      const password = el.authPassword.value;
-      const name = el.authName.value.trim();
-      setAuthStatus("正在注册账号。");
+      if (!email) {
+        setAuthStatus("先输入邮箱。", "error");
+        return;
+      }
+      el.sendCodeBtn.disabled = true;
+      setAuthStatus("正在发送验证码。");
       try {
-        const payload = await apiPost("/api/auth", { action: "register", email, password, name });
-        await finishAuth(payload, "云端账号已注册并登录。");
+        const payload = await apiPost("/api/auth", { action: "send_code", email });
+        if (payload.debug_code) {
+          el.authCode.value = payload.debug_code;
+          setAuthStatus(`测试模式验证码：${payload.debug_code}。输入后即可登录。`, "success");
+        } else {
+          setAuthStatus(`验证码已发送到 ${payload.email || email}，10 分钟内有效。`, "success");
+        }
       } catch (error) {
-        if (error.payload && error.payload.error !== "missing_storage") throw error;
-        const payload = await localRegister(email, password, name);
-        await finishAuth(payload, "当前未配置云端 KV，已创建本机账号。");
+        if (error.payload && !["missing_storage", "missing_email_provider"].includes(error.payload.error)) throw error;
+        const payload = await localSendCode(email);
+        el.authCode.value = payload.debug_code;
+        setAuthStatus(`当前未配置云端邮件服务，已使用本机验证码：${payload.debug_code}`, "success");
+      } finally {
+        el.sendCodeBtn.disabled = false;
       }
     }
 
     async function loginAccount() {
       const email = el.authEmail.value.trim();
-      const password = el.authPassword.value;
-      setAuthStatus("正在登录。");
+      const code = el.authCode.value.trim();
+      const name = el.authName.value.trim();
+      setAuthStatus("正在验证邮箱。");
       try {
-        const payload = await apiPost("/api/auth", { action: "login", email, password });
-        await finishAuth(payload, "云端账号已登录。");
+        const payload = await apiPost("/api/auth", { action: "verify_code", email, code, name });
+        await finishAuth(payload, "邮箱验证通过，已登录云端账号。");
       } catch (error) {
-        if (error.payload && error.payload.error !== "missing_storage") throw error;
-        const payload = await localLogin(email, password);
+        if (error.payload && !["missing_storage", "missing_email_provider"].includes(error.payload.error)) throw error;
+        const payload = await localVerifyCode(email, code, name);
         await finishAuth(payload, "当前未配置云端 KV，已登录本机账号。");
       }
     }
@@ -3345,7 +3489,8 @@
       localStorage.removeItem("mrk.authToken");
       setLocalSession(null);
       renderAuth();
-      setAuthStatus("已退出。未登录时素材会保存到本机访客空间。");
+      setAuthStatus("已退出。未登录可免费试用 3 次。");
+      renderGuestUsage();
       await refreshAssets();
     }
 
@@ -3366,9 +3511,11 @@
         state.storageMode = "local";
         renderAuth();
         setAuthStatus("已恢复本机账号。");
+        renderGuestUsage();
       } else {
         renderAuth();
-        setAuthStatus("未登录也可以保存到本机。");
+        renderGuestUsage();
+        setAuthStatus(`未登录可免费试用 3 次，剩余 ${guestRemaining()} 次。`);
       }
       await refreshAssets();
     }
@@ -3781,6 +3928,8 @@
     }
 
     async function generateAiBackground(options = {}) {
+      const shouldCountUsage = !options.fromAgent;
+      if (shouldCountUsage && !ensureGuestCanUse("生成背景")) return;
       const prompt = buildAiPrompt();
       el.generateBgBtn.disabled = true;
       if (options.fromAgent) setAgentButtonsDisabled(true);
@@ -3817,6 +3966,7 @@
       } finally {
         el.generateBgBtn.disabled = false;
         if (options.fromAgent) setAgentButtonsDisabled(false);
+        if (shouldCountUsage) recordGuestUse("生成背景");
         draw();
       }
     }
@@ -3893,6 +4043,7 @@
       if (fromDouyin && extractedUrl) {
         el.agentLink.value = extractedUrl;
       }
+      if (!ensureGuestCanUse(fromDouyin ? "根据抖音内容生成" : "对话生成")) return;
 
       const userLine = [
         fromDouyin ? "抖音链接生成封面" : (message || "按当前内容生成一版封面"),
@@ -3930,6 +4081,7 @@
         const sourceNote = agentSourceNote(payload.source);
         setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
         await generateAiBackground({ fromAgent: true });
+        recordGuestUse(state.template === "intro" ? "生成片头" : "生成封面");
         const outputLabel = state.template === "intro" ? "导出 WebM 或封面帧 PNG" : "导出 PNG";
         setAgentStatus(`${payload.fallback ? "已用本地方案完成" : `已用 ${payload.model || "LLM"} 方案完成`}，可以直接${outputLabel}。`, payload.fallback ? "error" : "success");
         el.status.textContent = "Agent cover generated";
@@ -3949,6 +4101,7 @@
         setAgentStatus("先粘贴抖音主页/作品链接，或至少 10 条作品标题、封面文字、截图转文字。", "error");
         return;
       }
+      if (!ensureGuestCanUse("解码 DNA")) return;
 
       addAgentMessage("user", `解码 DNA\n${sourceText || message || extractedUrl}`);
       setAgentButtonsDisabled(true);
@@ -3981,6 +4134,7 @@
         } else {
           setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成账号 DNA 和设计方向。`, payload.fallback ? "error" : "success");
           addAgentMessage("assistant", payload.reply || "账号 DNA 和设计方向已生成。");
+          recordGuestUse("解码 DNA");
         }
         el.status.textContent = "DNA decoded";
       } catch (error) {
@@ -4903,12 +5057,12 @@
     el.saveModelConfigBtn.addEventListener("click", saveModelConfig);
     el.clearModelConfigBtn.addEventListener("click", clearModelConfig);
 
-    el.loginBtn.addEventListener("click", () => {
-      loginAccount().catch(error => setAuthStatus(`登录失败：${error.message}`));
+    el.sendCodeBtn.addEventListener("click", () => {
+      sendAuthCode().catch(error => setAuthStatus(`发送失败：${error.message}`, "error"));
     });
 
-    el.registerBtn.addEventListener("click", () => {
-      registerAccount().catch(error => setAuthStatus(`注册失败：${error.message}`));
+    el.loginBtn.addEventListener("click", () => {
+      loginAccount().catch(error => setAuthStatus(`登录失败：${error.message}`));
     });
 
     el.logoutBtn.addEventListener("click", logoutAccount);
