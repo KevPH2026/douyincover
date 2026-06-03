@@ -1089,7 +1089,7 @@
 
     .onboarding-progress {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-bottom: 16px;
     }
@@ -1117,6 +1117,67 @@
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
+    }
+
+    .tour-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .tour-card {
+      min-height: 142px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .tour-card b {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      background: #15191f;
+      color: #f7ffe8;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .tour-card strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .tour-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .recording-script {
+      padding: 14px 16px;
+      border: 1px solid rgba(178,255,82,.24);
+      border-radius: 8px;
+      background: rgba(178,255,82,.08);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .recording-script strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--text);
+      font-size: 13px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
     }
 
     .onboarding-choice {
@@ -1896,6 +1957,31 @@
       color: #f4f7fb;
     }
 
+    .tour-card {
+      border-color: rgba(255,255,255,.1);
+      background: rgba(255,255,255,.055);
+      color: #f4f7fb;
+    }
+
+    .tour-card b {
+      background: var(--lime);
+      color: #07120d;
+    }
+
+    .tour-card span {
+      color: rgba(244,247,251,.68);
+    }
+
+    .recording-script {
+      border-color: rgba(178,255,82,.28);
+      background: linear-gradient(135deg, rgba(178,255,82,.12), rgba(80,216,255,.06));
+      color: rgba(244,247,251,.82);
+    }
+
+    .recording-script strong {
+      color: var(--lime);
+    }
+
     .onboarding-choice.active {
       border-color: var(--lime);
       box-shadow: inset 0 0 0 1px rgba(178,255,82,.8);
@@ -1961,6 +2047,7 @@
       }
 
       .onboarding-grid,
+      .tour-grid,
       .onboarding-form,
       .advanced-body {
         grid-template-columns: 1fr;
@@ -2013,7 +2100,7 @@
           <button class="hero-btn primary utility-hidden" id="scrollToStudioBtn">进入工作台</button>
           <button class="hero-btn primary" id="advancedOpenBtn">手动 / 素材</button>
           <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
-          <button class="hero-btn utility-hidden" id="onboardingOpenBtn">Onboarding</button>
+          <button class="hero-btn" id="onboardingOpenBtn">新手导览</button>
         </div>
       </div>
 
@@ -2042,8 +2129,8 @@
     <section class="onboarding-panel" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
       <header class="onboarding-head">
         <div>
-          <h2 id="onboardingTitle">3 步完成 Mr.K 封面系统初始化</h2>
-          <p>先选使用方式，再选常用模板，最后确认栏目。完成后直接进入工作台。</p>
+          <h2 id="onboardingTitle">4 步上手 Mr.K Cover Studio</h2>
+          <p>从抖音链接到封面/片头资产，按这条路径走。录屏讲解也可以直接照着念。</p>
         </div>
         <button class="onboarding-close" id="onboardingCloseBtn" aria-label="关闭">×</button>
       </header>
@@ -2053,9 +2140,39 @@
           <span data-onboarding-progress="0" class="active"></span>
           <span data-onboarding-progress="1"></span>
           <span data-onboarding-progress="2"></span>
+          <span data-onboarding-progress="3"></span>
         </div>
 
         <div class="onboarding-step active" data-onboarding-step="0">
+          <div class="tour-grid">
+            <div class="tour-card">
+              <b>01</b>
+              <strong>丢进内容</strong>
+              <span>粘贴抖音链接、分享文案、截图转文字，或直接写一个主题。</span>
+            </div>
+            <div class="tour-card">
+              <b>02</b>
+              <strong>AI 定方案</strong>
+              <span>系统提炼标题、栏目、英文副题、摘要和背景方向。</span>
+            </div>
+            <div class="tour-card">
+              <b>03</b>
+              <strong>固定风格</strong>
+              <span>模板负责头像、K 标、栏目色、标题层级和安全区。</span>
+            </div>
+            <div class="tour-card">
+              <b>04</b>
+              <strong>导出资产</strong>
+              <span>保存到素材库，导出 PNG；片头动效可导出 WebM。</span>
+            </div>
+          </div>
+          <div class="recording-script">
+            <strong>录屏口播</strong>
+            “这不是通用海报工具。你把抖音链接或文案丢进来，Agent 先理解内容，再按固定视觉 DNA 生成封面或片头。标题、栏目、背景都能改，最后保存到素材库，直接导出发布。”
+          </div>
+        </div>
+
+        <div class="onboarding-step" data-onboarding-step="1">
           <div class="onboarding-grid">
             <button class="onboarding-choice active" data-onboarding-path="agent">
               <strong>Agent Skill</strong>
@@ -2072,7 +2189,7 @@
           </div>
         </div>
 
-        <div class="onboarding-step" data-onboarding-step="1">
+        <div class="onboarding-step" data-onboarding-step="2">
           <div class="onboarding-grid">
             <button class="onboarding-choice" data-quick-template="ai-news">
               <strong>AI 热点拆解</strong>
@@ -2094,6 +2211,10 @@
               <strong>主页背景</strong>
               <span>适合更新抖音主页背景，保留移动端安全区。</span>
             </button>
+            <button class="onboarding-choice" data-quick-template="motion-intro">
+              <strong>片头动效</strong>
+              <span>适合覆盖视频前 1-2 秒，让核心观点先动起来。</span>
+            </button>
             <button class="onboarding-choice" data-quick-template="custom-column">
               <strong>自定义栏目</strong>
               <span>适合新栏目、新业务线或临时专题，颜色和文案都可以改。</span>
@@ -2101,7 +2222,7 @@
           </div>
         </div>
 
-        <div class="onboarding-step" data-onboarding-step="2">
+        <div class="onboarding-step" data-onboarding-step="3">
           <div class="onboarding-form">
             <div class="field">
               <label for="onboardCategoryTitle">栏目中文</label>
@@ -2122,6 +2243,10 @@
                 <input id="onboardCategoryColorText" value="#b2ff52">
               </div>
             </div>
+          </div>
+          <div class="recording-script">
+            <strong>第一次使用建议</strong>
+            先保留三大栏目：AI下半场、强者恒强、在路上。新用户不需要理解所有设置，只要粘贴内容，点“生成封面/片头”，再改标题和背景即可。
           </div>
           <div class="ai-status">默认三类栏目会保留；如果你填了新栏目，就会作为“自定义栏目”进入当前工作台。</div>
         </div>
@@ -4455,7 +4580,7 @@
     }
 
     function setOnboardingStep(step) {
-      state.onboardingStep = Math.max(0, Math.min(2, step));
+      state.onboardingStep = Math.max(0, Math.min(3, step));
       document.querySelectorAll("[data-onboarding-step]").forEach(node => {
         node.classList.toggle("active", Number(node.dataset.onboardingStep) === state.onboardingStep);
       });
@@ -4463,18 +4588,21 @@
         node.classList.toggle("active", Number(node.dataset.onboardingProgress) <= state.onboardingStep);
       });
       el.onboardingBackBtn.disabled = state.onboardingStep === 0;
-      el.onboardingNextBtn.textContent = state.onboardingStep === 2 ? "完成并进入工作台" : "下一步";
+      el.onboardingNextBtn.textContent = state.onboardingStep === 3 ? "完成并进入工作台" : "下一步";
     }
 
     function openOnboarding(force = false) {
-      if (!force && localStorage.getItem("mrk.onboardingDone") === "1") return;
+      if (!force && localStorage.getItem("mrk.onboardingGuideV2Done") === "1") return;
       el.onboardingOverlay.hidden = false;
       setOnboardingStep(0);
     }
 
     function closeOnboarding(done = false) {
       el.onboardingOverlay.hidden = true;
-      if (done) localStorage.setItem("mrk.onboardingDone", "1");
+      if (done) {
+        localStorage.setItem("mrk.onboardingGuideV2Done", "1");
+        localStorage.setItem("mrk.onboardingDone", "1");
+      }
     }
 
     function setSettingsOpen(open) {
@@ -4932,13 +5060,13 @@
     el.onboardingSkipBtn.addEventListener("click", () => closeOnboarding(true));
     el.onboardingBackBtn.addEventListener("click", () => setOnboardingStep(state.onboardingStep - 1));
     el.onboardingNextBtn.addEventListener("click", () => {
-      if (state.onboardingStep === 2) {
+      if (state.onboardingStep === 3) {
         applyOnboardingCategory();
         closeOnboarding(true);
         document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
-      if (state.onboardingStep === 1) syncOnboardingCategoryFromCurrent();
+      if (state.onboardingStep === 2) syncOnboardingCategoryFromCurrent();
       setOnboardingStep(state.onboardingStep + 1);
     });
 
