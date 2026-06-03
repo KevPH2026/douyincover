@@ -2,7 +2,7 @@
 
 **A fixed visual cover system for Douyin creators who publish AI, business, judgment, and field-note content.**
 
-[中文](./README.zh-CN.md) | [English](./README.en.md) | [Live Site](https://dna.superk.ai)
+[中文](./README.zh-CN.md) | [English](./README.en.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/dna-superk-ai)
 
 Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content idea into an on-brand cover. It is not a general poster editor. It is a repeatable content asset system for one account style: fixed identity, fixed categories, flexible titles and backgrounds.
 
@@ -24,6 +24,7 @@ This project fixes that problem for `MR.K 在路上`.
 - First-run onboarding for choosing Agent/Web workflow, starter template, and content category
 - Quick templates for AI news, strong quotes, field notes, collections, profile banners, and custom columns
 - Custom categories with editable Chinese name, English name, subtitle, and accent color
+- Local-only configuration for OpenAI-compatible LLM and image models
 - Realistic editorial backgrounds instead of generic AI wallpaper
 - Local material management for generated covers
 - A deployable Skill for Agent workflows
@@ -39,8 +40,8 @@ This project fixes that problem for `MR.K 在路上`.
 ## Core Workflow
 
 1. Paste a Douyin share snippet, short link, screenshot, or topic.
-2. DeepSeek extracts the content angle and proposes title/category/summary.
-3. Image generation creates a background that matches the copy.
+2. The configured LLM extracts the content angle and proposes title/category/summary.
+3. The configured image model creates a background that matches the copy.
 4. The fixed Mr.K overlay system renders the final cover.
 5. Save to material library or export PNG.
 
@@ -68,6 +69,17 @@ With image generation:
 ```bash
 OPENAI_API_KEY=sk-... python3 cover_studio_server.py
 ```
+
+## Local Model Configuration
+
+The Web Studio includes a local-only model panel for analysis, copywriting, and background generation.
+
+- LLM: OpenAI-compatible Chat Completions endpoint, model name, optional API key
+- Image: OpenAI-compatible Images endpoint, model name, optional API key
+- Storage: browser `localStorage` only, under `mrk.localModelConfig`
+- Server behavior: the config is used only for the current API request and is not persisted
+
+Leave these fields empty to use environment variables such as `DEEPSEEK_API_KEY` and `OPENAI_API_KEY`.
 
 ## Production
 

@@ -19,6 +19,7 @@ CATEGORY_KEYS = {"ai", "strong", "road"}
 TEMPLATE_KEYS = {"work", "collection", "profile"}
 STYLE_KEYS = {"cinematic", "terminal", "field", "minimal"}
 DENSITY_KEYS = {"low", "medium", "high"}
+DEFAULT_CHAT_ENDPOINT = "https://api.deepseek.com/chat/completions"
 
 
 class ServiceError(Exception):
@@ -69,6 +70,45 @@ class PageMetaParser(HTMLParser):
 def trim(value, limit):
     text = str(value or "").strip()
     return text[:limit]
+
+
+def model_config(incoming, kind):
+    config = incoming.get("model_config") if isinstance(incoming, dict) else {}
+    config = config if isinstance(config, dict) else {}
+    section = config.get(kind) if isinstance(config.get(kind), dict) else {}
+    return {
+        "endpoint": trim(section.get("endpoint"), 600),
+        "model": trim(section.get("model"), 120),
+        "api_key": trim(section.get("apiKey") or section.get("api_key"), 2000),
+    }
+
+
+def normalize_chat_endpoint(endpoint):
+    raw = trim(endpoint, 600).rstrip("/")
+    if not raw:
+        return DEFAULT_CHAT_ENDPOINT
+    parsed = urllib.parse.urlparse(raw)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise ValueError("LLM 接口地址必须是 http/https URL。")
+    if raw.endswith("/chat/completions"):
+        return raw
+    if raw.endswith("/v1"):
+        return f"{raw}/chat/completions"
+    return f"{raw}/chat/completions"
+
+
+def post_chat_completion(endpoint, payload, api_key, timeout=60):
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    request = urllib.request.Request(
+        endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return json.loads(response.read().decode("utf-8"))
 
 
 def safe_json_loads(text):
@@ -349,7 +389,7 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
     }[category]
 
     return {
-        "reply": "我先按现有账号规则生成了一版封面方案；DeepSeek 未配置时会走本地判断。",
+        "reply": "我先按现有账号规则生成了一版封面方案；LLM 未配置或不可用时会走本地判断。",
         "template": "work",
         "category": category,
         "fields": {
@@ -441,8 +481,12 @@ def normalize_plan(plan, incoming, douyin_context):
 def create_cover_plan(incoming):
     douyin_context = build_douyin_context(incoming)
     link_meta = douyin_context.get("meta") or {}
-    api_key = os.environ.get("DEEPSEEK_API_KEY")
-    if not api_key:
+    llm_config = model_config(incoming, "llm")
+    has_custom_llm = bool(llm_config["endpoint"] or llm_config["model"] or llm_config["api_key"])
+    api_key = llm_config["api_key"] or os.environ.get("DEEPSEEK_API_KEY")
+    endpoint = normalize_chat_endpoint(llm_config["endpoint"] or DEFAULT_CHAT_ENDPOINT)
+    model = llm_config["model"] or os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
+    if not api_key and not has_custom_llm:
         plan = fallback_plan(incoming, douyin_context, "missing_deepseek_api_key")
         return {
             "plan": plan,
@@ -465,7 +509,6 @@ def create_cover_plan(incoming):
         "current": current,
         "history": history,
     }
-    model = os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
     payload = {
         "model": model,
         "messages": [
@@ -476,25 +519,24 @@ def create_cover_plan(incoming):
         "stream": False,
         "max_tokens": 1400,
     }
-    request = urllib.request.Request(
-        "https://api.deepseek.com/chat/completions",
-        data=json.dumps(payload).encode("utf-8"),
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
 
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
-            result = json.loads(response.read().decode("utf-8"))
+        try:
+            result = post_chat_completion(endpoint, payload, api_key)
+        except urllib.error.HTTPError as exc:
+            if has_custom_llm and exc.code in {400, 422} and "response_format" in payload:
+                relaxed_payload = dict(payload)
+                relaxed_payload.pop("response_format", None)
+                result = post_chat_completion(endpoint, relaxed_payload, api_key)
+            else:
+                raise
         content = result["choices"][0]["message"]["content"]
         plan = normalize_plan(safe_json_loads(content), incoming, douyin_context)
         return {
             "plan": plan,
             "reply": plan["reply"],
             "model": model,
+            "provider": "local-config" if has_custom_llm else "deepseek-env",
             "source": douyin_context,
             "fallback": False,
             "usage": result.get("usage"),

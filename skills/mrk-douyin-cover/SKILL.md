@@ -94,7 +94,15 @@ metadata:
    - Open the printed URL in the in-app browser when the user wants to operate the page directly.
    - For full AI workflow, preserve any available `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `KV_REST_API_URL`, and `KV_REST_API_TOKEN` environment variables. Without them, the page still works for local editing and local asset storage.
 
-8. **Verify**
+8. **Local model configuration**
+   - The Web Studio exposes a local-only model panel for analysis, copywriting, and image generation.
+   - Store model settings only in the browser's `localStorage` under `mrk.localModelConfig`; never commit API keys, model keys, or private endpoints to the repo.
+   - Supported LLM shape: OpenAI-compatible Chat Completions endpoint, model name, optional API key. Examples: DeepSeek, LM Studio, Ollama OpenAI-compatible `/v1/chat/completions`.
+   - Supported image shape: OpenAI-compatible Images endpoint, model name, optional API key. Examples: OpenAI Images-compatible local gateways or cloud image endpoints.
+   - Each request may include `model_config`; the local server uses it only for that request and does not persist it.
+   - If the configured endpoint fails, fall back to the existing local planning/image placeholder flow so the user can still continue editing.
+
+9. **Verify**
    Before finishing, inspect or open the generated image/contact sheet and check:
    - ratio and pixel size match the request;
    - title is readable in Douyin grid size;
@@ -103,9 +111,8 @@ metadata:
    - category, ID, and code are correct;
    - background feels specific to the copy, not generic AI wallpaper.
 
-9. **Hand off**
+10. **Hand off**
    - Show the generated image with a Markdown image tag when possible.
    - Give the absolute file path.
    - If a local page was deployed, give the URL and the log path.
    - If the user wants to upload to Douyin backend, note that the in-app browser may not support local file upload automation; open/reveal the folder so the user can select the file manually.
-

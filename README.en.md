@@ -2,7 +2,7 @@
 
 **A fixed visual cover system for Douyin creators working in AI, business judgment, personal leverage, and field notes.**
 
-[中文](./README.zh-CN.md) | [Default README](./README.md) | [Live Site](https://dna.superk.ai)
+[中文](./README.zh-CN.md) | [Default README](./README.md) | [Live Site](https://dna.superk.ai) | [GitHub](https://github.com/KevPH2026/dna-superk-ai)
 
 Mr.K Cover Studio is not a generic poster maker. It is a production system for one repeatable creator identity: fixed brand assets, fixed content categories, flexible titles, flexible backgrounds.
 
@@ -49,6 +49,10 @@ Built-in starters cover AI news analysis, strong quotes, field notes, collection
 
 Covers can be saved into a material library. It works locally by default and can use KV storage in production.
 
+### Configure Local Models
+
+The Web Studio includes a local-only model panel for OpenAI-compatible LLM and image endpoints. Use it for content analysis, cover copywriting, and background generation. The settings stay in the browser and are never committed to Git or saved to the material library.
+
 ## Brand DNA
 
 - Account: `MR.K 在路上`
@@ -66,8 +70,8 @@ Fixed categories:
 ## Workflow
 
 1. Paste a Douyin share snippet, short link, screenshot, image, or topic.
-2. DeepSeek extracts the angle and proposes title, category, summary, and background direction.
-3. Image generation creates a realistic editorial background matched to the copy.
+2. The configured LLM extracts the angle and proposes title, category, summary, and background direction.
+3. The configured image model creates a realistic editorial background matched to the copy.
 4. The fixed template adds avatar, K mark, category chip, title, subtitle, and code.
 5. Save to the material library or export PNG.
 
@@ -101,6 +105,17 @@ Enable real image generation:
 ```bash
 OPENAI_API_KEY=sk-... python3 cover_studio_server.py
 ```
+
+## Local Model Configuration
+
+The right-side "Local Model Configuration" panel supports:
+
+- LLM: OpenAI-compatible Chat Completions endpoint, model name, optional API key
+- Image: OpenAI-compatible Images API endpoint, model name, optional API key
+- Storage: browser `localStorage`, key `mrk.localModelConfig`
+- Server behavior: config is used only for the current request and is not written to server files, KV, or Git
+
+Leave these fields empty to keep using environment variables such as `DEEPSEEK_API_KEY` and `OPENAI_API_KEY`. If an endpoint fails, the page falls back to local planning rules and local placeholder backgrounds.
 
 ## Install As An Agent Skill
 
