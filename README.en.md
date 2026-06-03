@@ -19,6 +19,8 @@ Give it a Douyin share snippet, short link, screenshot, image reference, or plai
 
 The Agent asks before it generates:
 
+Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.md).
+
 1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Task type: single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.

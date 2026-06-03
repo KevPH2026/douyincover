@@ -702,6 +702,41 @@
       background: #f7f8fa;
     }
 
+    .agent-guide-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .agent-guide-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .agent-guide-action.primary {
+      border-color: #15191f;
+      background: #15191f;
+      color: #fff;
+    }
+
+    .agent-guide-action:focus-visible {
+      outline: 2px solid var(--lime);
+      outline-offset: 2px;
+    }
+
     .agent-transcript {
       display: grid;
       gap: 8px;
@@ -1602,6 +1637,23 @@
       color: rgba(232,237,242,.54);
     }
 
+    .agent-guide-action {
+      border-color: rgba(255,255,255,.11);
+      background: rgba(255,255,255,.055);
+      color: rgba(232,237,242,.78);
+    }
+
+    .agent-guide-action.primary {
+      border-color: rgba(178,255,82,.72);
+      background: rgba(178,255,82,.13);
+      color: #f7ffe8;
+    }
+
+    .agent-guide-action:hover {
+      border-color: rgba(178,255,82,.42);
+      color: #f7ffe8;
+    }
+
     .ai-command-input {
       min-height: 178px !important;
       border-color: rgba(178,255,82,.28);
@@ -2166,6 +2218,14 @@
           <p class="group-title">部署和代码</p>
           <div class="delivery-mini">
             <div class="delivery-mini-item">
+              <strong>Agent 接入指南</strong>
+              <span>两种接入方式：下载安装到 Agent，或直接复制提示词。</span>
+              <div class="agent-guide-actions">
+                <a class="agent-guide-action primary" href="https://github.com/KevPH2026/dna-superk-ai/blob/main/AGENT_GUIDE.md" target="_blank" rel="noreferrer">下载 / 安装 Skill</a>
+                <button class="agent-guide-action" type="button" data-copy-agent-guide>直接复制</button>
+              </div>
+            </div>
+            <div class="delivery-mini-item">
               <strong>Agent Skill</strong>
               <span>scripts/install_agent_skill.sh</span>
             </div>
@@ -2352,6 +2412,10 @@
             </li>
           </ol>
           <div class="agent-flow-prompt">推荐开场：我的抖音 ID 是 ___，这次要做 ___，内容/链接是 ___。</div>
+          <div class="agent-guide-actions">
+            <a class="agent-guide-action primary" href="https://github.com/KevPH2026/dna-superk-ai/blob/main/AGENT_GUIDE.md" target="_blank" rel="noreferrer">下载 / 安装 Skill</a>
+            <button class="agent-guide-action" type="button" data-copy-agent-guide>直接复制</button>
+          </div>
         </div>
         <div class="agent-transcript" id="agentTranscript"></div>
         <div class="dna-result" id="dnaResult" hidden></div>
@@ -2637,6 +2701,49 @@
         imageTheme: "自定义栏目，内容资产系统，深色工作台，品牌视觉"
       }
     };
+
+    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景方案。
+
+默认账号：
+- 账号名：MR.K 在路上
+- 抖音 ID：KevPH2026
+- 微信 ID：kevph2026
+- 域名：dna.superk.ai
+- 固定栏目：AI下半场、强者恒强、在路上
+
+对话工作流：
+1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
+2. 再问任务类型：单条封面、解码 DNA、批量换封面、合集封面、主页背景。
+3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
+4. 再收素材：单条作品需要链接/文案/截图/主题；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
+5. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例、编号、栏目。
+
+硬规则：
+- 不要声称看到了没有提供的抖音内容。
+- 链接打不开时，让用户提供截图、标题、封面文字或分享文案。
+- 私密作品默认不参与。
+- 单条封面默认 1:1 / 1080x1080。
+- 封面必须有大号中文标题；可搭配英文副题。
+- 不要写播放量、点赞数或历史表现，除非用户明确要求。
+- 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
+
+输出 brief JSON：
+{
+  "account": "MR.K 在路上 / KevPH2026",
+  "task": "single_cover|dna_decode|batch_refresh|collection|profile",
+  "source_url": "",
+  "category": "ai|strong|road|custom",
+  "ratio": "1:1",
+  "title_cn": "",
+  "title_en": "",
+  "summary": "",
+  "background_direction": "",
+  "background_prompt": "",
+  "code": "K-xx"
+}
+
+推荐开场：
+“先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、解码 DNA、批量换封面、合集封面，还是主页背景？”`;
 
     const state = {
       template: "work",
@@ -4471,25 +4578,36 @@
       draw();
     });
 
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (error) {
+        const holder = document.createElement("textarea");
+        holder.value = text;
+        holder.setAttribute("readonly", "");
+        holder.style.position = "fixed";
+        holder.style.opacity = "0";
+        document.body.appendChild(holder);
+        holder.select();
+        document.execCommand("copy");
+        holder.remove();
+      }
+    }
+
     document.querySelectorAll("[data-copy-contact]").forEach(btn => {
       btn.addEventListener("click", async () => {
         const contact = btn.dataset.copyContact || "";
         if (!contact) return;
-        try {
-          await navigator.clipboard.writeText(contact);
-          el.status.textContent = `已复制微信 ID：${contact}`;
-        } catch (error) {
-          const holder = document.createElement("textarea");
-          holder.value = contact;
-          holder.setAttribute("readonly", "");
-          holder.style.position = "fixed";
-          holder.style.opacity = "0";
-          document.body.appendChild(holder);
-          holder.select();
-          document.execCommand("copy");
-          holder.remove();
-          el.status.textContent = `已复制微信 ID：${contact}`;
-        }
+        await copyToClipboard(contact);
+        el.status.textContent = `已复制微信 ID：${contact}`;
+      });
+    });
+
+    document.querySelectorAll("[data-copy-agent-guide]").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        await copyToClipboard(AGENT_INTEGRATION_PROMPT);
+        setAgentStatus("已复制 Agent 接入提示词，可以直接粘给任意 Agent。", "success");
+        el.status.textContent = "Agent guide copied";
       });
     });
 

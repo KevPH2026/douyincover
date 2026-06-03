@@ -17,6 +17,8 @@ Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content
 
 The Agent does not generate first. It asks for context, then turns the answer into a production brief:
 
+Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.md).
+
 1. Ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Ask for the task: single-work cover, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Choose the category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only when needed.
