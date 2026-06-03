@@ -27,7 +27,28 @@ metadata:
    - If the link cannot be opened because of auth, anti-bot, or app restrictions, do not get stuck; ask for the caption, screenshot, or key text.
    - Private works are excluded by default unless the user explicitly asks to process them.
 
-2. **Ask only missing questions**
+2. **Client DNA diagnosis mode**
+   Use this mode when the user asks to analyze a creator/client account, read multiple Douyin works, extract `客户DNA`, or produce a design direction before generating individual covers.
+   - Require at least 10 public work samples before making a full DNA conclusion. Samples can be titles, cover text, captions, copied share text, or OCR from screenshots.
+   - If a Douyin profile/work link is blocked by login, anti-bot, or the in-app browser, say that clearly and ask for the missing samples instead of guessing.
+   - Exclude private works by default.
+   - Output:
+     - account positioning, audience, voice, and content pillars;
+     - title patterns and recurring content angles;
+     - style signals and visual taboos;
+     - 2-3 cover/profile/collection design directions;
+     - operating rules for future cover generation.
+   - If using the local Web Studio, call `/api/dna-agent` with:
+     ```json
+     {
+       "douyin_url": "",
+       "source_text": "10+ work samples",
+       "content_samples": [],
+       "goal": "提炼客户DNA并输出设计方向"
+     }
+     ```
+
+3. **Ask only missing questions**
    Ask 2-4 concise questions when the answer is not inferable. Use defaults aggressively.
    - `用途/比例`: single-work cover `1:1` by default; ask only if it may be a collection cover, homepage background, or image-post carousel.
    - `主标题`: offer a recommended title and ask whether to use it. Preserve exact user-specified titles.
@@ -43,7 +64,7 @@ metadata:
    3. 背景走 A「...」、B「...」还是 C「...」？
    ```
 
-3. **Build a cover brief**
+4. **Build a cover brief**
    Keep a compact brief before generation:
    ```json
    {
@@ -59,7 +80,7 @@ metadata:
    }
    ```
 
-4. **Title rules**
+5. **Title rules**
    - Ideal Chinese title length: 8-18 characters, split into 2-3 strong lines.
    - Use judgment-title forms:
      - `X不是Y，是Z`
@@ -70,13 +91,13 @@ metadata:
    - Avoid plain topic labels like `AI发展趋势` unless the user insists.
    - For quote/cognition content, sharpen into a repeatable judgment rather than a soft slogan.
 
-5. **Background mapping**
+6. **Background mapping**
    - AI model/product/business news: real product screen, terminal/API console, founder desk, conference table, market chart, server room, newsroom wall.
    - Strong people/cognition/Jobs/business judgment: late-night office, whiteboard discussion, desk lamp, book/notes, portrait-like black-and-white editorial, negotiation room.
    - Road/field notes: city night, airport/train/car interior, client site, hotel desk, rainy street, border/cross-border scene.
    - Use the accent color only as subtle environmental light or a small design element.
 
-6. **Generate and compose**
+7. **Generate and compose**
    - In `/Users/k/Documents/SNS`, prefer the existing MRK cover system and drawing rules:
      - `mrk-cover-studio.html` for interactive generation/material management.
      - `make_high_play_covers.py` and `make_low_play_covers.py` as reference implementations for typography, layout, avatar, K mark, category chips, and output manifests.
@@ -84,7 +105,7 @@ metadata:
    - If AI background generation is needed, generate the background first from the `background_prompt`, then composite the fixed Mr.K overlay. The background must serve the title, not compete with it.
    - If the user asks to update the web product/material library, update the relevant manifest/local storage/cloud asset path when available, then open the page or folder for inspection.
 
-7. **Local page deployment**
+8. **Local page deployment**
    - If the user asks to deploy, preview, open, or use a local page, run this skill's local launcher:
      ```bash
      scripts/launch_local_studio.sh
@@ -94,7 +115,7 @@ metadata:
    - Open the printed URL in the in-app browser when the user wants to operate the page directly.
    - For full AI workflow, preserve any available `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`, `KV_REST_API_URL`, and `KV_REST_API_TOKEN` environment variables. Without them, the page still works for local editing and local asset storage.
 
-8. **Local model configuration**
+9. **Local model configuration**
    - The Web Studio exposes a local-only model panel for analysis, copywriting, and image generation.
    - Store model settings only in the browser's `localStorage` under `mrk.localModelConfig`; never commit API keys, model keys, or private endpoints to the repo.
    - Supported LLM shape: OpenAI-compatible Chat Completions endpoint, model name, optional API key. Examples: DeepSeek, LM Studio, Ollama OpenAI-compatible `/v1/chat/completions`.
@@ -102,7 +123,7 @@ metadata:
    - Each request may include `model_config`; the local server uses it only for that request and does not persist it.
    - If the configured endpoint fails, fall back to the existing local planning/image placeholder flow so the user can still continue editing.
 
-9. **Verify**
+10. **Verify**
    Before finishing, inspect or open the generated image/contact sheet and check:
    - ratio and pixel size match the request;
    - title is readable in Douyin grid size;
@@ -111,7 +132,7 @@ metadata:
    - category, ID, and code are correct;
    - background feels specific to the copy, not generic AI wallpaper.
 
-10. **Hand off**
+11. **Hand off**
    - Show the generated image with a Markdown image tag when possible.
    - Give the absolute file path.
    - If a local page was deployed, give the URL and the log path.

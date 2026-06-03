@@ -1411,6 +1411,44 @@
       display: none;
     }
 
+    .ai-command-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .dna-result {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .dna-card {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,.055);
+      color: rgba(232,237,242,.76);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .dna-card strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #f7ffe8;
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .dna-card ul {
+      display: grid;
+      gap: 5px;
+      margin: 0;
+      padding-left: 16px;
+    }
+
     .agent-line.assistant {
       border-color: rgba(178,255,82,.38);
       background: rgba(178,255,82,.1);
@@ -1995,8 +2033,11 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="粘贴抖音链接、分享文案、截图里的文字，或者直接写一句主题。AI 会自动判断标题、栏目、背景方向。"></textarea>
-          <button class="export-btn ai-command-btn" id="douyinRunBtn" style="margin-top:10px;">生成封面</button>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面：粘贴抖音链接/分享文案/主题。诊断客户 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <div class="ai-command-grid">
+            <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面</button>
+            <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">诊断客户 DNA</button>
+          </div>
         </div>
 
         <div class="field ai-secondary">
@@ -2024,6 +2065,7 @@
         </div>
         <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。</div>
         <div class="agent-transcript" id="agentTranscript"></div>
+        <div class="dna-result" id="dnaResult" hidden></div>
       </section>
 
       <section class="group" data-advanced-panel>
@@ -2328,10 +2370,12 @@
       agentPreviewImg: document.getElementById("agentPreviewImg"),
       agentPreviewText: document.getElementById("agentPreviewText"),
       douyinRunBtn: document.getElementById("douyinRunBtn"),
+      dnaRunBtn: document.getElementById("dnaRunBtn"),
       agentRunBtn: document.getElementById("agentRunBtn"),
       agentClearBtn: document.getElementById("agentClearBtn"),
       agentStatus: document.getElementById("agentStatus"),
       agentTranscript: document.getElementById("agentTranscript"),
+      dnaResult: document.getElementById("dnaResult"),
       llmEndpoint: document.getElementById("llmEndpoint"),
       llmModel: document.getElementById("llmModel"),
       llmApiKey: document.getElementById("llmApiKey"),
@@ -2469,6 +2513,50 @@
       });
     }
 
+    function renderList(items) {
+      const list = document.createElement("ul");
+      (items || []).slice(0, 6).forEach(item => {
+        const li = document.createElement("li");
+        if (typeof item === "string") li.textContent = item;
+        else li.textContent = [item.name, item.evidence, item.best_for].filter(Boolean).join(" / ");
+        list.appendChild(li);
+      });
+      return list;
+    }
+
+    function appendDnaCard(title, content) {
+      const card = document.createElement("div");
+      card.className = "dna-card";
+      const head = document.createElement("strong");
+      head.textContent = title;
+      card.appendChild(head);
+      if (Array.isArray(content)) card.appendChild(renderList(content));
+      else card.appendChild(document.createTextNode(String(content || "")));
+      el.dnaResult.appendChild(card);
+    }
+
+    function renderDnaResult(payload) {
+      el.dnaResult.hidden = false;
+      el.dnaResult.innerHTML = "";
+      if (payload.status === "need_samples") {
+        appendDnaCard("样本不足", payload.reply || `还差 ${payload.missing_count || 0} 条作品样本。`);
+        appendDnaCard("补样方式", payload.collection_guide || []);
+        if (payload.samples && payload.samples.length) appendDnaCard("已识别样本", payload.samples.map(item => item.text));
+        return;
+      }
+      const dna = payload.client_dna || {};
+      const style = payload.style_signals || {};
+      appendDnaCard("客户 DNA", [
+        `定位：${dna.positioning || "待确认"}`,
+        `受众：${dna.audience || "待确认"}`,
+        `声音：${dna.voice || "待确认"}`,
+      ]);
+      appendDnaCard("内容栏目", dna.content_pillars || []);
+      appendDnaCard("设计方向", (payload.design_directions || []).map(item => `${item.name}：${item.best_for}；${item.palette}；${item.layout}`));
+      appendDnaCard("视觉禁忌", style.avoid || []);
+      appendDnaCard("下一步问题", payload.next_questions || []);
+    }
+
     function extractUrlFromText(text) {
       const match = String(text || "").match(/https?:\/\/[^\s，。！？；;、)）\]】"'<>]+/i);
       return match ? match[0].replace(/[，。！？；;、]+$/g, "") : "";
@@ -2477,6 +2565,7 @@
     function setAgentButtonsDisabled(disabled) {
       el.agentRunBtn.disabled = disabled;
       el.douyinRunBtn.disabled = disabled;
+      el.dnaRunBtn.disabled = disabled;
     }
 
     function agentSourceNote(source = {}) {
@@ -3331,6 +3420,56 @@
       }
     }
 
+    async function runClientDnaAnalysis() {
+      const sourceText = el.douyinShare.value.trim();
+      const message = el.agentMessage.value.trim();
+      const extractedUrl = extractUrlFromText([sourceText, el.agentLink.value, message].join("\n"));
+      if (!sourceText && !message && !extractedUrl) {
+        setAgentStatus("先粘贴抖音主页/作品链接，或至少 10 条作品标题、封面文字、截图转文字。", "error");
+        return;
+      }
+
+      addAgentMessage("user", `客户 DNA 诊断\n${sourceText || message || extractedUrl}`);
+      setAgentButtonsDisabled(true);
+      setAgentStatus("正在整理作品样本，至少需要 10 条内容来判断客户 DNA。", "working");
+      el.status.textContent = "Analyzing client DNA";
+      el.dnaResult.hidden = true;
+      el.dnaResult.innerHTML = "";
+
+      try {
+        const response = await fetch("/api/dna-agent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message,
+            source_text: sourceText,
+            douyin_url: extractedUrl,
+            douyin_share_text: sourceText,
+            goal: "读取不少于 10 条内容和风格，提炼客户 DNA，并输出封面/主页/合集设计方向。",
+            model_config: modelConfigPayload()
+          })
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.message || `HTTP ${response.status}`);
+        }
+        renderDnaResult(payload);
+        if (payload.status === "need_samples") {
+          setAgentStatus(payload.reply || "样本不足，先补足至少 10 条公开作品内容。", "error");
+          addAgentMessage("assistant", payload.reply || "样本不足，无法生成完整客户 DNA。");
+        } else {
+          setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成客户 DNA 和设计方向。`, payload.fallback ? "error" : "success");
+          addAgentMessage("assistant", payload.reply || "客户 DNA 和设计方向已生成。");
+        }
+        el.status.textContent = "Client DNA analyzed";
+      } catch (error) {
+        setAgentStatus(`客户 DNA 诊断失败：${error.message}`, "error");
+        el.status.textContent = "DNA analysis failed";
+      } finally {
+        setAgentButtonsDisabled(false);
+      }
+    }
+
     function values() {
       return {
         categoryTitle: el.categoryTitle.value.trim(),
@@ -3948,6 +4087,7 @@
     });
 
     el.douyinRunBtn.addEventListener("click", () => runCoverAgent({ fromDouyin: true }));
+    el.dnaRunBtn.addEventListener("click", runClientDnaAnalysis);
     el.agentRunBtn.addEventListener("click", () => runCoverAgent());
     el.agentClearBtn.addEventListener("click", () => {
       state.agentMessages = [];
@@ -3959,6 +4099,8 @@
       el.agentLink.value = "";
       el.agentImage.value = "";
       el.agentPreview.hidden = true;
+      el.dnaResult.hidden = true;
+      el.dnaResult.innerHTML = "";
       renderAgentTranscript();
       setAgentStatus("粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。");
     });

@@ -6,6 +6,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 
 from account_service import ServiceError as AccountServiceError
 from account_service import handle_assets, handle_auth, list_assets
+from cover_agent_service import analyze_client_dna
 from cover_agent_service import create_cover_plan
 from cover_image_service import ServiceError as ImageServiceError
 from cover_image_service import generate_image
@@ -45,6 +46,15 @@ class CoverStudioHandler(SimpleHTTPRequestHandler):
                 self._json(400, {"error": "bad_request", "message": str(exc)})
             except Exception as exc:
                 self._json(502, {"error": "agent_failed", "message": str(exc)})
+            return
+
+        if self.path == "/api/dna-agent":
+            try:
+                self._json(200, analyze_client_dna(self._read_json()))
+            except ValueError as exc:
+                self._json(400, {"error": "bad_request", "message": str(exc)})
+            except Exception as exc:
+                self._json(502, {"error": "dna_agent_failed", "message": str(exc)})
             return
 
         if self.path == "/api/auth":

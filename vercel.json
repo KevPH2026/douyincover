@@ -15,6 +15,9 @@
     "api/cover-agent.py": {
       "maxDuration": 60
     },
+    "api/dna-agent.py": {
+      "maxDuration": 60
+    },
     "api/generate-image.py": {
       "maxDuration": 60
     }

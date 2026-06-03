@@ -20,6 +20,7 @@ TEMPLATE_KEYS = {"work", "collection", "profile"}
 STYLE_KEYS = {"cinematic", "terminal", "field", "minimal"}
 DENSITY_KEYS = {"low", "medium", "high"}
 DEFAULT_CHAT_ENDPOINT = "https://api.deepseek.com/chat/completions"
+DNA_MIN_SAMPLE_COUNT = 10
 
 
 class ServiceError(Exception):
@@ -65,6 +66,52 @@ class PageMetaParser(HTMLParser):
             "og_description": self.meta.get("og:description", ""),
             "cover_image_url": self.meta.get("og:image", "") or self.meta.get("twitter:image", ""),
         }
+
+
+def unescape_json_text(value):
+    text = str(value or "")
+    try:
+        text = json.loads(f'"{text}"')
+    except Exception:
+        text = text.replace("\\n", " ").replace("\\/", "/").replace('\\"', '"')
+    return html.unescape(text)
+
+
+def extract_page_content_samples(page_text):
+    samples = []
+    seen = set()
+    patterns = [
+        r'"desc"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+        r'"description"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+        r'"title"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+        r'"text"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+        r'"caption"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+        r'"share_title"\s*:\s*"((?:\\.|[^"\\]){8,260})"',
+    ]
+    ignored = {
+        "抖音",
+        "douyin",
+        "推荐",
+        "首页",
+        "登录",
+        "分享",
+        "关注",
+        "用户",
+        "音乐",
+    }
+    for pattern in patterns:
+        for raw in re.findall(pattern, page_text, flags=re.I):
+            clean = clean_sample_line(unescape_json_text(raw))
+            compact = re.sub(r"\s+", "", clean.lower())
+            if len(compact) < 8 or compact in seen:
+                continue
+            if any(token in compact for token in ignored):
+                continue
+            seen.add(compact)
+            samples.append(clean)
+            if len(samples) >= 30:
+                return samples
+    return samples
 
 
 def trim(value, limit):
@@ -122,7 +169,7 @@ def safe_json_loads(text):
         end = raw.rfind("}")
         if start >= 0 and end > start:
             return json.loads(raw[start : end + 1])
-    raise ValueError("DeepSeek did not return valid JSON.")
+    raise ValueError("LLM did not return valid JSON.")
 
 
 def is_allowed_douyin_url(url):
@@ -162,11 +209,13 @@ def fetch_douyin_metadata(url):
 
     parser = PageMetaParser()
     try:
-        parser.feed(body.decode(charset, errors="replace"))
+        decoded = body.decode(charset, errors="replace")
     except Exception:
-        parser.feed(body.decode("utf-8", errors="replace"))
+        decoded = body.decode("utf-8", errors="replace")
+    parser.feed(decoded)
 
     data = parser.data()
+    data["content_samples"] = extract_page_content_samples(decoded)
     data.update({"status": "ok", "url": url, "final_url": final_url})
     return data
 
@@ -271,6 +320,288 @@ def build_douyin_context(incoming):
         "cover_image_url": meta.get("cover_image_url", ""),
         "meta": meta,
     }
+
+
+def clean_sample_line(text):
+    line = clean_share_text(text)
+    line = URL_PATTERN.sub(" ", line)
+    line = re.sub(r"^\d+[\).、\s]+", "", line)
+    line = normalize_space(line).strip(" -_/｜|，。#")
+    if not line:
+        return ""
+    if any(
+        phrase in line
+        for phrase in [
+            "复制此链接",
+            "打开抖音搜索",
+            "直接观看视频",
+            "http://",
+            "https://",
+        ]
+    ):
+        return ""
+    return trim(line, 220)
+
+
+def extract_content_samples(incoming, douyin_context=None):
+    samples = []
+    seen = set()
+
+    def add(text, source="text"):
+        clean = clean_sample_line(text)
+        compact = re.sub(r"\s+", "", clean.lower())
+        if len(compact) < 6 or compact in seen:
+            return
+        seen.add(compact)
+        samples.append({"text": clean, "source": source})
+
+    for item in incoming.get("content_samples") or incoming.get("samples") or []:
+        if isinstance(item, dict):
+            add(item.get("title") or item.get("text") or item.get("caption") or "", item.get("source") or "sample")
+        else:
+            add(item, "sample")
+
+    source_blocks = [
+        incoming.get("source_text", ""),
+        incoming.get("message", ""),
+        incoming.get("douyin_share_text", ""),
+    ]
+    if douyin_context:
+        source_blocks.extend(
+            [
+                douyin_context.get("source_text", ""),
+                douyin_context.get("clean_without_tags", ""),
+                douyin_context.get("clean_text", ""),
+            ]
+        )
+
+    for block in source_blocks:
+        text = str(block or "")
+        if not text:
+            continue
+        candidates = re.split(r"[\n\r]+|(?=\s*\d+[\).、])|(?=#)", text)
+        for candidate in candidates:
+            add(candidate, "pasted")
+
+    if douyin_context:
+        meta = douyin_context.get("meta") or {}
+        for sample in meta.get("content_samples") or []:
+            add(sample, "douyin_page")
+        add(meta.get("og_title") or meta.get("title") or "", "douyin_meta")
+        add(meta.get("og_description") or meta.get("description") or "", "douyin_meta")
+
+    return samples[:40]
+
+
+def keyword_hits(samples, keywords):
+    text = "\n".join(item["text"] for item in samples).lower()
+    compact = re.sub(r"\s+", "", text)
+    return sum(1 for keyword in keywords if keyword.lower() in text or keyword in compact)
+
+
+def local_client_dna(samples, douyin_context, reason="local_dna"):
+    ai_score = keyword_hits(samples, ["ai", "模型", "agent", "openai", "deepseek", "saas", "api", "自动化"])
+    business_score = keyword_hits(samples, ["商业", "创业", "公司", "估值", "增长", "产品", "客户", "市场"])
+    cognition_score = keyword_hits(samples, ["认知", "判断", "强者", "乔布斯", "聪明", "选择", "底层逻辑"])
+    field_score = keyword_hits(samples, ["出差", "路上", "客户现场", "一线", "机场", "城市", "跨境", "现场"])
+
+    pillars = []
+    if ai_score:
+        pillars.append({"name": "AI 商业判断", "evidence": "样本里高频出现模型、Agent、API、SaaS 或自动化。"})
+    if cognition_score:
+        pillars.append({"name": "强者认知 / 判断力", "evidence": "样本里出现强者、判断、聪明人、选择等观点型表达。"})
+    if field_score:
+        pillars.append({"name": "一线观察 / 在路上", "evidence": "样本里有出差、客户、一线、现场等行动场景。"})
+    if business_score and not any(item["name"] == "AI 商业判断" for item in pillars):
+        pillars.append({"name": "商业增长 / 产品策略", "evidence": "样本里有公司、产品、客户、增长、估值等商业词。"})
+    if not pillars:
+        pillars.append({"name": "观点表达", "evidence": "样本更像观点集合，需要更多作品判断稳定栏目。"})
+
+    tone = "冷静、判断型、有压迫感" if cognition_score >= field_score else "一线、真实、行动感"
+    if ai_score >= max(cognition_score, field_score):
+        tone = "深夜科技商业、克制但锋利"
+
+    return {
+        "status": "complete",
+        "sample_count": len(samples),
+        "min_required": DNA_MIN_SAMPLE_COUNT,
+        "source_url": douyin_context.get("url", "") if douyin_context else "",
+        "client_dna": {
+            "positioning": "AI 时代的商业判断与个人系统内容账号",
+            "audience": "关注 AI、商业变化、个人成长和判断力的创业者/知识工作者",
+            "voice": tone,
+            "content_pillars": pillars[:4],
+            "signature_titles": [
+                "这不是热点，这是重新定价",
+                "判断不能外包",
+                "在路上才有答案",
+            ],
+        },
+        "style_signals": {
+            "keywords": ["dark editorial", "AI business", "field notes", "strong judgment"],
+            "avoid": ["通用 AI 壁纸", "花哨渐变", "营销海报感", "信息过满"],
+            "visual_mood": tone,
+        },
+        "design_directions": [
+            {
+                "name": "Deep Work Command",
+                "best_for": "AI、模型、公司、产品趋势类作品",
+                "palette": "黑底 + 石墨灰 + 荧光绿",
+                "background": "真实屏幕、终端、办公室、产品界面局部，不出现可读文字",
+                "layout": "大标题左压，右侧场景，顶部固定品牌和头像印章",
+            },
+            {
+                "name": "Strong Signal Editorial",
+                "best_for": "强者恒强、乔布斯、判断力、认知内容",
+                "palette": "黑白影像 + 冷青色高光",
+                "background": "深夜书桌、白板、会议室、人物剪影，保持低调压迫感",
+                "layout": "2-3 行中文判断句，英文副标题小字，编号 K-xx",
+            },
+            {
+                "name": "Road Field Notes",
+                "best_for": "出差、客户、一线观察、跨境场景",
+                "palette": "夜色黑 + 暖白 + 红色小信号",
+                "background": "机场、车窗、城市夜景、客户现场，保留大面积安全留白",
+                "layout": "标题更像现场笔记，加入 ON THE ROAD 系列感",
+            },
+        ],
+        "operating_rules": [
+            "默认先收集至少 10 条公开作品样本，再定视觉 DNA。",
+            "每个账号最多保留 3 个主栏目，避免主页变成分类货架。",
+            "单条封面必须出现作品标题，播放量等历史数据不进封面。",
+            "背景图只服务主题，不承担文字信息。",
+        ],
+        "next_questions": [
+            "这个账号更想卖观点、卖服务，还是卖个人 IP？",
+            "主页希望更像商业顾问、AI 产品人，还是一线创业者？",
+            "是否有必须保留的头像、品牌色、口号或微信 ID？",
+        ],
+        "samples": samples[:12],
+        "reason": reason,
+    }
+
+
+DNA_SYSTEM_PROMPT = """
+你是一个短视频账号视觉 DNA 诊断顾问。用户会提供抖音主页/作品链接、至少 10 条作品样本、截图转文字或分享文案。你的任务不是生成单张封面，而是为该客户提炼账号 DNA，并输出可执行的封面/主页/合集设计方向。
+
+硬规则：
+- 不得声称看到了没有提供的作品。
+- 样本不足 10 条时不能做完整结论，只能要求补样本。
+- 设计方向必须来自样本中的内容主题、表达方式、标题气质、视觉/场景线索。
+- 输出要能直接指导封面系统：栏目、字体气质、配色、背景类型、版式、禁忌。
+
+只输出合法 JSON，不要 markdown，不要解释。JSON 结构：
+{
+  "status": "complete",
+  "client_dna": {
+    "positioning": "...",
+    "audience": "...",
+    "voice": "...",
+    "content_pillars": [{"name": "...", "evidence": "..."}],
+    "signature_titles": ["..."]
+  },
+  "style_signals": {
+    "keywords": ["..."],
+    "avoid": ["..."],
+    "visual_mood": "..."
+  },
+  "design_directions": [
+    {
+      "name": "...",
+      "best_for": "...",
+      "palette": "...",
+      "background": "...",
+      "layout": "..."
+    }
+  ],
+  "operating_rules": ["..."],
+  "next_questions": ["..."]
+}
+"""
+
+
+def need_more_samples_response(samples, douyin_context):
+    url = douyin_context.get("url", "") if douyin_context else ""
+    return {
+        "status": "need_samples",
+        "sample_count": len(samples),
+        "min_required": DNA_MIN_SAMPLE_COUNT,
+        "missing_count": max(0, DNA_MIN_SAMPLE_COUNT - len(samples)),
+        "source_url": url,
+        "reply": f"目前只拿到 {len(samples)} 条可用内容样本。客户 DNA 诊断至少需要 {DNA_MIN_SAMPLE_COUNT} 条公开作品样本，还差 {max(0, DNA_MIN_SAMPLE_COUNT - len(samples))} 条。",
+        "collection_guide": [
+            "粘贴抖音主页链接，并补充最近 10-20 条作品标题/文案。",
+            "如果链接受登录或反爬限制，发主页作品列表截图或复制作品标题。",
+            "每条样本最好包含：标题、口播核心句、封面文字、发布时间或播放表现。",
+        ],
+        "samples": samples,
+    }
+
+
+def analyze_client_dna(incoming):
+    douyin_context = build_douyin_context(incoming)
+    samples = extract_content_samples(incoming, douyin_context)
+    if len(samples) < DNA_MIN_SAMPLE_COUNT:
+        return need_more_samples_response(samples, douyin_context)
+
+    llm_config = model_config(incoming, "llm")
+    has_custom_llm = bool(llm_config["endpoint"] or llm_config["model"] or llm_config["api_key"])
+    api_key = llm_config["api_key"] or os.environ.get("DEEPSEEK_API_KEY")
+    endpoint = normalize_chat_endpoint(llm_config["endpoint"] or DEFAULT_CHAT_ENDPOINT)
+    model = llm_config["model"] or os.environ.get("DEEPSEEK_MODEL", "deepseek-chat")
+    if not api_key and not has_custom_llm:
+        dna = local_client_dna(samples, douyin_context, "missing_llm_api_key")
+        dna.update({"reply": "已基于样本生成本地 DNA 诊断；配置 LLM 后可获得更细的设计方向。", "model": "local-fallback", "fallback": True})
+        return dna
+
+    user_payload = {
+        "douyin_url": douyin_context.get("url", ""),
+        "douyin_context": douyin_context,
+        "sample_count": len(samples),
+        "samples": samples[:30],
+        "user_goal": trim(incoming.get("goal") or incoming.get("message"), 1200),
+    }
+    payload = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": DNA_SYSTEM_PROMPT},
+            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+        ],
+        "response_format": {"type": "json_object"},
+        "stream": False,
+        "max_tokens": 2400,
+    }
+    try:
+        try:
+            result = post_chat_completion(endpoint, payload, api_key, timeout=80)
+        except urllib.error.HTTPError as exc:
+            if has_custom_llm and exc.code in {400, 422} and "response_format" in payload:
+                relaxed_payload = dict(payload)
+                relaxed_payload.pop("response_format", None)
+                result = post_chat_completion(endpoint, relaxed_payload, api_key, timeout=80)
+            else:
+                raise
+        parsed = safe_json_loads(result["choices"][0]["message"]["content"])
+        dna = local_client_dna(samples, douyin_context, "llm_normalized")
+        dna.update({k: v for k, v in parsed.items() if k in {"client_dna", "style_signals", "design_directions", "operating_rules", "next_questions"}})
+        dna.update(
+            {
+                "status": "complete",
+                "sample_count": len(samples),
+                "min_required": DNA_MIN_SAMPLE_COUNT,
+                "samples": samples[:12],
+                "reply": f"已读取并整理 {len(samples)} 条内容样本，生成客户 DNA 和设计方向。",
+                "model": model,
+                "provider": "local-config" if has_custom_llm else "deepseek-env",
+                "fallback": False,
+                "usage": result.get("usage"),
+            }
+        )
+        return dna
+    except Exception as exc:
+        dna = local_client_dna(samples, douyin_context, "llm_failed")
+        dna.update({"reply": "LLM 暂不可用，已基于样本生成本地 DNA 诊断。", "model": "local-fallback", "fallback": True, "error": str(exc)})
+        return dna
 
 
 def infer_category(text):
