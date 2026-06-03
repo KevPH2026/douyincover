@@ -986,11 +986,25 @@
       background:
         linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        repeating-linear-gradient(135deg, transparent 0 18px, rgba(178,255,82,.05) 18px 19px, transparent 19px 38px),
         linear-gradient(115deg, rgba(178,255,82,.12) 0 12%, transparent 12% 100%),
         linear-gradient(72deg, transparent 0 68%, rgba(80,216,255,.09) 68% 76%, transparent 76% 100%),
         #07090d;
       background-size: 34px 34px, 34px 34px, auto, auto, auto;
       color: #e8edf2;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, transparent 0 62%, rgba(178,255,82,.08) 62% 62.4%, transparent 62.4% 100%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 5px);
+      mix-blend-mode: screen;
+      opacity: .42;
     }
 
     button:focus-visible,
@@ -1012,7 +1026,7 @@
     }
 
     .launch-hero {
-      grid-template-columns: minmax(360px, 1fr) minmax(360px, 500px);
+      grid-template-columns: 1fr;
       align-items: center;
       gap: 14px;
       padding: 12px 14px;
@@ -1116,6 +1130,7 @@
     }
 
     .delivery-board {
+      display: none;
       grid-template-columns: 1fr 1fr;
       align-self: center;
       align-content: center;
@@ -1166,7 +1181,7 @@
     }
 
     .app {
-      grid-template-columns: 244px minmax(440px, 1fr) 392px;
+      grid-template-columns: 196px minmax(520px, 1fr) 390px;
       gap: 12px;
       height: calc(100vh - 81px);
       min-height: 680px;
@@ -1195,7 +1210,18 @@
     }
 
     .brand-head {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+    }
+
+    .brand-head p,
+    .owner-card {
+      display: none;
+    }
+
+    .domain {
+      border-color: rgba(178,255,82,.28);
+      background: rgba(178,255,82,.08);
+      color: #dfffad;
     }
 
     .brand-head h1,
@@ -1332,7 +1358,57 @@
     }
 
     .agent-actions {
-      grid-template-columns: 1fr 90px;
+      grid-template-columns: 1fr;
+    }
+
+    #agentRunBtn {
+      display: none;
+    }
+
+    #agentClearBtn {
+      height: 32px;
+      margin-top: 0;
+      justify-self: end;
+      width: 86px;
+      color: rgba(232,237,242,.58);
+    }
+
+    .ai-command-input {
+      min-height: 178px !important;
+      border-color: rgba(178,255,82,.28);
+      background:
+        linear-gradient(180deg, rgba(178,255,82,.08), rgba(255,255,255,.04)),
+        rgba(255,255,255,.055);
+      color: #f7ffe8;
+      font-size: 15px;
+      line-height: 1.65;
+      box-shadow: inset 0 0 0 1px rgba(178,255,82,.06);
+    }
+
+    .ai-command-btn {
+      position: relative;
+      height: 58px;
+      overflow: hidden;
+      font-size: 16px;
+    }
+
+    .ai-command-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 0 32%, rgba(255,255,255,.48) 48%, transparent 62% 100%);
+      transform: translateX(-120%);
+      opacity: .42;
+    }
+
+    .ai-command-btn:hover::after {
+      transform: translateX(120%);
+      transition: transform .7s ease;
+    }
+
+    .ai-secondary,
+    .utility-hidden {
+      display: none;
     }
 
     .agent-line.assistant {
@@ -1377,6 +1453,17 @@
       backdrop-filter: blur(12px);
     }
 
+    .advanced-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 58;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(0,0,0,.58);
+      backdrop-filter: blur(14px);
+    }
+
     .settings-panel {
       display: grid;
       grid-template-rows: auto 1fr;
@@ -1387,6 +1474,21 @@
         linear-gradient(180deg, rgba(178,255,82,.09), transparent 24%),
         #0b0f15;
       box-shadow: -28px 0 80px rgba(0,0,0,.48);
+      overflow: hidden;
+    }
+
+    .advanced-panel {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      width: min(980px, 100%);
+      max-height: min(860px, calc(100vh - 44px));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(80,216,255,.1), transparent 32%),
+        linear-gradient(225deg, rgba(178,255,82,.09), transparent 34%),
+        #0b0f15;
+      box-shadow: 0 34px 100px rgba(0,0,0,.56);
       overflow: hidden;
     }
 
@@ -1421,6 +1523,23 @@
     .settings-body {
       padding: 18px;
       overflow: auto;
+    }
+
+    .advanced-body {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .advanced-body > .group {
+      margin-top: 0;
+      min-width: 0;
+    }
+
+    .advanced-body > .group:first-child {
+      grid-column: 1 / -1;
     }
 
     .onboarding-panel {
@@ -1508,7 +1627,8 @@
       }
 
       .onboarding-grid,
-      .onboarding-form {
+      .onboarding-form,
+      .advanced-body {
         grid-template-columns: 1fr;
       }
 
@@ -1540,9 +1660,10 @@
           <a class="hero-chip" href="https://github.com/KevPH2026/dna-superk-ai" target="_blank" rel="noreferrer">GitHub: dna-superk-ai</a>
         </div>
         <div class="hero-actions">
-          <button class="hero-btn primary" id="scrollToStudioBtn">进入工作台</button>
+          <button class="hero-btn primary utility-hidden" id="scrollToStudioBtn">进入工作台</button>
+          <button class="hero-btn primary" id="advancedOpenBtn">手动 / 素材</button>
           <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
-          <button class="hero-btn" id="onboardingOpenBtn">Onboarding</button>
+          <button class="hero-btn utility-hidden" id="onboardingOpenBtn">Onboarding</button>
         </div>
       </div>
 
@@ -1779,6 +1900,19 @@
     </section>
   </div>
 
+  <div class="advanced-backdrop" id="advancedDrawer" hidden>
+    <section class="advanced-panel" role="dialog" aria-modal="true" aria-labelledby="advancedTitle">
+      <header class="settings-head">
+        <div>
+          <span class="hero-kicker">ADVANCED DECK</span>
+          <h2 id="advancedTitle">手动编辑和素材库</h2>
+        </div>
+        <button class="onboarding-close" id="advancedCloseBtn" aria-label="关闭">×</button>
+      </header>
+      <div class="advanced-body" id="advancedBody"></div>
+    </section>
+  </div>
+
   <div class="app">
     <aside class="side">
       <div class="brand-head">
@@ -1801,7 +1935,7 @@
         </div>
       </section>
 
-      <section class="group">
+      <section class="group" data-advanced-panel>
         <p class="group-title">快速模板</p>
         <div class="quick-template-list" id="quickTemplateButtons">
           <button class="quick-template" data-quick-template="ai-news">
@@ -1857,20 +1991,20 @@
 
     <aside class="inspector">
       <section class="group" style="margin-top:0;">
-        <p class="group-title">对话生成</p>
+        <p class="group-title">AI 输入</p>
 
         <div class="field">
-          <label for="douyinShare">抖音分享文案/链接</label>
-          <textarea id="douyinShare" style="min-height:82px;" placeholder="粘贴抖音复制出来的一整段，或只粘贴 https://v.douyin.com/..."></textarea>
-          <button class="export-btn" id="douyinRunBtn" style="margin-top:8px;">抖音链接生成封面</button>
+          <label for="douyinShare">给 AI 的素材</label>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="粘贴抖音链接、分享文案、截图里的文字，或者直接写一句主题。AI 会自动判断标题、栏目、背景方向。"></textarea>
+          <button class="export-btn ai-command-btn" id="douyinRunBtn" style="margin-top:10px;">生成封面</button>
         </div>
 
-        <div class="field">
+        <div class="field ai-secondary">
           <label for="agentMessage">自然语言</label>
           <textarea id="agentMessage" style="min-height:86px;" placeholder="比如：这条讲 Anthropic 估值回调，但我想表达 AI 下半场强者恒强。"></textarea>
         </div>
 
-        <div class="field">
+        <div class="field ai-secondary">
           <label for="agentLink">抖音作品链接</label>
           <input id="agentLink" placeholder="https://v.douyin.com/...">
         </div>
@@ -1892,7 +2026,7 @@
         <div class="agent-transcript" id="agentTranscript"></div>
       </section>
 
-      <section class="group">
+      <section class="group" data-advanced-panel>
         <p class="group-title">内容输入</p>
 
         <div class="field" data-field="profileVariant">
@@ -1999,11 +2133,12 @@
         <p class="group-title">导出</p>
         <button class="export-btn" id="exportBtn">导出 PNG</button>
         <button class="ghost-btn" id="saveAssetBtn">保存到素材库</button>
-        <button class="ghost-btn" id="resetBtn">恢复当前栏目默认文案</button>
+        <button class="ghost-btn" id="advancedOpenSmallBtn">手动编辑</button>
+        <button class="ghost-btn utility-hidden" id="resetBtn">恢复当前栏目默认文案</button>
         <div class="hint" id="fileNameHint">work-ai-AI-03.png</div>
       </section>
 
-      <section class="group">
+      <section class="group" data-advanced-panel>
         <p class="group-title">素材库</p>
         <div class="auth-actions">
           <button class="ghost-btn" id="refreshAssetsBtn" style="margin-top:0;">刷新</button>
@@ -2152,6 +2287,11 @@
       canvas: document.getElementById("coverCanvas"),
       onboardingOpenBtn: document.getElementById("onboardingOpenBtn"),
       scrollToStudioBtn: document.getElementById("scrollToStudioBtn"),
+      advancedOpenBtn: document.getElementById("advancedOpenBtn"),
+      advancedOpenSmallBtn: document.getElementById("advancedOpenSmallBtn"),
+      advancedDrawer: document.getElementById("advancedDrawer"),
+      advancedCloseBtn: document.getElementById("advancedCloseBtn"),
+      advancedBody: document.getElementById("advancedBody"),
       settingsOpenBtn: document.getElementById("settingsOpenBtn"),
       settingsDrawer: document.getElementById("settingsDrawer"),
       settingsCloseBtn: document.getElementById("settingsCloseBtn"),
@@ -3412,6 +3552,17 @@
       document.body.classList.toggle("settings-open", open);
     }
 
+    function setAdvancedOpen(open) {
+      el.advancedDrawer.hidden = !open;
+      document.body.classList.toggle("advanced-open", open);
+    }
+
+    function mountAdvancedPanels() {
+      document.querySelectorAll("[data-advanced-panel]").forEach(panel => {
+        el.advancedBody.appendChild(panel);
+      });
+    }
+
     function syncOnboardingCategoryFromCurrent() {
       const cat = activeCategory();
       el.onboardCategoryTitle.value = cat.label;
@@ -3704,6 +3855,13 @@
       document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
+    el.advancedOpenBtn.addEventListener("click", () => setAdvancedOpen(true));
+    el.advancedOpenSmallBtn.addEventListener("click", () => setAdvancedOpen(true));
+    el.advancedCloseBtn.addEventListener("click", () => setAdvancedOpen(false));
+    el.advancedDrawer.addEventListener("click", event => {
+      if (event.target === el.advancedDrawer) setAdvancedOpen(false);
+    });
+
     el.settingsOpenBtn.addEventListener("click", () => setSettingsOpen(true));
     el.settingsCloseBtn.addEventListener("click", () => setSettingsOpen(false));
     el.settingsDrawer.addEventListener("click", event => {
@@ -3712,6 +3870,7 @@
 
     document.addEventListener("keydown", event => {
       if (event.key !== "Escape") return;
+      if (!el.advancedDrawer.hidden) setAdvancedOpen(false);
       if (!el.settingsDrawer.hidden) setSettingsOpen(false);
       if (!el.onboardingOverlay.hidden) closeOnboarding();
     });
@@ -3836,6 +3995,8 @@
       applyCategoryDefaults(state.category);
       draw();
     });
+
+    mountAdvancedPanels();
 
     state.modelConfig = loadModelConfig();
     applyModelConfigToInputs(state.modelConfig);
