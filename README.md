@@ -22,8 +22,9 @@ Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.m
 1. Ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Ask for the task: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Choose the category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only when needed.
-4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public work samples for DNA decode.
-5. Confirm the brief: Chinese title, English subtitle, background direction, ratio/duration, and code. Then generate and save to the material library.
+4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public work samples for DNA decode and Style generation.
+5. For a new creator or client account, generate an applicable `style_profile` before producing individual covers.
+6. Confirm the brief: Chinese title, English subtitle, background direction, ratio/duration, and code. Then generate and save to the material library.
 
 Starter prompt:
 
@@ -40,6 +41,7 @@ This project fixes that problem for `MR.K 在路上`.
 - One visual language across single posts, 1-2 second motion intros/outros, collections, and profile background
 - AI-assisted title, summary, category, and background direction
 - DNA decode from at least 10 content samples before proposing a design direction
+- Account Style generation that can be applied to category, accent color, image style, density, and background prompt controls
 - First-run onboarding for choosing Agent/Web workflow, starter template, and content category
 - Quick templates for AI news, strong quotes, field notes, motion intros/outros, collections, profile banners, and custom columns
 - Custom categories with editable Chinese name, English name, subtitle, and accent color
@@ -72,6 +74,7 @@ For a new creator or account, paste a Douyin profile/work link plus at least 10 
 
 - account positioning, audience, voice, and content pillars
 - style signals and visual taboos
+- an applicable `style_profile`: category, column labels, accent color, image style, density, background direction, and cover rules
 - 2-3 design directions for covers, collections, and profile background
 - operating rules for future cover generation
 

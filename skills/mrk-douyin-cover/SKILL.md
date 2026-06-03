@@ -52,6 +52,7 @@ metadata:
      - account positioning, audience, voice, and content pillars;
      - title patterns and recurring content angles;
      - style signals and visual taboos;
+     - an applicable `style_profile` with category labels, accent color, image style, density, background direction, title rule, and cover rule;
      - 2-3 cover/profile/collection design directions;
      - operating rules for future cover generation.
    - If using the local Web Studio, call `/api/dna-agent` with:
@@ -59,10 +60,10 @@ metadata:
      {
        "douyin_url": "",
        "source_text": "10+ work samples",
-       "content_samples": [],
-       "goal": "提炼账号DNA并输出设计方向"
-     }
-     ```
+	     "content_samples": [],
+	     "goal": "提炼账号DNA并输出可应用的账号Style和设计方向"
+	   }
+	   ```
 
 4. **Ask only missing questions**
    Ask 2-4 concise questions when the answer is not inferable. Use defaults aggressively.

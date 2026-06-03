@@ -399,6 +399,99 @@ def keyword_hits(samples, keywords):
     return sum(1 for keyword in keywords if keyword.lower() in text or keyword in compact)
 
 
+def custom_style_profile(tone):
+    return {
+        "name": "Custom Account Signal",
+        "category": "custom",
+        "categoryTitle": "自定义栏目",
+        "categoryEn": "CUSTOM COLUMN",
+        "categorySub": "主题 / 场景 / 业务线",
+        "categoryColor": "#f5d76e",
+        "imageStyle": "minimal",
+        "imageDensity": "low",
+        "imageTheme": "深色编辑感，真实工作场景，清晰留白，账号统一封面系统",
+        "titleRule": "先找稳定标题句式，再固定栏目；样本不足时不要过早定死风格。",
+        "backgroundRule": "背景只服务主题和气质，先保留留白，等样本增加后再提高识别度。",
+        "coverRule": "先稳定标题层级、栏目色和安全区，再扩展更多背景变化。",
+        "voiceRule": tone,
+        "avoid": ["过早复杂化", "一条内容一个风格", "信息过满", "通用模板感"],
+    }
+
+
+def local_style_profile(ai_score, business_score, cognition_score, field_score, tone):
+    if max(ai_score, business_score, cognition_score, field_score) == 0:
+        return custom_style_profile(tone)
+    if ai_score >= max(cognition_score, field_score, business_score):
+        return {
+            "name": "AI Command Editorial",
+            "category": "ai",
+            "categoryTitle": "AI下半场",
+            "categoryEn": "AI SECOND HALF",
+            "categorySub": "模型 / Agent / 商业重构",
+            "categoryColor": "#b2ff52",
+            "imageStyle": "terminal",
+            "imageDensity": "medium",
+            "imageTheme": "AI Agent，产品屏幕，代码终端，深夜办公室，商业判断，真实科技现场",
+            "titleRule": "标题像判断句，不写泛泛趋势；优先使用“这不是X，是Y”“X正在重定价”。",
+            "backgroundRule": "背景用真实屏幕、终端、产品界面局部或夜间工作台，不出现可读文字。",
+            "coverRule": "左侧保留大标题安全区，右侧放屏幕光和场景深度，栏目色只做小信号。",
+            "voiceRule": tone,
+            "avoid": ["泛 AI 壁纸", "随机神经网络", "大面积科技渐变", "文字塞满背景"],
+        }
+    if field_score >= max(ai_score, cognition_score, business_score):
+        return {
+            "name": "Road Field Notes",
+            "category": "road",
+            "categoryTitle": "在路上",
+            "categoryEn": "ON THE ROAD",
+            "categorySub": "出差 / 客户 / 一线观察",
+            "categoryColor": "#ff6052",
+            "imageStyle": "field",
+            "imageDensity": "medium",
+            "imageTheme": "机场，车窗，城市夜景，客户现场，一线观察，真实出差现场，克制纪实感",
+            "titleRule": "标题像现场笔记，优先写一线判断和反差，不写旅行流水账。",
+            "backgroundRule": "背景选择路上、机场、酒店桌面、车窗、客户现场等真实场景，留出标题安全区。",
+            "coverRule": "画面要有行动感，但文字区保持冷静干净，红色只做路线或信号点。",
+            "voiceRule": tone,
+            "avoid": ["旅行大片感", "游客视角", "过亮风景", "杂乱现场"],
+        }
+    if cognition_score >= max(ai_score, field_score, business_score):
+        return {
+            "name": "Strong Signal Editorial",
+            "category": "strong",
+            "categoryTitle": "强者恒强",
+            "categoryEn": "THE STRONG GET STRONGER",
+            "categorySub": "判断力 / 筹码 / 个体系统",
+            "categoryColor": "#50d6ff",
+            "imageStyle": "cinematic",
+            "imageDensity": "low",
+            "imageTheme": "强者恒强，深夜书桌，白板讨论，人物剪影，判断力，黑白编辑感，安静压迫感",
+            "titleRule": "标题要像一句能被转述的判断，短、硬、有方向感。",
+            "backgroundRule": "背景用深夜办公室、白板、桌面、谈判室或黑白人物剪影，避免励志海报感。",
+            "coverRule": "大标题压住画面，英文副题克制，保留黑白编辑感和冷色高光。",
+            "voiceRule": tone,
+            "avoid": ["鸡汤海报", "夸张成功学符号", "金色财富感", "软口号"],
+        }
+    if business_score:
+        return {
+            "name": "Business Growth System",
+            "category": "custom",
+            "categoryTitle": "商业增长",
+            "categoryEn": "BUSINESS GROWTH",
+            "categorySub": "产品 / 客户 / 增长",
+            "categoryColor": "#f5d76e",
+            "imageStyle": "cinematic",
+            "imageDensity": "medium",
+            "imageTheme": "商业增长，产品会议，客户现场，市场图表，深夜办公室，真实商业决策",
+            "titleRule": "标题围绕商业结果和决策代价，不写空泛方法论。",
+            "backgroundRule": "背景用产品会议、客户讨论、市场看板、办公桌和真实业务现场。",
+            "coverRule": "保持单一强标题，栏目名可自定义，颜色只做标识不做大面积铺色。",
+            "voiceRule": tone,
+            "avoid": ["企业宣传册感", "模板化商务握手", "PPT 图标堆叠", "过度金色"],
+        }
+    return custom_style_profile(tone)
+
+
 def local_client_dna(samples, douyin_context, reason="local_dna"):
     ai_score = keyword_hits(samples, ["ai", "模型", "agent", "openai", "deepseek", "saas", "api", "自动化"])
     business_score = keyword_hits(samples, ["商业", "创业", "公司", "估值", "增长", "产品", "客户", "市场"])
@@ -421,6 +514,8 @@ def local_client_dna(samples, douyin_context, reason="local_dna"):
     if ai_score >= max(cognition_score, field_score):
         tone = "深夜科技商业、克制但锋利"
 
+    style_profile = local_style_profile(ai_score, business_score, cognition_score, field_score, tone)
+
     return {
         "status": "complete",
         "sample_count": len(samples),
@@ -442,6 +537,7 @@ def local_client_dna(samples, douyin_context, reason="local_dna"):
             "avoid": ["通用 AI 壁纸", "花哨渐变", "营销海报感", "信息过满"],
             "visual_mood": tone,
         },
+        "style_profile": style_profile,
         "design_directions": [
             {
                 "name": "Deep Work Command",
@@ -489,6 +585,7 @@ DNA_SYSTEM_PROMPT = """
 - 样本不足 10 条时不能做完整结论，只能要求补样本。
 - 设计方向必须来自样本中的内容主题、表达方式、标题气质、视觉/场景线索。
 - 输出要能直接指导封面系统：栏目、字体气质、配色、背景类型、版式、禁忌。
+- 必须额外输出一个可直接应用到页面控件的 style_profile；字段名必须稳定，不能只写自然语言建议。
 
 只输出合法 JSON，不要 markdown，不要解释。JSON 结构：
 {
@@ -504,6 +601,22 @@ DNA_SYSTEM_PROMPT = """
     "keywords": ["..."],
     "avoid": ["..."],
     "visual_mood": "..."
+  },
+  "style_profile": {
+    "name": "...",
+    "category": "ai|strong|road|custom",
+    "categoryTitle": "...",
+    "categoryEn": "...",
+    "categorySub": "...",
+    "categoryColor": "#b2ff52",
+    "imageStyle": "cinematic|terminal|field|minimal",
+    "imageDensity": "low|medium|high",
+    "imageTheme": "...",
+    "titleRule": "...",
+    "backgroundRule": "...",
+    "coverRule": "...",
+    "voiceRule": "...",
+    "avoid": ["..."]
   },
   "design_directions": [
     {
@@ -583,7 +696,7 @@ def analyze_client_dna(incoming):
                 raise
         parsed = safe_json_loads(result["choices"][0]["message"]["content"])
         dna = local_client_dna(samples, douyin_context, "llm_normalized")
-        dna.update({k: v for k, v in parsed.items() if k in {"client_dna", "style_signals", "design_directions", "operating_rules", "next_questions"}})
+        dna.update({k: v for k, v in parsed.items() if k in {"client_dna", "style_signals", "style_profile", "design_directions", "operating_rules", "next_questions"}})
         dna.update(
             {
                 "status": "complete",

@@ -24,8 +24,9 @@ Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.m
 1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
 2. Task type: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.
-4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public samples for DNA decode.
-5. Final brief: Chinese title, English subtitle, background direction, ratio/duration, and code. After confirmation, generate and save the asset.
+4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public samples for DNA decode and Style generation.
+5. For a new creator or client account, generate an applicable `style_profile` before producing individual covers.
+6. Final brief: Chinese title, English subtitle, background direction, ratio/duration, and code. After confirmation, generate and save the asset.
 
 Starter prompt:
 
@@ -81,7 +82,9 @@ The Web Studio includes a local-only model panel for OpenAI-compatible LLM and i
 
 ### Decode DNA
 
-For a new creator/account, send the Agent a Douyin profile/work link and at least 10 public content samples: titles, cover text, captions, or screenshot OCR. The Agent extracts the account DNA first, then proposes design directions.
+For a new creator/account, send the Agent a Douyin profile/work link and at least 10 public content samples: titles, cover text, captions, or screenshot OCR. The Agent extracts the account DNA first, then proposes design directions and an applicable account Style.
+
+The generated Style can be applied to the Web Studio controls: category labels, accent color, image style, density, background direction, and cover rules.
 
 If fewer than 10 usable samples are available, the Agent asks for the missing samples instead of inventing a strategy from one link.
 
@@ -111,8 +114,8 @@ DNA Decode workflow:
 
 1. Paste a Douyin link and at least 10 work samples.
 2. The Agent analyzes themes, voice, title patterns, and visual cues.
-3. It returns positioning, audience, content pillars, visual taboos, and 2-3 design directions.
-4. Use that DNA for single covers, collection covers, and profile backgrounds.
+3. It returns positioning, audience, content pillars, visual taboos, design directions, and an applicable `style_profile`.
+4. Apply the Style, then use that DNA for single covers, collection covers, and profile backgrounds.
 
 ## Output Sizes
 

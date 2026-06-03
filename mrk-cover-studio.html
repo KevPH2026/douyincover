@@ -1811,6 +1811,118 @@
       padding-left: 16px;
     }
 
+    .style-profile-card {
+      position: relative;
+      overflow: hidden;
+      border-color: rgba(178,255,82,.24);
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.14), transparent 42%),
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.035));
+    }
+
+    .style-profile-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 18px 18px;
+      opacity: .34;
+      mask-image: linear-gradient(90deg, transparent, #000 24%, #000 76%, transparent);
+    }
+
+    .style-profile-head,
+    .style-profile-row,
+    .style-action-row {
+      position: relative;
+      z-index: 1;
+    }
+
+    .style-profile-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .style-profile-name {
+      display: grid;
+      gap: 3px;
+    }
+
+    .style-profile-name strong {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .style-profile-name span {
+      color: rgba(232,237,242,.62);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .style-swatch {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 8px;
+      box-shadow: 0 0 28px color-mix(in srgb, var(--style-color, #b2ff52) 42%, transparent);
+      background: var(--style-color, #b2ff52);
+    }
+
+    .style-profile-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0;
+    }
+
+    .style-chip {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: 4px 7px;
+      background: rgba(5,8,12,.54);
+      color: rgba(247,255,232,.84);
+      font-size: 11px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .style-rule {
+      position: relative;
+      z-index: 1;
+      margin-top: 8px;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .style-rule b {
+      display: block;
+      margin-bottom: 3px;
+      color: rgba(178,255,82,.9);
+      font-size: 11px;
+    }
+
+    .style-action-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .style-action-row button {
+      min-height: 34px;
+      margin: 0;
+      font-size: 12px;
+    }
+
     .agent-line.assistant {
       border-color: rgba(178,255,82,.38);
       background: rgba(178,255,82,.1);
@@ -2741,11 +2853,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.9</span>
-            <span class="version-pill">2026.06.03 更新</span>
+            <span class="version-pill current">当前版本 v0.10</span>
+            <span class="version-pill">2026.06.04 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>从“能生成封面”，升级到“能讲清楚怎么用、为什么更新”。</h3>
+          <h3>从“看懂账号”，升级到“生成一套可应用的账号 Style”。</h3>
           <p>这里记录的是产品能力变化，不是代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 Mr.K Cover Studio 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -2767,7 +2879,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.9</span>
+                <span class="version-pill current">v0.10</span>
+                <strong>根据抖音样本生成账号 Style，并一键应用</strong>
+                <span>适合给新账号或客户账号快速定视觉方向。</span>
+              </div>
+              <div class="release-date">2026.06.04</div>
+            </div>
+            <p>解码 DNA 不再只输出文字建议，而是生成一套可直接应用到页面控件的 Style：栏目、英文名、栏目色、背景方向、画面风格和封面规则都会被整理出来。</p>
+            <ul class="release-points">
+              <li>粘贴至少 10 条公开作品样本后，自动提炼账号 Style。</li>
+              <li>Style 卡片可以完整应用，也可以只把背景方向应用到当前封面。</li>
+              <li>LLM 不可用时也会用本地规则给出可编辑的 Style 草案。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.9</span>
                 <strong>新增片尾动效，手机上也能顺手使用</strong>
                 <span>适合短视频最后 1-2 秒做关注提示和品牌收束。</span>
               </div>
@@ -2975,10 +3104,10 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA / 生成 Style：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
           <div class="ai-command-grid">
             <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/动效</button>
-            <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA</button>
+            <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA / Style</button>
           </div>
         </div>
 
@@ -3397,8 +3526,9 @@
 1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
 2. 再问任务类型：单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
-4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
-5. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
+4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
+5. 如果是新账号或客户账号，先解码 DNA，再生成可应用的 style_profile：栏目、栏目英文、副标题、栏目色、配图风格、信息密度、背景方向、标题规则和封面规则。
+6. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
 - 不要声称看到了没有提供的抖音内容。
@@ -3412,6 +3542,7 @@
 - 片尾动效必须包含明确关注动作或品牌收束，例如“关注我，看懂 AI 下半场 / KevPH2026”。
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
+- 给客户账号做解码时，必须输出能被页面应用的 style_profile，不要只写审美建议。
 
 输出 brief JSON：
 {
@@ -3426,7 +3557,21 @@
   "summary": "",
   "background_direction": "",
   "background_prompt": "",
-  "code": "K-xx"
+  "code": "K-xx",
+  "style_profile": {
+    "name": "",
+    "category": "ai|strong|road|custom",
+    "categoryTitle": "",
+    "categoryEn": "",
+    "categorySub": "",
+    "categoryColor": "#b2ff52",
+    "imageStyle": "cinematic|terminal|field|minimal",
+    "imageDensity": "low|medium|high",
+    "imageTheme": "",
+    "titleRule": "",
+    "backgroundRule": "",
+    "coverRule": ""
+  }
 }
 
 推荐开场：
@@ -3443,6 +3588,7 @@
       agentCoverImageUrl: "",
       agentPromptHint: "",
       agentMessages: [],
+      generatedStyle: null,
       modelConfig: null,
       motionMedia: null,
       motionMediaType: "",
@@ -3685,9 +3831,140 @@
       el.dnaResult.appendChild(card);
     }
 
+    function pickStyleValue(raw, keys) {
+      for (const key of keys) {
+        const value = raw && raw[key];
+        if (value !== undefined && value !== null && String(value).trim()) return String(value).trim();
+      }
+      return "";
+    }
+
+    function styleOptionLabel(value) {
+      return {
+        cinematic: "深夜电影感",
+        terminal: "代码终端感",
+        field: "一线纪实感",
+        minimal: "极简抽象感"
+      }[value] || value || "待确认";
+    }
+
+    function densityOptionLabel(value) {
+      return {
+        low: "留白多",
+        medium: "适中",
+        high: "细节多"
+      }[value] || value || "待确认";
+    }
+
+    function normalizeGeneratedStyle(raw) {
+      if (!raw || typeof raw !== "object") return null;
+      const requestedCategory = pickStyleValue(raw, ["category", "column", "categoryKey"]);
+      const category = categories[requestedCategory] ? requestedCategory : "custom";
+      const base = categories[category] || categories.custom;
+      const imageStyle = pickStyleValue(raw, ["imageStyle", "image_style", "visualStyle", "visual_style"]);
+      const imageDensity = pickStyleValue(raw, ["imageDensity", "image_density", "density"]);
+      const color = normalizedColor(
+        pickStyleValue(raw, ["categoryColor", "category_color", "accentColor", "accent_color", "color"]),
+        base.color
+      );
+      const profile = {
+        name: pickStyleValue(raw, ["name", "styleName", "style_name", "title"]) || `${base.label} Style`,
+        category,
+        categoryTitle: pickStyleValue(raw, ["categoryTitle", "category_title", "columnTitle", "column_title"]) || base.label,
+        categoryEn: pickStyleValue(raw, ["categoryEn", "category_en", "columnEn", "column_en"]) || base.en,
+        categorySub: pickStyleValue(raw, ["categorySub", "category_sub", "subtitle", "sub"]) || base.sub,
+        categoryColor: color,
+        imageStyle: ["cinematic", "terminal", "field", "minimal"].includes(imageStyle) ? imageStyle : "cinematic",
+        imageDensity: ["low", "medium", "high"].includes(imageDensity) ? imageDensity : "medium",
+        imageTheme: pickStyleValue(raw, ["imageTheme", "image_theme", "backgroundTheme", "background_theme", "backgroundDirection", "background_direction"]) || base.theme,
+        titleRule: pickStyleValue(raw, ["titleRule", "title_rule"]),
+        backgroundRule: pickStyleValue(raw, ["backgroundRule", "background_rule"]),
+        coverRule: pickStyleValue(raw, ["coverRule", "cover_rule", "layoutRule", "layout_rule"]),
+        voiceRule: pickStyleValue(raw, ["voiceRule", "voice_rule", "voice"]),
+        avoid: Array.isArray(raw.avoid) ? raw.avoid : []
+      };
+      return profile;
+    }
+
+    function appendStyleRule(card, label, value) {
+      const clean = String(value || "").trim();
+      if (!clean) return;
+      const node = document.createElement("div");
+      node.className = "style-rule";
+      const title = document.createElement("b");
+      title.textContent = label;
+      const copy = document.createElement("span");
+      copy.textContent = clean;
+      node.append(title, copy);
+      card.appendChild(node);
+    }
+
+    function appendStyleProfileCard(rawStyle) {
+      const style = normalizeGeneratedStyle(rawStyle);
+      if (!style) return;
+      state.generatedStyle = style;
+
+      const card = document.createElement("div");
+      card.className = "dna-card style-profile-card";
+      card.style.setProperty("--style-color", style.categoryColor);
+
+      const head = document.createElement("div");
+      head.className = "style-profile-head";
+      const name = document.createElement("div");
+      name.className = "style-profile-name";
+      const strong = document.createElement("strong");
+      strong.textContent = "生成的账号 Style";
+      const sub = document.createElement("span");
+      sub.textContent = style.name;
+      name.append(strong, sub);
+      const swatch = document.createElement("span");
+      swatch.className = "style-swatch";
+      swatch.setAttribute("aria-hidden", "true");
+      head.append(name, swatch);
+      card.appendChild(head);
+
+      const chipRow = document.createElement("div");
+      chipRow.className = "style-profile-row";
+      [
+        style.categoryTitle,
+        style.categoryEn,
+        style.categorySub,
+        styleOptionLabel(style.imageStyle),
+        densityOptionLabel(style.imageDensity)
+      ].filter(Boolean).forEach(text => {
+        const chip = document.createElement("span");
+        chip.className = "style-chip";
+        chip.textContent = text;
+        chipRow.appendChild(chip);
+      });
+      card.appendChild(chipRow);
+
+      appendStyleRule(card, "背景方向", style.imageTheme);
+      appendStyleRule(card, "标题规则", style.titleRule);
+      appendStyleRule(card, "封面规则", style.coverRule);
+      appendStyleRule(card, "风格禁区", style.avoid.slice(0, 4).join(" / "));
+
+      const actions = document.createElement("div");
+      actions.className = "style-action-row";
+      const applyBtn = document.createElement("button");
+      applyBtn.type = "button";
+      applyBtn.className = "export-btn";
+      applyBtn.dataset.dnaStyleAction = "full";
+      applyBtn.textContent = "应用这套 Style";
+      const themeBtn = document.createElement("button");
+      themeBtn.type = "button";
+      themeBtn.className = "ghost-btn";
+      themeBtn.dataset.dnaStyleAction = "theme";
+      themeBtn.textContent = "只应用背景";
+      actions.append(applyBtn, themeBtn);
+      card.appendChild(actions);
+      el.dnaResult.appendChild(card);
+    }
+
     function renderDnaResult(payload) {
       el.dnaResult.hidden = false;
       el.dnaResult.innerHTML = "";
+      state.generatedStyle = null;
       if (payload.status === "need_samples") {
         appendDnaCard("样本不足", payload.reply || `还差 ${payload.missing_count || 0} 条作品样本。`);
         appendDnaCard("补样方式", payload.collection_guide || []);
@@ -3696,6 +3973,7 @@
       }
       const dna = payload.client_dna || {};
       const style = payload.style_signals || {};
+      appendStyleProfileCard(payload.style_profile);
       appendDnaCard("账号 DNA", [
         `定位：${dna.positioning || "待确认"}`,
         `受众：${dna.audience || "待确认"}`,
@@ -4553,6 +4831,7 @@
       const v = values();
       const cat = activeCategory();
       const theme = el.imageTheme.value.trim() || [v.title, v.summary].filter(Boolean).join(" / ");
+      const generatedStyle = normalizeGeneratedStyle(state.generatedStyle);
       const safeArea = state.template === "profile"
         ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
         : state.template === "intro"
@@ -4566,6 +4845,7 @@
         `Brand: Mr.K, Chinese AI/business solo creator, calm judgment, cross-border AI, field notes.`,
         `Category: ${v.categoryTitle || cat.label} / ${v.categoryEn || cat.en}. Accent color hint: ${cat.color}.`,
         `Theme: ${theme}.`,
+        generatedStyle ? `Account style profile: ${generatedStyle.name}. Title rule: ${generatedStyle.titleRule || "stable judgment-like Chinese title"}. Background rule: ${generatedStyle.backgroundRule || generatedStyle.imageTheme}. Cover rule: ${generatedStyle.coverRule || "fixed high-contrast editorial cover system"}.` : "",
         state.agentPromptHint ? `Editorial direction from DeepSeek: ${state.agentPromptHint}.` : "",
         state.agentReference ? "Use the uploaded image as a loose visual reference for mood, color and scene structure, but do not copy text or identifiable UI." : "",
         state.agentCoverImageUrl ? "Use the Douyin source cover image as a loose visual reference when provided, while keeping the final result in Mr.K's fixed cover system." : "",
@@ -4640,6 +4920,7 @@
         imageTheme: el.imageTheme.value,
         imageStyle: el.imageStyle.value,
         imageDensity: el.imageDensity.value,
+        generatedStyle: state.generatedStyle,
         motionDuration: el.motionDuration.value,
         motionStyle: el.motionStyle.value
       };
@@ -4648,6 +4929,37 @@
     function setValue(input, value) {
       const clean = String(value || "").trim();
       if (clean) input.value = clean;
+    }
+
+    function applyGeneratedStyle(mode = "full") {
+      const style = normalizeGeneratedStyle(state.generatedStyle);
+      if (!style) {
+        setAgentStatus("还没有可应用的账号 Style。先粘贴至少 10 条公开作品样本并解码。", "error");
+        return;
+      }
+      if (mode !== "theme") {
+        const category = categories[style.category] ? style.category : "custom";
+        updateCategorySelection(category);
+        el.categoryTitle.value = style.categoryTitle;
+        el.categoryEn.value = style.categoryEn;
+        el.categorySub.value = style.categorySub;
+        syncColorInputs(style.categoryColor);
+      }
+      el.imageTheme.value = style.imageTheme;
+      el.imageStyle.value = style.imageStyle;
+      el.imageDensity.value = style.imageDensity;
+      state.agentPromptHint = [
+        style.titleRule,
+        style.backgroundRule,
+        style.coverRule,
+        style.voiceRule
+      ].filter(Boolean).join(" ");
+      el.bgPreset.value = "auto";
+      draw();
+      const actionLabel = mode === "theme" ? "已应用 Style 背景方向" : `已应用账号 Style：${style.name}`;
+      setAgentStatus(actionLabel, "success");
+      setAiStatus(`${actionLabel}。现在可以生成主题配图或继续微调。`, "success");
+      el.status.textContent = "DNA style applied";
     }
 
     function applyAgentPlan(payload) {
@@ -4758,10 +5070,10 @@
       }
       if (!ensureGuestCanUse("解码 DNA")) return;
 
-      addAgentMessage("user", `解码 DNA\n${sourceText || message || extractedUrl}`);
+      addAgentMessage("user", `解码 DNA / 生成 Style\n${sourceText || message || extractedUrl}`);
       setAgentButtonsDisabled(true);
-      setAgentStatus("正在整理作品样本，至少需要 10 条内容来判断账号 DNA。", "working");
-      el.status.textContent = "Decoding DNA";
+      setAgentStatus("正在整理作品样本，至少需要 10 条内容来判断账号 DNA，并生成可应用 Style。", "working");
+      el.status.textContent = "Decoding DNA style";
       el.dnaResult.hidden = true;
       el.dnaResult.innerHTML = "";
 
@@ -4774,7 +5086,7 @@
             source_text: sourceText,
             douyin_url: extractedUrl,
             douyin_share_text: sourceText,
-            goal: "读取不少于 10 条内容和风格，提炼账号 DNA，并输出封面/主页/合集设计方向。",
+            goal: "读取不少于 10 条内容和风格，提炼账号 DNA，并输出可应用到封面系统的账号 Style、封面/主页/合集设计方向。",
             model_config: modelConfigPayload()
           })
         });
@@ -4787,9 +5099,10 @@
           setAgentStatus(payload.reply || "样本不足，先补足至少 10 条公开作品内容。", "error");
           addAgentMessage("assistant", payload.reply || "样本不足，无法生成完整账号 DNA。");
         } else {
-          setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成账号 DNA 和设计方向。`, payload.fallback ? "error" : "success");
-          addAgentMessage("assistant", payload.reply || "账号 DNA 和设计方向已生成。");
-          recordGuestUse("解码 DNA");
+          const styleNote = payload.style_profile ? "，可直接应用 Style" : "";
+          setAgentStatus(`${payload.fallback ? "本地" : payload.model || "LLM"} 已基于 ${payload.sample_count || 0} 条样本生成账号 DNA${styleNote}。`, payload.fallback ? "error" : "success");
+          addAgentMessage("assistant", payload.reply || `账号 DNA 和 Style 已生成${styleNote ? "，可以一键应用到当前封面" : ""}。`);
+          recordGuestUse("解码 DNA / Style");
         }
         el.status.textContent = "DNA decoded";
       } catch (error) {
@@ -5156,11 +5469,15 @@
       draw();
     }
 
-    function setCategory(category) {
+    function updateCategorySelection(category) {
       state.category = category;
       document.querySelectorAll("[data-category]").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.category === category);
       });
+    }
+
+    function setCategory(category) {
+      updateCategorySelection(category);
       applyCategoryDefaults(category);
       draw();
     }
@@ -5678,6 +5995,12 @@
     el.categoryButtons.addEventListener("click", event => {
       const btn = event.target.closest("[data-category]");
       if (btn) setCategory(btn.dataset.category);
+    });
+
+    el.dnaResult.addEventListener("click", event => {
+      const btn = event.target.closest("[data-dna-style-action]");
+      if (!btn) return;
+      applyGeneratedStyle(btn.dataset.dnaStyleAction || "full");
     });
 
     ["profileVariant", "categoryTitle", "categoryEn", "categorySub", "categoryColor", "categoryColorText", "title", "enTitle", "summary", "code", "bgPreset", "imageTheme", "imageStyle", "imageDensity", "motionDuration", "motionStyle"].forEach(id => {
