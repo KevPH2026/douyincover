@@ -2130,6 +2130,13 @@
       margin-top: 0;
     }
 
+    .feedback-issue-link {
+      display: grid;
+      place-items: center;
+      margin-top: 10px;
+      text-decoration: none;
+    }
+
     .version-panel {
       width: min(760px, 100%);
     }
@@ -2982,7 +2989,7 @@
             </div>
             <p>页面顶部和底部都新增“反馈”入口。用户可以提交报错、流程困惑、生成结果不满意、登录和素材库问题，系统会自动带上当前模板、栏目、标题和浏览器尺寸，减少来回追问。</p>
             <ul class="release-points">
-              <li>反馈优先进入云端反馈箱；本地开发时写入 `.codex-local/feedback.jsonl`。</li>
+              <li>反馈优先进入云端反馈箱；云端未配置时生成 GitHub Issue 草稿，本地开发时写入 `.codex-local/feedback.jsonl`。</li>
               <li>提交失败时会先保存到本机浏览器，避免用户写完的问题丢失。</li>
               <li>支持一键复制反馈内容，方便直接发微信或 GitHub Issue。</li>
             </ul>
@@ -3158,7 +3165,8 @@
           <button class="export-btn" id="feedbackSubmitBtn">提交反馈</button>
           <button class="ghost-btn" id="feedbackCopyBtn">复制反馈内容</button>
         </div>
-        <div class="ai-status" id="feedbackStatus">反馈会优先保存到云端；本地开发环境会写入 `.codex-local/feedback.jsonl`。</div>
+        <div class="ai-status" id="feedbackStatus">反馈会优先保存到云端；云端未配置时会生成 GitHub Issue 草稿，本地开发会写入 `.codex-local/feedback.jsonl`。</div>
+        <a class="ghost-btn feedback-issue-link" id="feedbackIssueLink" href="https://github.com/KevPH2026/douyincover/issues/new" target="_blank" rel="noreferrer" hidden>打开 GitHub Issue 草稿</a>
       </div>
     </section>
   </div>
@@ -3807,6 +3815,7 @@
       feedbackIncludeContext: document.getElementById("feedbackIncludeContext"),
       feedbackSubmitBtn: document.getElementById("feedbackSubmitBtn"),
       feedbackCopyBtn: document.getElementById("feedbackCopyBtn"),
+      feedbackIssueLink: document.getElementById("feedbackIssueLink"),
       feedbackStatus: document.getElementById("feedbackStatus"),
       onboardingOverlay: document.getElementById("onboardingOverlay"),
       onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
@@ -4530,6 +4539,22 @@
       ].join("\n");
     }
 
+    function feedbackIssueUrl(payload) {
+      const params = new URLSearchParams();
+      const typeLabel = {
+        bug: "报错",
+        confusing: "流程困惑",
+        output: "结果问题",
+        account: "账号素材",
+        idea: "功能建议",
+        other: "其它"
+      }[payload.type] || "反馈";
+      params.set("title", `[反馈] ${typeLabel} - ${String(payload.message || "").slice(0, 32)}`);
+      params.set("body", feedbackMarkdown(payload));
+      params.set("labels", "feedback");
+      return `https://github.com/KevPH2026/douyincover/issues/new?${params.toString()}`;
+    }
+
     async function submitFeedback() {
       const payload = buildFeedbackPayload();
       if (payload.message.length < 6) {
@@ -4544,6 +4569,7 @@
         saveLocalFeedback({ ...result.feedback, storage: result.storage, synced: true });
         const suffix = result.storage === "local" ? "已保存到本地反馈文件。" : "已保存到云端反馈箱。";
         setFeedbackStatus(`收到，反馈编号 ${result.feedback.id}。${suffix}`, "success");
+        el.feedbackIssueLink.hidden = true;
         el.feedbackMessage.value = "";
       } catch (error) {
         const fallback = {
@@ -4554,7 +4580,15 @@
           error: error.message
         };
         saveLocalFeedback(fallback);
-        setFeedbackStatus("云端暂时没收进去，已先保存在本机浏览器；可以点“复制反馈内容”发给我。", "error");
+        el.feedbackIssueLink.href = feedbackIssueUrl(payload);
+        el.feedbackIssueLink.hidden = false;
+        const missingStorage = error.payload && error.payload.error === "missing_storage";
+        setFeedbackStatus(
+          missingStorage
+            ? "云端反馈箱还没配置，已先保存在本机浏览器；可以打开 GitHub Issue 草稿提交。"
+            : "云端暂时没收进去，已先保存在本机浏览器；可以点“复制反馈内容”发给我。",
+          "error"
+        );
       } finally {
         el.feedbackSubmitBtn.disabled = false;
       }
@@ -5889,7 +5923,8 @@
       el.feedbackDrawer.hidden = !open;
       document.body.classList.toggle("feedback-open", open);
       if (open) {
-        setFeedbackStatus("反馈会优先保存到云端；本地开发环境会写入 `.codex-local/feedback.jsonl`。");
+        setFeedbackStatus("反馈会优先保存到云端；云端未配置时会生成 GitHub Issue 草稿，本地开发会写入 `.codex-local/feedback.jsonl`。");
+        el.feedbackIssueLink.hidden = true;
         setTimeout(() => el.feedbackMessage.focus(), 60);
       }
     }

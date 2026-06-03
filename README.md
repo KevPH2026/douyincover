@@ -49,7 +49,7 @@ This project fixes that problem for `MR.K 在路上`.
 - Local-only configuration for OpenAI-compatible LLM and image models
 - Anonymous users can try 3 AI generation actions before email-code login is required
 - Email verification login with auto-create account on first verified email
-- In-product feedback entry for bugs, confusing flows, output issues, and feature requests
+- In-product feedback entry for bugs, confusing flows, output issues, and feature requests; KV-backed in production with a GitHub Issue draft fallback
 - Realistic editorial backgrounds instead of generic AI wallpaper
 - Local material management for generated covers and motion frames
 - A deployable Skill for Agent workflows

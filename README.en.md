@@ -74,7 +74,7 @@ Covers can be saved into a material library. It works locally by default and can
 
 ### User Feedback Loop
 
-The page includes a feedback entry in the top actions and footer. Users can report errors, confusing flows, unsatisfying outputs, login/material-library issues, or feature ideas. The form can include current template, category, title, page URL, and viewport context for faster debugging.
+The page includes a feedback entry in the top actions and footer. Users can report errors, confusing flows, unsatisfying outputs, login/material-library issues, or feature ideas. The form can include current template, category, title, page URL, and viewport context for faster debugging. Production feedback is KV-backed; if cloud storage is not configured, the page generates a GitHub Issue draft.
 
 ### Trial Limit And Email Login
 
