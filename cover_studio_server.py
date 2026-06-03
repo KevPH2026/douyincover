@@ -10,6 +10,8 @@ from cover_agent_service import analyze_client_dna
 from cover_agent_service import create_cover_plan
 from cover_image_service import ServiceError as ImageServiceError
 from cover_image_service import generate_image
+from motion_export_service import MotionExportError
+from motion_export_service import transcode_m4v
 
 
 class CoverStudioHandler(SimpleHTTPRequestHandler):
@@ -72,6 +74,15 @@ class CoverStudioHandler(SimpleHTTPRequestHandler):
             except ValueError as exc:
                 self._json(400, {"error": "bad_request", "message": str(exc)})
             except AccountServiceError as exc:
+                self._json(exc.status, exc.payload)
+            return
+
+        if self.path == "/api/transcode-m4v":
+            try:
+                self._json(200, transcode_m4v(self._read_json()))
+            except ValueError as exc:
+                self._json(400, {"error": "bad_request", "message": str(exc)})
+            except MotionExportError as exc:
                 self._json(exc.status, exc.payload)
             return
 

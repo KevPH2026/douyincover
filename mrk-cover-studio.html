@@ -39,6 +39,10 @@
       min-height: calc(100vh - 224px);
     }
 
+    body.mobile-menu-open {
+      overflow: hidden;
+    }
+
     .product-shell {
       background: var(--bg);
     }
@@ -1920,6 +1924,190 @@
       overflow: auto;
     }
 
+    .version-panel {
+      width: min(760px, 100%);
+    }
+
+    .version-hero {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.14), transparent 36%),
+        linear-gradient(225deg, rgba(80,216,255,.1), transparent 38%),
+        rgba(255,255,255,.045);
+      color: #f4f7fb;
+    }
+
+    .version-hero h3 {
+      margin: 0;
+      max-width: 560px;
+      font-size: 26px;
+      line-height: 1.12;
+    }
+
+    .version-hero p {
+      margin: 0;
+      max-width: 640px;
+      color: rgba(232,237,242,.72);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .version-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .version-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: rgba(244,247,251,.78);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .version-pill.current {
+      border-color: rgba(178,255,82,.7);
+      background: rgba(178,255,82,.14);
+      color: #f7ffe8;
+    }
+
+    .version-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .version-stat {
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .version-stat strong {
+      display: block;
+      color: #f4f7fb;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    .version-stat span {
+      display: block;
+      margin-top: 6px;
+      color: rgba(232,237,242,.58);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .release-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .release-card {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+      color: rgba(232,237,242,.72);
+    }
+
+    .release-card.current {
+      border-color: rgba(178,255,82,.45);
+      background:
+        linear-gradient(90deg, rgba(178,255,82,.1), transparent 56%),
+        rgba(255,255,255,.055);
+    }
+
+    .release-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .release-title {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .release-title strong {
+      color: #f4f7fb;
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
+    .release-title span,
+    .release-date {
+      color: rgba(232,237,242,.5);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .release-date {
+      flex: 0 0 auto;
+      text-align: right;
+    }
+
+    .release-card p {
+      margin: 0;
+      color: rgba(232,237,242,.68);
+      font-size: 13px;
+      line-height: 1.62;
+    }
+
+    .release-points {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .release-points li {
+      display: grid;
+      grid-template-columns: 10px 1fr;
+      gap: 9px;
+      align-items: start;
+      color: rgba(232,237,242,.72);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .release-points li::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      margin-top: 8px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 16px rgba(178,255,82,.5);
+    }
+
+    .release-note {
+      padding: 12px 14px;
+      border: 1px solid rgba(80,216,255,.18);
+      border-radius: 8px;
+      background: rgba(80,216,255,.06);
+      color: rgba(232,237,242,.7);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .advanced-body {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2048,13 +2236,92 @@
 
       .onboarding-grid,
       .tour-grid,
+      .version-stat-grid,
       .onboarding-form,
       .advanced-body {
         grid-template-columns: 1fr;
       }
 
+      .release-head {
+        display: grid;
+      }
+
+      .release-date {
+        text-align: left;
+      }
+
       .app {
-        display: block;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        height: auto;
+        min-height: 0;
+        padding: 10px;
+      }
+
+      .product-shell {
+        position: static;
+      }
+
+      .side,
+      .workspace,
+      .inspector {
+        border-radius: 8px;
+      }
+
+      .side,
+      .inspector {
+        padding: 14px;
+        max-height: none;
+        overflow: visible;
+      }
+
+      .brand-head {
+        margin-bottom: 12px;
+      }
+
+      .brand-head h1 {
+        font-size: 20px;
+      }
+
+      .domain {
+        margin-top: 10px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        min-height: 0;
+        padding: 14px;
+      }
+
+      .topbar h2 {
+        font-size: 18px;
+      }
+
+      .meta {
+        flex: 0 0 auto;
+        font-size: 11px;
+      }
+
+      .row,
+      .agent-actions,
+      .agent-guide-actions,
+      .auth-actions,
+      .material-actions,
+      .ai-command-grid {
+        grid-template-columns: 1fr;
+      }
+
+      input,
+      select,
+      textarea,
+      .seg button,
+      .category button,
+      .preset button,
+      .quick-template,
+      .export-btn,
+      .ghost-btn {
+        min-height: 44px;
       }
 
       .social-footer {
@@ -2074,11 +2341,82 @@
       }
 
       .stage {
-        padding: 16px;
+        padding: 12px;
+        min-height: auto;
       }
 
       canvas {
+        width: 100%;
+        height: auto;
         max-height: none;
+      }
+
+      .footbar {
+        display: grid;
+        gap: 4px;
+        padding: 12px 14px;
+      }
+
+      .settings-backdrop {
+        justify-items: stretch;
+      }
+
+      .settings-panel,
+      .version-panel {
+        width: 100%;
+        height: 100dvh;
+        border-left: 0;
+      }
+
+      .advanced-backdrop {
+        align-items: stretch;
+        padding: 10px;
+      }
+
+      .advanced-panel {
+        width: 100%;
+        max-height: calc(100dvh - 20px);
+      }
+
+      .onboarding-panel {
+        width: min(100%, calc(100vw - 20px));
+        max-height: calc(100dvh - 20px);
+      }
+
+      .onboarding-head,
+      .settings-head {
+        padding: 14px;
+      }
+
+      .settings-body,
+      .onboarding-body {
+        padding: 14px;
+      }
+
+      .onboarding-foot {
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 10px 14px 14px;
+      }
+
+      .onboarding-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .onboarding-btn {
+        width: 100%;
+        min-width: 0;
+        padding: 0 10px;
+      }
+
+      .version-hero h3 {
+        font-size: 21px;
+      }
+
+      .release-card {
+        padding: 14px;
       }
     }
   </style>
@@ -2099,8 +2437,9 @@
         <div class="hero-actions">
           <button class="hero-btn primary utility-hidden" id="scrollToStudioBtn">进入工作台</button>
           <button class="hero-btn primary" id="advancedOpenBtn">手动 / 素材</button>
-          <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
           <button class="hero-btn" id="onboardingOpenBtn">新手导览</button>
+          <button class="hero-btn" id="versionOpenBtn">版本 / 更新</button>
+          <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
         </div>
       </div>
 
@@ -2130,7 +2469,7 @@
       <header class="onboarding-head">
         <div>
           <h2 id="onboardingTitle">4 步上手 Mr.K Cover Studio</h2>
-          <p>从抖音链接到封面/片头资产，按这条路径走。录屏讲解也可以直接照着念。</p>
+          <p>从抖音链接到封面/动效资产，按这条路径走。录屏讲解也可以直接照着念。</p>
         </div>
         <button class="onboarding-close" id="onboardingCloseBtn" aria-label="关闭">×</button>
       </header>
@@ -2163,12 +2502,12 @@
             <div class="tour-card">
               <b>04</b>
               <strong>导出资产</strong>
-              <span>保存到素材库，导出 PNG；片头动效可导出 WebM。</span>
+              <span>保存到素材库，导出 PNG；片头/片尾动效导出 M4V。</span>
             </div>
           </div>
           <div class="recording-script">
             <strong>录屏口播</strong>
-            “这不是通用海报工具。你把抖音链接或文案丢进来，Agent 先理解内容，再按固定视觉 DNA 生成封面或片头。标题、栏目、背景都能改，最后保存到素材库，直接导出发布。”
+            “这不是通用海报工具。你把抖音链接或文案丢进来，Agent 先理解内容，再按固定视觉 DNA 生成封面、片头或片尾。标题、栏目、背景都能改，最后保存到素材库，直接导出发布。”
           </div>
         </div>
 
@@ -2180,7 +2519,7 @@
             </button>
             <button class="onboarding-choice" data-onboarding-path="local">
               <strong>Local Web Studio</strong>
-              <span>打开本地页面手动调图，适合预览封面/片头、保存素材库和导出 PNG/WebM。</span>
+              <span>打开本地页面手动调图，适合预览封面/动效、保存素材库和导出 PNG/M4V。</span>
             </button>
             <button class="onboarding-choice" data-onboarding-path="both">
               <strong>Agent + Web</strong>
@@ -2215,6 +2554,10 @@
               <strong>片头动效</strong>
               <span>适合覆盖视频前 1-2 秒，让核心观点先动起来。</span>
             </button>
+            <button class="onboarding-choice" data-quick-template="motion-outro">
+              <strong>片尾动效</strong>
+              <span>适合视频最后 1-2 秒做关注提示和品牌收束。</span>
+            </button>
             <button class="onboarding-choice" data-quick-template="custom-column">
               <strong>自定义栏目</strong>
               <span>适合新栏目、新业务线或临时专题，颜色和文案都可以改。</span>
@@ -2246,7 +2589,7 @@
           </div>
           <div class="recording-script">
             <strong>第一次使用建议</strong>
-            先保留三大栏目：AI下半场、强者恒强、在路上。新用户不需要理解所有设置，只要粘贴内容，点“生成封面/片头”，再改标题和背景即可。
+            先保留三大栏目：AI下半场、强者恒强、在路上。新用户不需要理解所有设置，只要粘贴内容，点“生成封面/动效”，再改标题和背景即可。
           </div>
           <div class="ai-status">默认三类栏目会保留；如果你填了新栏目，就会作为“自定义栏目”进入当前工作台。</div>
         </div>
@@ -2384,6 +2727,148 @@
     </section>
   </div>
 
+  <div class="settings-backdrop" id="versionDrawer" hidden>
+    <section class="settings-panel version-panel" role="dialog" aria-modal="true" aria-labelledby="versionTitle">
+      <header class="settings-head">
+        <div>
+          <span class="hero-kicker">VERSION LOG</span>
+          <h2 id="versionTitle">版本和迭代</h2>
+        </div>
+        <button class="onboarding-close" id="versionCloseBtn" aria-label="关闭">×</button>
+      </header>
+
+      <div class="settings-body">
+        <section class="version-hero">
+          <div class="version-meta-row">
+            <span class="version-pill current">当前版本 v0.9</span>
+            <span class="version-pill">2026.06.03 更新</span>
+            <span class="version-pill">面向创作者和 Agent</span>
+          </div>
+          <h3>从“能生成封面”，升级到“能讲清楚怎么用、为什么更新”。</h3>
+          <p>这里记录的是产品能力变化，不是代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 Mr.K Cover Studio 每次迭代解决了什么问题。</p>
+          <div class="version-stat-grid">
+            <div class="version-stat">
+              <strong>封面资产</strong>
+              <span>单条封面、合集封面、主页背景，统一视觉 DNA。</span>
+            </div>
+            <div class="version-stat">
+              <strong>Agent 协作</strong>
+              <span>抖音链接、图片和文案进来，先理解内容再出视觉方案。</span>
+            </div>
+            <div class="version-stat">
+              <strong>片头动效</strong>
+              <span>支持 1-2 秒观点动画，用来覆盖短视频开头和结尾。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="release-list" aria-label="迭代内容">
+          <article class="release-card current">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill current">v0.9</span>
+                <strong>新增片尾动效，手机上也能顺手使用</strong>
+                <span>适合短视频最后 1-2 秒做关注提示和品牌收束。</span>
+              </div>
+              <div class="release-date">2026.06.03</div>
+            </div>
+            <p>新增片尾模板，把“关注我、继续看懂 AI 下半场、KevPH2026”做成统一的结尾资产；同时让手机访问时的编辑、预览和导出更自然。</p>
+            <ul class="release-points">
+              <li>新增“片尾动效”模板，适合视频结尾关注提示和品牌露出。</li>
+              <li>动效导出升级为 M4V 优先；浏览器不支持时会提示使用 WebM 兜底或服务端转码。</li>
+              <li>移动端改为单列工作台，按钮、输入框、抽屉和画布都按手机触摸优化。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.8</span>
+                <strong>新用户第一次打开就知道怎么用</strong>
+                <span>适合录抖音讲解视频，也适合给客户演示。</span>
+              </div>
+              <div class="release-date">2026.06.03</div>
+            </div>
+            <p>把使用路径整理成 4 步：丢进内容、AI 定方案、固定风格、导出资产。用户不用先理解全部按钮，也能马上开始。</p>
+            <ul class="release-points">
+              <li>新增“新手导览”，第一次打开自动出现，也可以从顶部随时重看。</li>
+              <li>导览里加入录屏口播稿，方便直接拍产品讲解。</li>
+              <li>新增“版本 / 更新”，让用户看到产品迭代，而不是只看到一个工具页面。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.7</span>
+                <strong>从本地小工具，变成可试用、可登录、可管理素材的产品</strong>
+                <span>适合公开给别人用，同时保留本机工作流。</span>
+              </div>
+              <div class="release-date">2026.06.03</div>
+            </div>
+            <ul class="release-points">
+              <li>免登录用户可以先试用 3 次，超过后再注册。</li>
+              <li>支持邮箱验证码登录，减少账号密码门槛。</li>
+              <li>生成过的封面可以进入素材库，方便回看、载入和再次导出。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.6</span>
+                <strong>让 Agent 先理解内容，再生成封面</strong>
+                <span>适合把抖音链接、截图、分享文案直接丢给 Agent。</span>
+              </div>
+              <div class="release-date">2026.06.03</div>
+            </div>
+            <ul class="release-points">
+              <li>支持用自然语言描述需求，不必手动填满所有字段。</li>
+              <li>支持“解码 DNA”：读取账号样本后，给出内容分类和设计方向。</li>
+              <li>背景不再随机套模板，而是根据文案主题给出匹配方向。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.5</span>
+                <strong>封面之外，增加视频片头形态</strong>
+                <span>适合短视频开头 1-2 秒先把观点打出来。</span>
+              </div>
+              <div class="release-date">2026.06.03</div>
+            </div>
+            <ul class="release-points">
+              <li>新增片头动效模板，主标题和英文副题可以动态出现。</li>
+              <li>支持上传图片或视频素材作为片头背景。</li>
+              <li>可直接预览，也可以从本地浏览器导出 M4V 优先的视频文件。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.4</span>
+                <strong>固定 Mr.K 的视觉 DNA</strong>
+                <span>适合把账号主页从“每条都不一样”改成系列化资产。</span>
+              </div>
+              <div class="release-date">早期版本</div>
+            </div>
+            <ul class="release-points">
+              <li>确定三大栏目：AI下半场、强者恒强、在路上。</li>
+              <li>统一 K 标、KevPH2026、标题层级、栏目色和安全区。</li>
+              <li>支持单条作品封面、合集封面和抖音主页背景。</li>
+            </ul>
+          </article>
+        </section>
+
+        <div class="release-note">
+          下一步方向：把“版本说明”继续产品化，让 Agent 也能读取当前版本能力，回答用户“这个工具现在能做什么、适合谁、怎么开始”。
+        </div>
+      </div>
+    </section>
+  </div>
+
   <div class="advanced-backdrop" id="advancedDrawer" hidden>
     <section class="advanced-panel" role="dialog" aria-modal="true" aria-labelledby="advancedTitle">
       <header class="settings-head">
@@ -2417,6 +2902,7 @@
           <button data-template="collection">合集封面</button>
           <button data-template="profile">主页背景</button>
           <button data-template="intro">片头动效</button>
+          <button data-template="outro">片尾动效</button>
         </div>
       </section>
 
@@ -2442,6 +2928,10 @@
           <button class="quick-template" data-quick-template="motion-intro">
             <strong>片头动效</strong>
             <span>覆盖视频前 1-2 秒的观点动画</span>
+          </button>
+          <button class="quick-template" data-quick-template="motion-outro">
+            <strong>片尾动效</strong>
+            <span>视频最后 1-2 秒的关注收束</span>
           </button>
         </div>
       </section>
@@ -2484,9 +2974,9 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA：粘贴主页链接，并补充至少 10 条作品标题、封面文字或截图转文字。"></textarea>
           <div class="ai-command-grid">
-            <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/片头</button>
+            <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/动效</button>
             <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA</button>
           </div>
         </div>
@@ -2532,7 +3022,7 @@
               <span class="agent-flow-index">02</span>
               <div class="agent-flow-copy">
                 <strong>这次要做什么</strong>
-                <span>单条封面、片头动效、解码 DNA、批量换封面、合集封面或主页背景。</span>
+                <span>单条封面、片头/片尾动效、解码 DNA、批量换封面、合集封面或主页背景。</span>
               </div>
             </li>
             <li>
@@ -2546,7 +3036,7 @@
               <span class="agent-flow-index">04</span>
               <div class="agent-flow-copy">
                 <strong>素材和样本</strong>
-                <span>单条给链接/文案/截图；片头动效可补图片或视频素材；解码 DNA 至少给 10 条公开作品样本。</span>
+                <span>单条给链接/文案/截图；片头/片尾动效可补图片或视频素材；解码 DNA 至少给 10 条公开作品样本。</span>
               </div>
             </li>
             <li>
@@ -2641,14 +3131,14 @@
         </div>
 
         <div class="field" data-field="motionMedia">
-          <label for="motionMedia">片头素材</label>
+          <label for="motionMedia">动效素材</label>
           <input id="motionMedia" type="file" accept="image/*,video/*">
           <div class="hint">支持图片或动效视频，用作前 1-2 秒覆盖层底图。</div>
         </div>
 
         <div class="row" data-field="motionSettings">
           <div class="field">
-            <label for="motionDuration">片头时长</label>
+            <label for="motionDuration">动效时长</label>
             <select id="motionDuration">
               <option value="1.2">1.2 秒</option>
               <option value="1.5" selected>1.5 秒</option>
@@ -2698,8 +3188,8 @@
       <section class="group">
         <p class="group-title">导出</p>
         <button class="export-btn" id="exportBtn">导出 PNG</button>
-        <button class="ghost-btn" id="previewMotionBtn">预览片头动效</button>
-        <button class="ghost-btn" id="exportMotionBtn">导出片头 WebM</button>
+        <button class="ghost-btn" id="previewMotionBtn">预览动效</button>
+        <button class="ghost-btn" id="exportMotionBtn">导出动效 M4V</button>
         <button class="ghost-btn" id="saveAssetBtn">保存到素材库</button>
         <button class="ghost-btn" id="advancedOpenSmallBtn">手动编辑</button>
         <button class="ghost-btn utility-hidden" id="resetBtn">恢复当前栏目默认文案</button>
@@ -2873,6 +3363,15 @@
         code: "M-01",
         imageTheme: "深夜工作台，观点动画，扫描光，黑底高对比，商业判断"
       },
+      "motion-outro": {
+        template: "outro",
+        category: "ai",
+        title: "关注我\n看懂AI下半场",
+        enTitle: "Follow The Signal",
+        summary: "少和人对话，多和AI对话。下一条继续拆。",
+        code: "END-01",
+        imageTheme: "短视频片尾，关注提示，深色品牌收束，城市夜景，Mr.K 在路上"
+      },
       "custom-column": {
         template: "work",
         category: "custom",
@@ -2884,7 +3383,7 @@
       }
     };
 
-    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效方案。
+    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效/片尾动效方案。
 
 默认账号：
 - 账号名：MR.K 在路上
@@ -2895,9 +3394,9 @@
 
 对话工作流：
 1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
-2. 再问任务类型：单条封面、片头动效、解码 DNA、批量换封面、合集封面、主页背景。
+2. 再问任务类型：单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
-4. 再收素材：单条作品需要链接/文案/截图/主题；片头动效还要确认是否有图片或视频素材；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
+4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA 至少需要 10 条公开作品样本；批量任务需要作品清单和优先级规则。
 5. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
@@ -2906,15 +3405,17 @@
 - 私密作品默认不参与。
 - 单条封面默认 9:16 / 1080x1920；用户指定方图时才用 1:1 / 1080x1080。
 - 片头动效默认 9:16 / 1080x1920 / 1.5 秒，用于覆盖视频前 1-2 秒。
+- 片尾动效默认 9:16 / 1080x1920 / 1.5 秒，用于视频最后 1-2 秒做关注提示和品牌收束。
 - 封面必须有大号中文标题；可搭配英文副题。
 - 片头动效必须让主干观点和文字在 1-2 秒内动态出现，背景只做氛围和语义，不把文字烧进图里。
+- 片尾动效必须包含明确关注动作或品牌收束，例如“关注我，看懂 AI 下半场 / KevPH2026”。
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
 
 输出 brief JSON：
 {
   "account": "MR.K 在路上 / KevPH2026",
-  "task": "single_cover|motion_intro|dna_decode|batch_refresh|collection|profile",
+  "task": "single_cover|motion_intro|motion_outro|dna_decode|batch_refresh|collection|profile",
   "source_url": "",
   "category": "ai|strong|road|custom",
   "ratio": "9:16|1:1",
@@ -2928,7 +3429,7 @@
 }
 
 推荐开场：
-“先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、片头动效、解码 DNA、批量换封面、合集封面，还是主页背景？”`;
+“先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面，还是主页背景？”`;
 
     const state = {
       template: "work",
@@ -2964,6 +3465,9 @@
       advancedDrawer: document.getElementById("advancedDrawer"),
       advancedCloseBtn: document.getElementById("advancedCloseBtn"),
       advancedBody: document.getElementById("advancedBody"),
+      versionOpenBtn: document.getElementById("versionOpenBtn"),
+      versionDrawer: document.getElementById("versionDrawer"),
+      versionCloseBtn: document.getElementById("versionCloseBtn"),
       settingsOpenBtn: document.getElementById("settingsOpenBtn"),
       settingsDrawer: document.getElementById("settingsDrawer"),
       settingsCloseBtn: document.getElementById("settingsCloseBtn"),
@@ -3069,6 +3573,15 @@
         reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(file);
+      });
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
       });
     }
 
@@ -3668,12 +4181,25 @@
         work: [1080, 1920],
         collection: [1080, 1080],
         profile: [1920, 640],
-        intro: [1080, 1920]
+        intro: [1080, 1920],
+        outro: [1080, 1920]
       };
       const [w, h] = sizes[state.template];
       el.canvas.width = w;
       el.canvas.height = h;
-      el.sizeMeta.innerHTML = `${w} x ${h}<br>${state.template === "intro" ? "WebM / PNG frame" : "PNG"}`;
+      el.sizeMeta.innerHTML = `${w} x ${h}<br>${isMotionTemplate() ? "M4V / PNG frame" : "PNG"}`;
+    }
+
+    function isMotionTemplate(template = state.template) {
+      return template === "intro" || template === "outro";
+    }
+
+    function motionLabel(template = state.template) {
+      return template === "outro" ? "片尾" : "片头";
+    }
+
+    function motionStatusLabel(template = state.template) {
+      return template === "outro" ? "outro" : "intro";
     }
 
     function drawCoverImage(img, x, y, w, h) {
@@ -3902,7 +4428,7 @@
       ].filter(Boolean).join(" / ");
       const seed = hashText(theme);
       const rand = randomFromSeed(seed);
-      const size = state.template === "profile" ? [1920, 640] : state.template === "intro" ? [1080, 1920] : [1600, 1600];
+      const size = state.template === "profile" ? [1920, 640] : isMotionTemplate() ? [1080, 1920] : [1600, 1600];
       const c = document.createElement("canvas");
       c.width = size[0];
       c.height = size[1];
@@ -4000,7 +4526,8 @@
         work: "vertical 9:16 Douyin work cover background",
         collection: "square 1:1 Douyin series cover background",
         profile: "wide 3:1 Douyin profile banner background",
-        intro: "vertical 9:16 short video intro overlay background"
+        intro: "vertical 9:16 short video intro overlay background",
+        outro: "vertical 9:16 short video outro call-to-action background"
       }[state.template];
     }
 
@@ -4029,7 +4556,9 @@
         ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
         : state.template === "intro"
           ? "Keep the left and center-left title animation area dark, clean and readable for kinetic Chinese typography. Put motion-friendly visual interest on the right third or lower right."
-          : "Keep the left half dark and readable for large Chinese title text. Put the main visual object on the right third or lower right.";
+          : state.template === "outro"
+            ? "Keep the center and lower third clean for a strong call-to-action, creator ID and closing brand mark. Put subtle motion-friendly visual interest around the edges."
+            : "Keep the left half dark and readable for large Chinese title text. Put the main visual object on the right third or lower right.";
       const noText = "Do not include readable text, letters, logos, watermarks, UI labels, QR codes, captions, or faces looking at camera.";
       return [
         `Create a high-end background image for ${templateLabel()}.`,
@@ -4125,7 +4654,7 @@
       if (plan.category && categories[plan.category]) {
         setCategory(plan.category);
       }
-      if (["work", "collection", "profile", "intro"].includes(plan.template)) {
+      if (["work", "collection", "profile", "intro", "outro"].includes(plan.template)) {
         setTemplate(plan.template);
       }
 
@@ -4206,8 +4735,8 @@
         const sourceNote = agentSourceNote(payload.source);
         setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
         await generateAiBackground({ fromAgent: true });
-        recordGuestUse(state.template === "intro" ? "生成片头" : "生成封面");
-        const outputLabel = state.template === "intro" ? "导出 WebM 或封面帧 PNG" : "导出 PNG";
+        recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成封面");
+        const outputLabel = isMotionTemplate() ? "导出 M4V 或封面帧 PNG" : "导出 PNG";
         setAgentStatus(`${payload.fallback ? "已用本地方案完成" : `已用 ${payload.model || "LLM"} 方案完成`}，可以直接${outputLabel}。`, payload.fallback ? "error" : "success");
         el.status.textContent = "Agent cover generated";
       } catch (error) {
@@ -4465,6 +4994,82 @@
       ctx.restore();
     }
 
+    function drawOutro(v, cat, progress = 1) {
+      const w = 1080;
+      const h = 1920;
+      const p = Math.max(0, Math.min(1, progress));
+      const style = el.motionStyle.value || "web2";
+      const media = activeMotionBackground();
+      drawCoverMedia(media, 0, 0, w, h, 1.04 - .025 * easeInOut(p));
+      drawOverlay(w, h, "work");
+
+      ctx.save();
+      ctx.fillStyle = "rgba(0,0,0,.5)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalAlpha = .18 + .16 * p;
+      ctx.strokeStyle = rgba(cat.color, .42);
+      ctx.lineWidth = 2;
+      for (let x = -180; x < w + 260; x += 120) {
+        ctx.beginPath();
+        ctx.moveTo(x + p * 80, 0);
+        ctx.lineTo(x - 420 + p * 80, h);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      drawCutK(246, 348, 590, cat.color, .08 + .16 * p);
+
+      const avatarIn = easeOutCubic((p - .04) / .28);
+      ctx.save();
+      ctx.globalAlpha = avatarIn;
+      ctx.translate(540, 318 - (1 - avatarIn) * 36);
+      ctx.scale(.86 + .14 * avatarIn, .86 + .14 * avatarIn);
+      drawAvatar(-86, -86, 172, cat.color);
+      ctx.restore();
+
+      const chipIn = easeOutCubic((p - .12) / .24);
+      ctx.save();
+      ctx.globalAlpha = chipIn;
+      fillRoundRect(334, 474, 412, 58, 29, "rgba(255,255,255,.09)");
+      ctx.strokeStyle = rgba(cat.color, .72);
+      ctx.lineWidth = 2;
+      roundRect(334, 474, 412, 58, 29);
+      ctx.stroke();
+      drawCenteredText("MR.K 在路上  /  KevPH2026", 334, 474, 412, 58, 25, 800, "rgba(248,248,242,.88)");
+      ctx.restore();
+
+      const titleLines = wrapText(v.title || "关注我\n看懂AI下半场", 7).slice(0, 3);
+      const maxLen = Math.max(...titleLines.map(line => line.length), 1);
+      const titleSize = maxLen <= 4 ? 124 : 104;
+      const titleProgress = (p - .22) / .46;
+      let y = 684;
+      titleLines.forEach((line, index) => {
+        const lineP = titleProgress - index * .08;
+        drawIntroLine(line, 96, y, titleSize, lineP, cat, style, 888);
+        y += titleSize * .98;
+      });
+
+      const ctaIn = easeOutCubic((p - .62) / .28);
+      ctx.save();
+      ctx.globalAlpha = ctaIn;
+      const barY = Math.min(1320, y + 62);
+      ctx.fillStyle = cat.color;
+      ctx.fillRect(96, barY, 360 * ctaIn, 12);
+      drawText((v.enTitle || "Follow The Signal").toUpperCase(), 96, barY + 54, 38, 800, "rgba(248,248,242,.78)", 888);
+      drawText(v.summary || "少和人对话，多和AI对话。下一条继续拆。", 96, barY + 116, 40, 400, "rgba(248,248,242,.9)", 888);
+      ctx.restore();
+
+      const bottomIn = easeOutCubic((p - .74) / .22);
+      ctx.save();
+      ctx.globalAlpha = bottomIn;
+      fillRoundRect(96, 1628, 390, 76, 10, rgba(cat.color, .16));
+      drawText("FOLLOW", 126, 1648, 24, 900, cat.color);
+      drawText("抖音 / 微信：KevPH2026", 126, 1684, 26, 700, "rgba(248,248,242,.82)");
+      drawText(v.code || "END-01", 844, 1668, 30, 800, cat.color);
+      drawText("OUTRO / 1-2 SEC", 96, 1750, 26, 700, "rgba(248,248,242,.58)");
+      ctx.restore();
+    }
+
     function draw() {
       setCanvasSize();
       const v = values();
@@ -4475,7 +5080,8 @@
         work: "单条作品封面",
         collection: "合集封面",
         profile: "主页背景",
-        intro: "片头动效"
+        intro: "片头动效",
+        outro: "片尾动效"
       }[state.template];
 
       ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
@@ -4483,6 +5089,7 @@
       if (state.template === "collection") drawCollection(v, cat);
       if (state.template === "profile") drawProfile(v, cat);
       if (state.template === "intro") drawIntro(v, cat, 1);
+      if (state.template === "outro") drawOutro(v, cat, 1);
       updateVisibility();
       updateFileName();
     }
@@ -4494,21 +5101,23 @@
         categoryEn: state.template !== "profile",
         categorySub: state.template === "collection",
         categoryColor: state.template !== "profile",
-        title: state.template === "work" || state.template === "intro",
-        enTitle: state.template === "work" || state.template === "intro",
-        summary: state.template === "work" || state.template === "intro",
-        code: state.template === "work" || state.template === "intro",
-        motionMedia: state.template === "intro",
-        motionSettings: state.template === "intro"
+        title: state.template === "work" || isMotionTemplate(),
+        enTitle: state.template === "work" || isMotionTemplate(),
+        summary: state.template === "work" || isMotionTemplate(),
+        code: state.template === "work" || isMotionTemplate(),
+        motionMedia: isMotionTemplate(),
+        motionSettings: isMotionTemplate()
       };
       Object.entries(visible).forEach(([name, show]) => {
         document.querySelectorAll(`[data-field="${name}"]`).forEach(node => {
           node.style.display = show ? "" : "none";
         });
       });
-      el.previewMotionBtn.style.display = state.template === "intro" ? "" : "none";
-      el.exportMotionBtn.style.display = state.template === "intro" ? "" : "none";
-      el.exportBtn.textContent = state.template === "intro" ? "导出封面帧 PNG" : "导出 PNG";
+      el.previewMotionBtn.style.display = isMotionTemplate() ? "" : "none";
+      el.exportMotionBtn.style.display = isMotionTemplate() ? "" : "none";
+      el.previewMotionBtn.textContent = isMotionTemplate() ? `预览${motionLabel()}动效` : "预览动效";
+      el.exportMotionBtn.textContent = isMotionTemplate() ? `导出${motionLabel()} M4V` : "导出动效 M4V";
+      el.exportBtn.textContent = isMotionTemplate() ? "导出封面帧 PNG" : "导出 PNG";
     }
 
     function updateFileName() {
@@ -4519,7 +5128,8 @@
         work: `work-${cat.slug}-${safeCode}.png`,
         collection: `collection-${cat.slug}.png`,
         profile: `mrk-profile-background-${v.profileVariant}.png`,
-        intro: `intro-${cat.slug}-${safeCode}.webm`
+        intro: `intro-${cat.slug}-${safeCode}.m4v`,
+        outro: `outro-${cat.slug}-${safeCode}.m4v`
       };
       el.fileNameHint.textContent = names[state.template];
     }
@@ -4610,6 +5220,11 @@
       document.body.classList.toggle("settings-open", open);
     }
 
+    function setVersionOpen(open) {
+      el.versionDrawer.hidden = !open;
+      document.body.classList.toggle("version-open", open);
+    }
+
     function setAdvancedOpen(open) {
       el.advancedDrawer.hidden = !open;
       document.body.classList.toggle("advanced-open", open);
@@ -4661,8 +5276,8 @@
     function exportPng() {
       const link = document.createElement("a");
       link.download = el.fileNameHint.textContent;
-      if (state.template === "intro") {
-        link.download = el.fileNameHint.textContent.replace(/\.webm$/i, ".png");
+      if (isMotionTemplate()) {
+        link.download = el.fileNameHint.textContent.replace(/\.(m4v|webm)$/i, ".png");
       }
       link.href = el.canvas.toDataURL("image/png");
       link.click();
@@ -4695,16 +5310,17 @@
     function drawMotionFrame(progress) {
       setCanvasSize();
       ctx.clearRect(0, 0, el.canvas.width, el.canvas.height);
-      drawIntro(values(), activeCategory(), progress);
+      if (state.template === "outro") drawOutro(values(), activeCategory(), progress);
+      else drawIntro(values(), activeCategory(), progress);
     }
 
     async function previewMotionIntro() {
-      if (state.template !== "intro") setTemplate("intro");
+      if (!isMotionTemplate()) setTemplate("intro");
       if (state.motionPlaying || state.motionRecording) return;
       const durationMs = Math.max(1, Number(el.motionDuration.value || 1.5)) * 1000;
       state.motionPlaying = true;
       el.previewMotionBtn.disabled = true;
-      el.status.textContent = "Previewing intro";
+      el.status.textContent = `Previewing ${motionStatusLabel()}`;
       await startMotionVideoPlayback();
       const startedAt = performance.now();
       function tick(now) {
@@ -4719,23 +5335,37 @@
         resetMotionVideo();
         drawMotionFrame(1);
         updateFileName();
-        el.status.textContent = "Intro preview complete";
+        el.status.textContent = `${motionLabel()} preview complete`;
       }
       requestAnimationFrame(tick);
     }
 
-    async function exportMotionWebm() {
-      if (state.template !== "intro") setTemplate("intro");
+    function preferredMotionMimeType() {
+      if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+      return [
+        "video/mp4;codecs=avc1.42E01E",
+        "video/mp4;codecs=h264",
+        "video/mp4",
+        "video/webm;codecs=vp9",
+        "video/webm"
+      ].find(type => MediaRecorder.isTypeSupported(type)) || "";
+    }
+
+    async function exportMotionM4v() {
+      if (!isMotionTemplate()) setTemplate("intro");
       if (!el.canvas.captureStream || !window.MediaRecorder) {
-        setAiStatus("当前浏览器不支持直接导出 WebM。可以用 web2-render-service 走服务端渲染。", "error");
+        setAiStatus("当前浏览器不支持直接录制动效。可以用 web2-render-service 走服务端渲染 M4V。", "error");
         return;
       }
       if (state.motionRecording) return;
       const durationMs = Math.max(1, Number(el.motionDuration.value || 1.5)) * 1000;
-      const filename = el.fileNameHint.textContent.replace(/\.png$/i, ".webm");
-      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
-        ? "video/webm;codecs=vp9"
-        : "video/webm";
+      const mimeType = preferredMotionMimeType();
+      if (!mimeType) {
+        setAiStatus("当前浏览器没有可用的视频编码器。可以用 web2-render-service 走服务端渲染 M4V。", "error");
+        return;
+      }
+      const nativeM4v = mimeType.startsWith("video/mp4");
+      const filename = el.fileNameHint.textContent.replace(/\.(png|webm|m4v)$/i, nativeM4v ? ".m4v" : ".webm");
       const stream = el.canvas.captureStream(30);
       const chunks = [];
       const recorder = new MediaRecorder(stream, { mimeType });
@@ -4749,8 +5379,13 @@
       state.motionRecording = true;
       el.exportMotionBtn.disabled = true;
       el.previewMotionBtn.disabled = true;
-      el.status.textContent = "Recording intro WebM";
-      setAiStatus("正在录制片头动效 WebM，本地浏览器完成，不上传素材。", "working");
+      el.status.textContent = `Recording ${motionStatusLabel()} video`;
+      setAiStatus(
+        nativeM4v
+          ? `正在录制${motionLabel()} M4V，本地浏览器完成，不上传素材。`
+          : `当前浏览器暂不支持原生 M4V，先录制中间视频，再请求本地 ffmpeg 转 M4V。`,
+        "working"
+      );
       await startMotionVideoPlayback();
       recorder.start();
 
@@ -4772,17 +5407,49 @@
       el.exportMotionBtn.disabled = false;
       el.previewMotionBtn.disabled = false;
 
-      const blob = new Blob(chunks, { type: "video/webm" });
-      const url = URL.createObjectURL(blob);
+      const blob = new Blob(chunks, { type: mimeType });
+      let downloadBlob = blob;
+      let downloadFilename = filename;
+      let finalNativeM4v = nativeM4v;
+      let fallbackReason = "";
+
+      if (!nativeM4v) {
+        try {
+          setAiStatus(`正在把${motionLabel()}动效转成 M4V。`, "working");
+          const response = await fetch("/api/transcode-m4v", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              filename: el.fileNameHint.textContent.replace(/\.(png|webm|m4v)$/i, ".m4v"),
+              video_data_url: await blobToDataUrl(blob)
+            })
+          });
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(payload.message || `HTTP ${response.status}`);
+          downloadFilename = payload.filename || el.fileNameHint.textContent.replace(/\.(png|webm|m4v)$/i, ".m4v");
+          const converted = await fetch(payload.video_data_url);
+          downloadBlob = await converted.blob();
+          finalNativeM4v = true;
+        } catch (error) {
+          fallbackReason = error.message;
+        }
+      }
+
+      const url = URL.createObjectURL(downloadBlob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = filename;
+      link.download = downloadFilename;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1200);
       drawMotionFrame(1);
       updateFileName();
-      setAiStatus(`片头 WebM 已导出：${filename}。如需 MP4，可接 web2-render-service 服务端渲染。`, "success");
-      el.status.textContent = "Intro WebM exported";
+      setAiStatus(
+        finalNativeM4v
+          ? `${motionLabel()} M4V 已导出：${downloadFilename}。`
+          : `${motionLabel()} WebM 已导出：${downloadFilename}。M4V 转码失败：${fallbackReason || "当前环境不可用"}。`,
+        finalNativeM4v ? "success" : "error"
+      );
+      el.status.textContent = `${motionLabel()} video exported`;
     }
 
     function canvasPreview(maxWidth = 720, quality = .82) {
@@ -4846,7 +5513,7 @@
     }
 
     function templateName(template) {
-      return { work: "作品", collection: "合集", profile: "主页", intro: "片头" }[template] || "素材";
+      return { work: "作品", collection: "合集", profile: "主页", intro: "片头", outro: "片尾" }[template] || "素材";
     }
 
     function renderAssets() {
@@ -4962,7 +5629,7 @@
     async function loadAsset(asset) {
       const snap = asset.editable || {};
       if (snap.category && categories[snap.category]) setCategory(snap.category);
-      if (["work", "collection", "profile", "intro"].includes(snap.template)) setTemplate(snap.template);
+      if (["work", "collection", "profile", "intro", "outro"].includes(snap.template)) setTemplate(snap.template);
       setValue(el.categoryTitle, snap.categoryTitle);
       setValue(el.categoryEn, snap.categoryEn);
       setValue(el.categorySub, snap.categorySub);
@@ -5043,6 +5710,12 @@
       if (event.target === el.advancedDrawer) setAdvancedOpen(false);
     });
 
+    el.versionOpenBtn.addEventListener("click", () => setVersionOpen(true));
+    el.versionCloseBtn.addEventListener("click", () => setVersionOpen(false));
+    el.versionDrawer.addEventListener("click", event => {
+      if (event.target === el.versionDrawer) setVersionOpen(false);
+    });
+
     el.settingsOpenBtn.addEventListener("click", () => setSettingsOpen(true));
     el.settingsCloseBtn.addEventListener("click", () => setSettingsOpen(false));
     el.settingsDrawer.addEventListener("click", event => {
@@ -5052,6 +5725,7 @@
     document.addEventListener("keydown", event => {
       if (event.key !== "Escape") return;
       if (!el.advancedDrawer.hidden) setAdvancedOpen(false);
+      if (!el.versionDrawer.hidden) setVersionOpen(false);
       if (!el.settingsDrawer.hidden) setSettingsOpen(false);
       if (!el.onboardingOverlay.hidden) closeOnboarding();
     });
@@ -5118,7 +5792,7 @@
         URL.revokeObjectURL(state.motionMediaUrl);
         state.motionMediaUrl = "";
       }
-      setTemplate("intro");
+      if (!isMotionTemplate()) setTemplate("intro");
       if (file.type.startsWith("video/")) {
         const url = URL.createObjectURL(file);
         const video = document.createElement("video");
@@ -5130,18 +5804,18 @@
         state.motionMediaType = "video";
         state.motionMediaUrl = url;
         video.addEventListener("loadeddata", () => {
-          el.status.textContent = `Using intro video: ${file.name}`;
+          el.status.textContent = `Using ${motionLabel()} video: ${file.name}`;
           draw();
         }, { once: true });
         video.load();
-        setAiStatus("已加入片头视频素材，可预览或导出前 1-2 秒动效。", "success");
+        setAiStatus(`已加入${motionLabel()}视频素材，可预览或导出 1-2 秒动效。`, "success");
       } else {
         const url = await readFileAsDataUrl(file);
         state.motionMedia = await loadImage(url);
         state.motionMediaType = "image";
         state.motionMediaUrl = "";
-        el.status.textContent = `Using intro image: ${file.name}`;
-        setAiStatus("已加入片头图片素材，可预览或导出 1-2 秒动效。", "success");
+        el.status.textContent = `Using ${motionLabel()} image: ${file.name}`;
+        setAiStatus(`已加入${motionLabel()}图片素材，可预览或导出 1-2 秒动效。`, "success");
         draw();
       }
     });
@@ -5197,7 +5871,7 @@
 
     el.exportBtn.addEventListener("click", exportPng);
     el.previewMotionBtn.addEventListener("click", previewMotionIntro);
-    el.exportMotionBtn.addEventListener("click", exportMotionWebm);
+    el.exportMotionBtn.addEventListener("click", exportMotionM4v);
     el.saveAssetBtn.addEventListener("click", saveCurrentAsset);
     el.saveAssetSmallBtn.addEventListener("click", saveCurrentAsset);
     el.refreshAssetsBtn.addEventListener("click", refreshAssets);

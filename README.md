@@ -11,7 +11,7 @@ Mr.K Cover Studio turns a Douyin link, copied share text, screenshot, or content
 | Delivery | Best For | Command |
 | --- | --- | --- |
 | Agent Skill | Send a Douyin link to an Agent, answer a few questions, generate a cover brief and asset | `scripts/install_agent_skill.sh` |
-| Local Web Studio | Preview, tune, save to material library, export PNG/WebM locally | `scripts/run_local_studio.sh` |
+| Local Web Studio | Preview, tune, save to material library, export PNG/M4V locally | `scripts/run_local_studio.sh` |
 
 ## Conversational Agent Workflow
 
@@ -20,9 +20,9 @@ The Agent does not generate first. It asks for context, then turns the answer in
 Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.md).
 
 1. Ask for Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
-2. Ask for the task: single-work cover, motion intro, DNA decode, batch cover refresh, collection cover, or profile background.
+2. Ask for the task: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Choose the category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only when needed.
-4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro when available; at least 10 public work samples for DNA decode.
+4. Collect material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public work samples for DNA decode.
 5. Confirm the brief: Chinese title, English subtitle, background direction, ratio/duration, and code. Then generate and save to the material library.
 
 Starter prompt:
@@ -37,17 +37,17 @@ Most creator homepages fail quietly. The content may be sharp, but the grid look
 
 This project fixes that problem for `MR.K 在路上`.
 
-- One visual language across single posts, 1-2 second motion intros, collections, and profile background
+- One visual language across single posts, 1-2 second motion intros/outros, collections, and profile background
 - AI-assisted title, summary, category, and background direction
 - DNA decode from at least 10 content samples before proposing a design direction
 - First-run onboarding for choosing Agent/Web workflow, starter template, and content category
-- Quick templates for AI news, strong quotes, field notes, motion intros, collections, profile banners, and custom columns
+- Quick templates for AI news, strong quotes, field notes, motion intros/outros, collections, profile banners, and custom columns
 - Custom categories with editable Chinese name, English name, subtitle, and accent color
 - Local-only configuration for OpenAI-compatible LLM and image models
 - Anonymous users can try 3 AI generation actions before email-code login is required
 - Email verification login with auto-create account on first verified email
 - Realistic editorial backgrounds instead of generic AI wallpaper
-- Local material management for generated covers and intro frames
+- Local material management for generated covers and motion frames
 - A deployable Skill for Agent workflows
 
 ## Brand DNA
@@ -64,7 +64,7 @@ This project fixes that problem for `MR.K 在路上`.
 2. The configured LLM extracts the content angle and proposes title/category/summary.
 3. The configured image model creates a background that matches the copy.
 4. The fixed Mr.K overlay system renders the final cover.
-5. Save to material library or export PNG/WebM.
+5. Save to material library or export PNG/M4V.
 
 ## DNA Decode
 
@@ -80,7 +80,7 @@ If fewer than 10 usable samples are found, the Agent returns a sample-gap reques
 ## Outputs
 
 - Single work cover: `1080x1920`
-- Motion intro overlay: `1080x1920`, `1.2-2s`, WebM export from the browser
+- Motion intro/outro overlay: `1080x1920`, `1.2-2s`, M4V-first export from the browser
 - Collection cover: `1080x1080`
 - Profile background: `1920x640`
 - Material library: local by default, KV-backed in production
@@ -116,7 +116,7 @@ Leave these fields empty to use environment variables such as `DEEPSEEK_API_KEY`
 
 ## Auth And Trial Limit
 
-Logged-out visitors can use 3 AI production actions: Agent cover/intro generation, DNA decode, or manual AI background generation. After the third action, the page opens the account menu and requires email-code login.
+Logged-out visitors can use 3 AI production actions: Agent cover/motion generation, DNA decode, or manual AI background generation. After the third action, the page opens the account menu and requires email-code login.
 
 Email-code login supports:
 
@@ -132,6 +132,7 @@ Vercel serves the static studio and Python serverless APIs:
 /api/cover-agent
 /api/dna-agent
 /api/generate-image
+/api/transcode-m4v
 /api/auth
 /api/assets
 ```

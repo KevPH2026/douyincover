@@ -6,7 +6,7 @@
 
 Mr.K Cover Studio is not a generic poster maker. It is a production system for one repeatable creator identity: fixed brand assets, fixed content categories, flexible titles, flexible backgrounds.
 
-Give it a Douyin share snippet, short link, screenshot, image/video reference, or plain topic. The system extracts the angle, proposes the copy, generates a matching background, and renders either a static cover or a 1-2 second motion intro inside the Mr.K visual system.
+Give it a Douyin share snippet, short link, screenshot, image/video reference, or plain topic. The system extracts the angle, proposes the copy, generates a matching background, and renders either a static cover or a 1-2 second motion intro/outro inside the Mr.K visual system.
 
 ## Two Delivery Modes
 
@@ -22,9 +22,9 @@ The Agent asks before it generates:
 Agent integration guide: [download the Skill or copy the prompt](./AGENT_GUIDE.md).
 
 1. Douyin ID, profile link, or profile screenshot. For Mr.K, default to `KevPH2026`.
-2. Task type: single-work cover, motion intro, DNA decode, batch cover refresh, collection cover, or profile background.
+2. Task type: single-work cover, motion intro/outro, DNA decode, batch cover refresh, collection cover, or profile background.
 3. Category: prefer `AI下半场`, `强者恒强`, or `在路上`; use a custom category only if the content does not fit.
-4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro when available; at least 10 public samples for DNA decode.
+4. Material: one link/caption/screenshot for a single work; image/video material for a motion intro/outro when available; at least 10 public samples for DNA decode.
 5. Final brief: Chinese title, English subtitle, background direction, ratio/duration, and code. After confirmation, generate and save the asset.
 
 Starter prompt:
@@ -65,7 +65,7 @@ New users choose Agent/Web workflow, starter template, and content category befo
 
 ### Quick Templates
 
-Built-in starters cover AI news analysis, strong quotes, field notes, motion intros, collection covers, profile banners, and custom columns.
+Built-in starters cover AI news analysis, strong quotes, field notes, motion intros/outros, collection covers, profile banners, and custom columns.
 
 ### Manage Generated Assets
 
@@ -73,7 +73,7 @@ Covers can be saved into a material library. It works locally by default and can
 
 ### Trial Limit And Email Login
 
-Logged-out visitors can use 3 AI production actions: conversational cover/intro generation, DNA decode, or manual AI background generation. After the third action, the account menu asks for email-code login. A verified new email automatically creates an account.
+Logged-out visitors can use 3 AI production actions: conversational cover/motion generation, DNA decode, or manual AI background generation. After the third action, the account menu asks for email-code login. A verified new email automatically creates an account.
 
 ### Configure Local Models
 
@@ -105,7 +105,7 @@ Fixed categories:
 2. The configured LLM extracts the angle and proposes title, category, summary, and background direction.
 3. The configured image model creates a realistic editorial background matched to the copy.
 4. The fixed template adds avatar, K mark, category chip, title, subtitle, and code.
-5. Save to the material library or export PNG/WebM.
+5. Save to the material library or export PNG/M4V.
 
 DNA Decode workflow:
 
@@ -117,7 +117,7 @@ DNA Decode workflow:
 ## Output Sizes
 
 - Single work cover: `1080x1920`
-- Motion intro overlay: `1080x1920`, `1.2-2s`, browser WebM export
+- Motion intro/outro overlay: `1080x1920`, `1.2-2s`, M4V-first browser export
 - Collection cover: `1080x1080`
 - Profile background: `1920x640`
 - Material library: local by default, KV-backed in production
@@ -188,6 +188,7 @@ Vercel serves the static studio and Python serverless APIs:
 /api/cover-agent
 /api/dna-agent
 /api/generate-image
+/api/transcode-m4v
 /api/auth
 /api/assets
 ```
