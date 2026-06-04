@@ -1317,6 +1317,8 @@ def fallback_title(text, current_title):
         return "强势\n文化"
     if "估值" in compact and any(k in compact for k in ["回调", "下杀", "蒸发", "缩水"]):
         return "估值\n回调"
+    if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
+        return "AI职业预测\n全中"
     if "saas" in source.lower() and "消失" in compact:
         return "SaaS\n正在消失"
     if "强者恒强" in compact:
@@ -1336,6 +1338,8 @@ def fallback_summary(text, category, current_summary):
     compact = re.sub(r"\s+", "", source)
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "交往", "多和", "强势文化", "强者恒强"]):
         return "强者会主动进入更高密度的人群。"
+    if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
+        return "AI 对职业的影响，已经开始兑现。"
     if "强势文化" in compact:
         return "不是情绪强，是判断和行动更稳定。"
     if "强者恒强" in compact:
@@ -1352,6 +1356,8 @@ def fallback_en_title(text, category, current_en_title):
     compact = re.sub(r"\s+", "", source)
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
         return "Stay With Smart People"
+    if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
+        return "AI Career Prediction Came True"
     if "强势文化" in compact:
         return "Strong Culture"
     if "强者恒强" in compact:
@@ -1368,8 +1374,12 @@ def fallback_image_theme(text, category, current_theme):
     compact = re.sub(r"\s+", "", source)
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
         return "硅谷深夜办公室，聪明人围绕白板讨论，黑白肖像气质，强势文化，低调电影感"
+    if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
+        return "未来职业变化，AI 办公桌，招聘和技能地图，深夜屏幕，真实商务科技摄影，暗色电影感"
     if "强势文化" in compact:
         return "强势文化，深夜会议室，白板，筹码，判断力，安静的压迫感"
+    if current_theme:
+        return current_theme
     if source:
         return source
     return current_theme or (
@@ -1379,10 +1389,25 @@ def fallback_image_theme(text, category, current_theme):
     )
 
 
+def explicit_title_from_incoming(incoming, source_text=""):
+    current = incoming.get("current") if isinstance(incoming.get("current"), dict) else {}
+    direct = trim(incoming.get("smart_title") or current.get("smartTitle"), 240)
+    if direct:
+        return direct
+    for source in [incoming.get("message"), source_text]:
+        text = str(source or "")
+        match = re.search(r"(?:标题|核心观点)\s*[:：]\s*(.+)", text, flags=re.S)
+        if match:
+            title = URL_PATTERN.sub(" ", match.group(1))
+            title = re.split(r"\n\s*(?:目标|任务|要求|链接)\s*[:：]", title, maxsplit=1)[0]
+            return trim(normalize_space(title), 240)
+    return ""
+
+
 def fallback_plan(incoming, douyin_context, reason="local_fallback"):
     current = incoming.get("current") or {}
     message = "" if douyin_context.get("share_text") else trim(incoming.get("message"), 500)
-    source_text = " / ".join(
+    raw_source_text = " / ".join(
         item
         for item in [
             douyin_context.get("source_text") or "",
@@ -1390,14 +1415,16 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
         ]
         if item
     )
-    category = infer_category(source_text)
+    explicit_title = explicit_title_from_incoming(incoming, raw_source_text)
+    source_text = explicit_title or raw_source_text
+    category = infer_category(" / ".join([source_text, raw_source_text]))
     template_source = normalize_space(
         " ".join(
             [
                 str(current.get("template") or ""),
                 trim(incoming.get("message"), 500),
                 trim(incoming.get("goal"), 500),
-                source_text,
+                raw_source_text,
             ]
         )
     ).lower()

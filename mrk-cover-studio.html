@@ -4668,6 +4668,9 @@
       const clean = cleanSmartTitle(text);
       if (!clean) return "";
       if (clean.includes("\n")) return clean;
+      if (/预测全中/.test(clean) && /AI/i.test(clean) && /职业/.test(clean)) {
+        return "AI职业预测\n全中";
+      }
       const normalized = clean.replace(/：/g, "：");
       if (normalized.length <= 8) return normalized;
       const colon = normalized.indexOf("：");
@@ -4691,6 +4694,7 @@
       const text = cleanSmartTitle(title);
       const lower = text.toLowerCase();
       if (/乔布斯|jobs/.test(text) && /聪明/.test(text)) return "Jobs: Stay With Smart People";
+      if (/预测全中/.test(text) && /ai/i.test(text) && /职业/.test(text)) return "AI Career Prediction Came True";
       if (/saas/.test(lower) && /消失/.test(text)) return "SaaS Is Disappearing";
       if (/ai|模型|agent|openai|deepseek|anthropic/i.test(text)) return "AI Second Half";
       if (category === "strong") return "The Strong Get Stronger";
@@ -4702,6 +4706,7 @@
       const text = cleanSmartTitle(title);
       if (template === "outro") return "关注我，下一条继续拆给你看。";
       if (/乔布斯|聪明的人/.test(text)) return "强者会主动进入更高密度的人群。";
+      if (/预测全中/.test(text) && /AI/i.test(text) && /职业/.test(text)) return "AI 对职业的影响，已经开始兑现。";
       if (/烦恼|人生/.test(text)) return "真正的问题，是你把内容看错了。";
       if (/saas|api|模型|agent|ai/i.test(text)) return "看懂模型之后，才看得懂生意。";
       if (category === "road") return "一线现场，比会议室更早给答案。";
@@ -4713,6 +4718,7 @@
       const text = cleanSmartTitle(title);
       if (template === "outro") return "深夜工作室，黑色桌面，屏幕微光，关注提示空间，成熟克制的科技商业气质";
       if (/乔布斯|聪明的人|强势文化/.test(text)) return "硅谷深夜办公室，白板讨论，聪明人围坐，黑白编辑肖像气质，低调电影感";
+      if (/预测全中/.test(text) && /AI/i.test(text) && /职业/.test(text)) return "未来职业变化，AI 办公桌，招聘和技能地图，深夜屏幕，真实商务科技摄影，暗色电影感";
       if (/烦恼|人生/.test(text)) return "夜晚书桌，笔记本，台灯，心理和人生判断，安静压迫感，成熟杂志摄影";
       if (/saas|api|模型|agent|ai|openai|deepseek|anthropic/i.test(text)) return "深夜产品办公室，API 控制台，模型监控屏，商业判断，真实屏幕光，暗色电影感";
       if (category === "road") return "雨夜城市，车内视角，机场或客户现场，一线观察，纪实电影感";
@@ -4829,12 +4835,22 @@
           : targetTemplate === "intro"
             ? "生成片头动效，主观点要在前 1-2 秒出现。"
             : "生成单条作品封面，并同时生成内容匹配的背景图。";
+        const draftBeforePlan = {
+          title: el.title.value,
+          enTitle: el.enTitle.value,
+          summary: el.summary.value,
+          imageTheme: el.imageTheme.value,
+          imageStyle: el.imageStyle.value,
+          imageDensity: el.imageDensity.value
+        };
         const payload = await apiPost("/api/cover-agent", {
-          message: `${goalLine}\n标题：${rawTitle}`,
+          message: rawTitle,
+          goal: goalLine,
+          smart_title: rawTitle,
           douyin_url: "",
           douyin_share_text: "",
           has_reference_image: Boolean(state.agentReference),
-          current: { ...currentAgentContext(), template: targetTemplate, title: rawTitle, code: reservedCode },
+          current: { ...currentAgentContext(), template: targetTemplate, title: rawTitle, smartTitle: rawTitle, code: reservedCode },
           history: state.agentMessages,
           model_config: modelConfigPayload()
         });
@@ -4848,14 +4864,27 @@
           el.enTitle.value = "Follow The Signal";
           el.summary.value = "关注我，下一条继续拆给你看。";
         }
+        if (payload.fallback && targetTemplate !== "outro") {
+          el.title.value = draftBeforePlan.title;
+          el.enTitle.value = draftBeforePlan.enTitle;
+          el.summary.value = draftBeforePlan.summary;
+          el.imageTheme.value = draftBeforePlan.imageTheme;
+          el.imageStyle.value = draftBeforePlan.imageStyle;
+          el.imageDensity.value = draftBeforePlan.imageDensity;
+          draw();
+        }
         syncSmartEditorFromMain();
         addAgentMessage("user", `标题工作流 / ${smartTypeLabel(targetTemplate)}\n${rawTitle}`);
         addAgentMessage("assistant", payload.reply || "标题方案已生成，正在生成 Image2 背景。");
         setSmartStatus(`${payload.fallback ? "本地方案" : payload.model || "LLM"} 已完成，正在调用 Image2 生成配套背景。`, payload.fallback ? "error" : "success");
-        await generateAiBackground({ fromAgent: true });
+        const bgResult = await generateAiBackground({ fromAgent: true });
         recordGuestUse(`生成${smartTypeLabel(targetTemplate)}`);
         syncSmartEditorFromMain();
-        setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成：文字仍可直接修改；背景已按内容生成。`, "success");
+        if (bgResult && bgResult.fallback) {
+          setSmartStatus(`${smartTypeLabel(targetTemplate)}文案已生成且未被重置；Image2 暂未返回图片，已先用本地占位背景。`, "error");
+        } else {
+          setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成：文字仍可直接修改；Image2 背景已按内容生成。`, "success");
+        }
         setAgentStatus(`${smartTypeLabel(targetTemplate)}已生成。${targetTemplate === "outro" ? "片尾已包含关注引导。" : "可以继续导出或保存素材。"}`, "success");
         el.status.textContent = "Smart title asset generated";
       } catch (error) {
@@ -5663,11 +5692,13 @@
         const refLabel = payload.reference_used ? " / 已参考图片" : "";
         setAiStatus(`AI 配图已生成：${payload.model || "image model"} / ${payload.size || "auto"}${refLabel}`, "success");
         el.status.textContent = "AI image generated";
+        return { ok: true, fallback: false, payload };
       } catch (error) {
         state.customBg = await makeThemeBackground();
         state.customBgDataUrl = state.customBg.src || "";
         setAiStatus(`AI 接口暂不可用，已使用本地占位配图。原因：${error.message}`, "error");
         el.status.textContent = "Local fallback generated";
+        return { ok: true, fallback: true, error };
       } finally {
         el.generateBgBtn.disabled = false;
         if (options.fromAgent) setAgentButtonsDisabled(false);
