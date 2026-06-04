@@ -40,6 +40,7 @@ This project fixes that problem for `MR.K 在路上`.
 
 - One visual language across single posts, 1-2 second motion intros/outros, collections, and profile background
 - AI-assisted title, summary, category, and background direction
+- Title-driven generation: enter one title, auto-classify, translate, code, subtitle, generate Image2 background, then edit text live
 - DNA decode from at least 10 content samples before proposing a design direction
 - One-link account discovery: from a single public Douyin work link, try to pull creator profile, avatar, ID, and related public works
 - Account Style generation that can be applied to category, accent color, image style, density, and background prompt controls

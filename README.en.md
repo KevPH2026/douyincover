@@ -68,6 +68,10 @@ New users choose Agent/Web workflow, starter template, and content category befo
 
 Built-in starters cover AI news analysis, strong quotes, field notes, motion intros/outros, collection covers, profile banners, and custom columns.
 
+### Title-driven Generation
+
+Enter one work title or core viewpoint, and the studio auto-classifies the category, assigns a code, translates the English title, and writes a subtitle. When you generate, the LLM refines the brief and Image2 creates a content-matched background. The Chinese title, English title, subtitle, and code remain directly editable after generation. One-click intro and outro generation are supported, and the outro defaults to a follow CTA.
+
 ### Manage Generated Assets
 
 Covers can be saved into a material library. It works locally by default and can use KV storage in production.

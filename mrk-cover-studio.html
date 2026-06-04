@@ -2137,6 +2137,67 @@
       text-decoration: none;
     }
 
+    .smart-flow {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 12px;
+      border: 1px solid rgba(178,255,82,.18);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.12), transparent 48%),
+        rgba(255,255,255,.045);
+    }
+
+    .smart-flow-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .smart-flow-head strong {
+      color: #f4f7fb;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    .smart-flow-head span,
+    .smart-meta {
+      color: rgba(232,237,242,.52);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .smart-action-grid {
+      display: grid;
+      grid-template-columns: 1.2fr .9fr .9fr;
+      gap: 8px;
+    }
+
+    .smart-action-grid .ghost-btn,
+    .smart-action-grid .export-btn {
+      margin-top: 0;
+    }
+
+    .smart-editor {
+      display: grid;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .smart-editor-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .smart-editor input,
+    .smart-editor textarea {
+      min-height: 38px;
+      font-size: 12px;
+    }
+
     .version-panel {
       width: min(760px, 100%);
     }
@@ -2522,6 +2583,8 @@
       .auth-actions,
       .material-actions,
       .feedback-actions,
+      .smart-action-grid,
+      .smart-editor-row,
       .ai-command-grid {
         grid-template-columns: 1fr;
       }
@@ -2955,11 +3018,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.11</span>
+            <span class="version-pill current">当前版本 v0.12</span>
             <span class="version-pill">2026.06.04 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>加上反馈入口，让使用问题可以直接回到产品迭代里。</h3>
+          <h3>从“填字段”，升级成“输入标题就能生产一套资产”。</h3>
           <p>这里记录的是产品能力变化，不是代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 Mr.K Cover Studio 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -2981,7 +3044,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.11</span>
+                <span class="version-pill current">v0.12</span>
+                <strong>标题驱动生成：自动归类、翻译、编号、配图和动效</strong>
+                <span>适合录屏演示，也适合真实生产时从一个观点直接开工。</span>
+              </div>
+              <div class="release-date">2026.06.04</div>
+            </div>
+            <p>新增“标题驱动生成”入口：输入作品标题后，系统会先本地判断栏目、生成编号、英文标题和子标题；点击生成后再让 LLM 精修，并调用 Image2 生成匹配内容的背景。</p>
+            <ul class="release-points">
+              <li>支持选择单条封面、片头动效、片尾动效三种类型。</li>
+              <li>生成后主标题、英文标题、子标题和编号可以直接改，画布实时同步。</li>
+              <li>片尾动效默认引导关注 Mr.K / KevPH2026，适合视频最后 1-2 秒收束。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.11</span>
                 <strong>新增反馈入口，收集真实使用问题</strong>
                 <span>适合公开给用户试用后，快速知道哪里卡住、哪里不好用。</span>
               </div>
@@ -3271,6 +3351,64 @@
     </main>
 
     <aside class="inspector">
+      <section class="smart-flow" aria-label="标题驱动生成">
+        <div class="smart-flow-head">
+          <strong>标题驱动生成</strong>
+          <span>标题进来，封面/片头/片尾出去</span>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="smartTitleInput">作品标题 / 核心观点</label>
+          <textarea id="smartTitleInput" style="min-height:74px;" placeholder="例如：乔布斯：多和聪明的人交往"></textarea>
+        </div>
+
+        <div class="row">
+          <div class="field" style="margin-bottom:0;">
+            <label for="smartAssetType">生成类型</label>
+            <select id="smartAssetType">
+              <option value="work">单条封面</option>
+              <option value="intro">片头动效</option>
+              <option value="outro">片尾动效</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label for="smartCategoryPreview">自动归类</label>
+            <input id="smartCategoryPreview" readonly value="AI下半场">
+          </div>
+        </div>
+
+        <div class="smart-editor" aria-label="生成后可修改文字">
+          <div class="smart-editor-row">
+            <div class="field" style="margin-bottom:0;">
+              <label for="smartTitleEdit">主标题</label>
+              <textarea id="smartTitleEdit" style="min-height:62px;"></textarea>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="smartEnTitleEdit">英文标题</label>
+              <textarea id="smartEnTitleEdit" style="min-height:62px;"></textarea>
+            </div>
+          </div>
+          <div class="smart-editor-row">
+            <div class="field" style="margin-bottom:0;">
+              <label for="smartSummaryEdit">子标题</label>
+              <input id="smartSummaryEdit">
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="smartCodeEdit">编号</label>
+              <input id="smartCodeEdit">
+            </div>
+          </div>
+        </div>
+
+        <div class="smart-action-grid">
+          <button class="export-btn" id="smartGenerateBtn">生成封面 + Image2 配图</button>
+          <button class="ghost-btn" id="smartIntroBtn">一键片头</button>
+          <button class="ghost-btn" id="smartOutroBtn">一键片尾</button>
+        </div>
+        <div class="smart-meta" id="smartMeta">输入标题后会先本地归类、翻译、生成编号和子标题；点击生成后再调用 LLM 和 Image2。</div>
+        <div class="ai-status" id="smartStatus">生成后仍可在上方字段直接修改文字，画布会同步更新。</div>
+      </section>
+
       <section class="group" style="margin-top:0;">
         <p class="group-title">AI 输入</p>
 
@@ -3817,6 +3955,18 @@
       feedbackCopyBtn: document.getElementById("feedbackCopyBtn"),
       feedbackIssueLink: document.getElementById("feedbackIssueLink"),
       feedbackStatus: document.getElementById("feedbackStatus"),
+      smartTitleInput: document.getElementById("smartTitleInput"),
+      smartAssetType: document.getElementById("smartAssetType"),
+      smartCategoryPreview: document.getElementById("smartCategoryPreview"),
+      smartTitleEdit: document.getElementById("smartTitleEdit"),
+      smartEnTitleEdit: document.getElementById("smartEnTitleEdit"),
+      smartSummaryEdit: document.getElementById("smartSummaryEdit"),
+      smartCodeEdit: document.getElementById("smartCodeEdit"),
+      smartGenerateBtn: document.getElementById("smartGenerateBtn"),
+      smartIntroBtn: document.getElementById("smartIntroBtn"),
+      smartOutroBtn: document.getElementById("smartOutroBtn"),
+      smartMeta: document.getElementById("smartMeta"),
+      smartStatus: document.getElementById("smartStatus"),
       onboardingOverlay: document.getElementById("onboardingOverlay"),
       onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
       onboardingSkipBtn: document.getElementById("onboardingSkipBtn"),
@@ -4472,6 +4622,250 @@
         throw error;
       }
       return payload;
+    }
+
+    function setSmartStatus(message, type = "") {
+      el.smartStatus.textContent = message;
+      el.smartStatus.className = `ai-status ${type}`.trim();
+    }
+
+    function smartTypeLabel(template = el.smartAssetType.value) {
+      return {
+        work: "单条封面",
+        intro: "片头动效",
+        outro: "片尾动效"
+      }[template] || "单条封面";
+    }
+
+    function cleanSmartTitle(text) {
+      return String(text || "")
+        .replace(/https?:\/\/\S+/g, " ")
+        .replace(/#\S+/g, " ")
+        .replace(/复制此链接.*$/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function inferSmartCategory(text) {
+      const source = cleanSmartTitle(text).toLowerCase();
+      if (/(在路上|出差|客户|机场|路上|一线|现场|城市|酒店|车里|travel|client)/i.test(source)) return "road";
+      if (/(强者|强势|乔布斯|聪明的人|认知|判断|竞争|筹码|增长|文化|人生|烦恼|strategy|jobs)/i.test(source)) return "strong";
+      return "ai";
+    }
+
+    function applyCategoryMeta(category) {
+      const cat = categories[category] || categories.ai;
+      updateCategorySelection(cat.slug);
+      el.categoryTitle.value = cat.label;
+      el.categoryEn.value = cat.en;
+      el.categorySub.value = cat.sub;
+      syncColorInputs(cat.color);
+      el.smartCategoryPreview.value = cat.label;
+      return cat;
+    }
+
+    function splitSmartTitle(text) {
+      const clean = cleanSmartTitle(text);
+      if (!clean) return "";
+      if (clean.includes("\n")) return clean;
+      const normalized = clean.replace(/：/g, "：");
+      if (normalized.length <= 8) return normalized;
+      const colon = normalized.indexOf("：");
+      if (colon > 0 && colon < normalized.length - 1) {
+        const head = normalized.slice(0, colon + 1);
+        const rest = normalized.slice(colon + 1);
+        if (rest.length <= 8) return `${head}\n${rest}`;
+        return `${head}\n${rest.slice(0, 8)}\n${rest.slice(8, 16)}`;
+      }
+      const chunks = [];
+      let rest = normalized;
+      while (rest.length > 0 && chunks.length < 3) {
+        const size = rest.length > 14 ? 7 : Math.ceil(rest.length / Math.max(1, 3 - chunks.length));
+        chunks.push(rest.slice(0, size));
+        rest = rest.slice(size);
+      }
+      return chunks.filter(Boolean).join("\n");
+    }
+
+    function localSmartEnglish(title, category) {
+      const text = cleanSmartTitle(title);
+      const lower = text.toLowerCase();
+      if (/乔布斯|jobs/.test(text) && /聪明/.test(text)) return "Jobs: Stay With Smart People";
+      if (/saas/.test(lower) && /消失/.test(text)) return "SaaS Is Disappearing";
+      if (/ai|模型|agent|openai|deepseek|anthropic/i.test(text)) return "AI Second Half";
+      if (category === "strong") return "The Strong Get Stronger";
+      if (category === "road") return "Road Field Note";
+      return "Judgment Note";
+    }
+
+    function localSmartSummary(title, category, template) {
+      const text = cleanSmartTitle(title);
+      if (template === "outro") return "关注我，下一条继续拆给你看。";
+      if (/乔布斯|聪明的人/.test(text)) return "强者会主动进入更高密度的人群。";
+      if (/烦恼|人生/.test(text)) return "真正的问题，是你把内容看错了。";
+      if (/saas|api|模型|agent|ai/i.test(text)) return "看懂模型之后，才看得懂生意。";
+      if (category === "road") return "一线现场，比会议室更早给答案。";
+      if (category === "strong") return "差距会在每一次判断里继续拉开。";
+      return "把这一轮变化讲清楚。";
+    }
+
+    function localSmartTheme(title, category, template) {
+      const text = cleanSmartTitle(title);
+      if (template === "outro") return "深夜工作室，黑色桌面，屏幕微光，关注提示空间，成熟克制的科技商业气质";
+      if (/乔布斯|聪明的人|强势文化/.test(text)) return "硅谷深夜办公室，白板讨论，聪明人围坐，黑白编辑肖像气质，低调电影感";
+      if (/烦恼|人生/.test(text)) return "夜晚书桌，笔记本，台灯，心理和人生判断，安静压迫感，成熟杂志摄影";
+      if (/saas|api|模型|agent|ai|openai|deepseek|anthropic/i.test(text)) return "深夜产品办公室，API 控制台，模型监控屏，商业判断，真实屏幕光，暗色电影感";
+      if (category === "road") return "雨夜城市，车内视角，机场或客户现场，一线观察，纪实电影感";
+      return "深夜会议室，白板，筹码，商业判断，安静的压迫感";
+    }
+
+    function twoDigits(value) {
+      return String(Math.max(1, Math.min(99, Number(value) || 1))).padStart(2, "0");
+    }
+
+    function smartCodePrefix(category, template) {
+      if (template === "intro") return "M";
+      if (template === "outro") return "END";
+      return { ai: "AI", strong: "K", road: "ROAD" }[category] || "K";
+    }
+
+    function smartCodeKey(category, template) {
+      return storageKey(`smartCode.${smartCodePrefix(category, template)}`);
+    }
+
+    function smartCodeSeed(category, template) {
+      if (template === "intro" || template === "outro") return 0;
+      if (category === "ai") return 3;
+      return 0;
+    }
+
+    function peekSmartCode(category, template) {
+      const key = smartCodeKey(category, template);
+      const current = Number(localStorage.getItem(key) || smartCodeSeed(category, template));
+      return `${smartCodePrefix(category, template)}-${twoDigits(current + 1)}`;
+    }
+
+    function nextSmartCode(category, template) {
+      const key = smartCodeKey(category, template);
+      const current = Number(localStorage.getItem(key) || smartCodeSeed(category, template));
+      const next = current + 1;
+      localStorage.setItem(key, String(next));
+      return `${smartCodePrefix(category, template)}-${twoDigits(next)}`;
+    }
+
+    function syncSmartEditorFromMain() {
+      el.smartTitleEdit.value = el.title.value;
+      el.smartEnTitleEdit.value = el.enTitle.value;
+      el.smartSummaryEdit.value = el.summary.value;
+      el.smartCodeEdit.value = el.code.value;
+      const cat = activeCategory();
+      el.smartCategoryPreview.value = cat.label;
+      el.smartMeta.textContent = `${smartTypeLabel()} / ${cat.label} / ${el.code.value || "未编号"} / ${el.imageStyle.value || "cinematic"}`;
+    }
+
+    function applySmartEditorToMain() {
+      el.title.value = el.smartTitleEdit.value;
+      el.enTitle.value = el.smartEnTitleEdit.value;
+      el.summary.value = el.smartSummaryEdit.value;
+      el.code.value = el.smartCodeEdit.value;
+      draw();
+      el.status.textContent = "Smart text edited";
+      syncSmartEditorFromMain();
+    }
+
+    function previewSmartTitleLocally() {
+      const title = cleanSmartTitle(el.smartTitleInput.value);
+      const template = el.smartAssetType.value;
+      if (!title) {
+        setSmartStatus("输入标题后会自动归类、翻译、生成编号和子标题。");
+        return;
+      }
+      const category = inferSmartCategory(title);
+      const cat = applyCategoryMeta(category);
+      if (state.template !== template) setTemplate(template);
+      const displayTitle = template === "outro" ? `关注我\n看懂${cat.label}` : splitSmartTitle(title);
+      el.title.value = displayTitle;
+      el.enTitle.value = template === "outro" ? "Follow The Signal" : localSmartEnglish(title, category);
+      el.summary.value = localSmartSummary(title, category, template);
+      el.code.value = peekSmartCode(category, template);
+      el.imageTheme.value = localSmartTheme(title, category, template);
+      el.imageStyle.value = category === "road" ? "field" : "cinematic";
+      el.imageDensity.value = "medium";
+      el.bgPreset.value = "auto";
+      draw();
+      syncSmartEditorFromMain();
+      setSmartStatus(`已本地判断：${cat.label} / ${smartTypeLabel(template)} / ${el.code.value}。点击生成会调用 LLM 精修并用 Image2 出背景。`, "success");
+    }
+
+    function setSmartButtonsDisabled(disabled) {
+      el.smartGenerateBtn.disabled = disabled;
+      el.smartIntroBtn.disabled = disabled;
+      el.smartOutroBtn.disabled = disabled;
+    }
+
+    async function runSmartTitleFlow(targetTemplate = "work") {
+      const rawTitle = cleanSmartTitle(el.smartTitleInput.value || el.smartTitleEdit.value || el.title.value);
+      if (!rawTitle) {
+        setSmartStatus("先输入作品标题或核心观点。", "error");
+        el.smartTitleInput.focus();
+        return;
+      }
+      if (!ensureGuestCanUse(`生成${smartTypeLabel(targetTemplate)}`)) return;
+      el.smartAssetType.value = targetTemplate;
+      previewSmartTitleLocally();
+      const category = state.category;
+      const reservedCode = nextSmartCode(category, targetTemplate);
+      el.code.value = reservedCode;
+      el.smartCodeEdit.value = reservedCode;
+      setSmartButtonsDisabled(true);
+      setAgentButtonsDisabled(true);
+      setSmartStatus(`正在生成${smartTypeLabel(targetTemplate)}方案：自动归类、翻译、子标题、编号和背景方向。`, "working");
+      setAgentStatus(`标题工作流正在生成${smartTypeLabel(targetTemplate)}。`, "working");
+      el.status.textContent = "Smart title planning";
+
+      try {
+        const goalLine = targetTemplate === "outro"
+          ? "生成片尾动效，结尾必须引导关注 Mr.K / KevPH2026。"
+          : targetTemplate === "intro"
+            ? "生成片头动效，主观点要在前 1-2 秒出现。"
+            : "生成单条作品封面，并同时生成内容匹配的背景图。";
+        const payload = await apiPost("/api/cover-agent", {
+          message: `${goalLine}\n标题：${rawTitle}`,
+          douyin_url: "",
+          douyin_share_text: "",
+          has_reference_image: Boolean(state.agentReference),
+          current: { ...currentAgentContext(), template: targetTemplate, title: rawTitle, code: reservedCode },
+          history: state.agentMessages,
+          model_config: modelConfigPayload()
+        });
+        applyAgentPlan(payload);
+        if (targetTemplate !== state.template) setTemplate(targetTemplate);
+        const finalCode = state.category === category ? reservedCode : nextSmartCode(state.category, targetTemplate);
+        el.code.value = finalCode;
+        if (targetTemplate === "outro" && !/关注|Follow/i.test(el.title.value + el.summary.value + el.enTitle.value)) {
+          const cat = activeCategory();
+          el.title.value = `关注我\n看懂${cat.label}`;
+          el.enTitle.value = "Follow The Signal";
+          el.summary.value = "关注我，下一条继续拆给你看。";
+        }
+        syncSmartEditorFromMain();
+        addAgentMessage("user", `标题工作流 / ${smartTypeLabel(targetTemplate)}\n${rawTitle}`);
+        addAgentMessage("assistant", payload.reply || "标题方案已生成，正在生成 Image2 背景。");
+        setSmartStatus(`${payload.fallback ? "本地方案" : payload.model || "LLM"} 已完成，正在调用 Image2 生成配套背景。`, payload.fallback ? "error" : "success");
+        await generateAiBackground({ fromAgent: true });
+        recordGuestUse(`生成${smartTypeLabel(targetTemplate)}`);
+        syncSmartEditorFromMain();
+        setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成：文字仍可直接修改；背景已按内容生成。`, "success");
+        setAgentStatus(`${smartTypeLabel(targetTemplate)}已生成。${targetTemplate === "outro" ? "片尾已包含关注引导。" : "可以继续导出或保存素材。"}`, "success");
+        el.status.textContent = "Smart title asset generated";
+      } catch (error) {
+        setSmartStatus(`生成失败：${error.message}`, "error");
+        setAgentStatus(`标题工作流失败：${error.message}`, "error");
+        el.status.textContent = "Smart title flow failed";
+      } finally {
+        setSmartButtonsDisabled(false);
+        setAgentButtonsDisabled(false);
+      }
     }
 
     function setFeedbackStatus(message, type = "") {
@@ -5366,6 +5760,7 @@
       state.agentCoverImageUrl = source.cover_image_url || sourceMeta.cover_image_url || "";
       el.bgPreset.value = "auto";
       draw();
+      syncSmartEditorFromMain();
     }
 
     async function runCoverAgent(options = {}) {
@@ -5839,10 +6234,14 @@
 
     function setTemplate(template) {
       state.template = template;
+      if (el.smartAssetType && ["work", "intro", "outro"].includes(template)) {
+        el.smartAssetType.value = template;
+      }
       document.querySelectorAll("[data-template]").forEach(btn => {
         btn.classList.toggle("active", btn.dataset.template === template);
       });
       draw();
+      syncSmartEditorFromMain();
     }
 
     function updateCategorySelection(category) {
@@ -6580,6 +6979,21 @@
       setAgentStatus("粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。");
     });
 
+    el.smartTitleInput.addEventListener("input", previewSmartTitleLocally);
+    el.smartAssetType.addEventListener("change", previewSmartTitleLocally);
+    [el.smartTitleEdit, el.smartEnTitleEdit, el.smartSummaryEdit, el.smartCodeEdit].forEach(input => {
+      input.addEventListener("input", applySmartEditorToMain);
+    });
+    el.smartGenerateBtn.addEventListener("click", () => {
+      runSmartTitleFlow("work").catch(error => setSmartStatus(`生成失败：${error.message}`, "error"));
+    });
+    el.smartIntroBtn.addEventListener("click", () => {
+      runSmartTitleFlow("intro").catch(error => setSmartStatus(`片头生成失败：${error.message}`, "error"));
+    });
+    el.smartOutroBtn.addEventListener("click", () => {
+      runSmartTitleFlow("outro").catch(error => setSmartStatus(`片尾生成失败：${error.message}`, "error"));
+    });
+
     el.saveModelConfigBtn.addEventListener("click", saveModelConfig);
     el.clearModelConfigBtn.addEventListener("click", clearModelConfig);
 
@@ -6657,6 +7071,7 @@
     preload();
     initAuth();
     syncColorInputs(categories[state.category].color);
+    syncSmartEditorFromMain();
     openOnboarding();
   </script>
 </body>

@@ -1422,6 +1422,16 @@ def fallback_plan(incoming, douyin_context, reason="local_fallback"):
         "road": ("在路上", "ON THE ROAD", "出差 / 客户 / 一线观察", "ROAD-01"),
     }[category]
 
+    if template == "outro":
+        outro_title = {
+            "ai": "关注我\n看懂AI下半场",
+            "strong": "关注我\n看懂强者逻辑",
+            "road": "关注我\n看一线现场",
+        }[category]
+        title = outro_title
+        en_title = "Follow The Signal"
+        summary = "关注我，下一条继续拆给你看。"
+
     return {
         "reply": "我先按现有账号规则生成了一版封面/动效方案；LLM 未配置或不可用时会走本地判断。",
         "template": template,
