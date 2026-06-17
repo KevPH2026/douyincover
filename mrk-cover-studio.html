@@ -326,6 +326,123 @@
       color: rgba(255,220,216,.9);
     }
 
+    .command-result {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(0,0,0,.28);
+    }
+
+    .command-result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .command-result-head strong {
+      display: block;
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .command-result-head span {
+      display: block;
+      max-width: 520px;
+      color: rgba(255,255,255,.58);
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    .delivery-checklist {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .delivery-step {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+    }
+
+    .delivery-step b {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .delivery-step b::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.24);
+    }
+
+    .delivery-step span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.5);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .delivery-step.ready {
+      border-color: rgba(178,255,82,.36);
+      background: rgba(178,255,82,.08);
+    }
+
+    .delivery-step.ready b::before {
+      background: var(--lime);
+      box-shadow: 0 0 14px rgba(178,255,82,.7);
+    }
+
+    .delivery-step.warning {
+      border-color: rgba(255,96,82,.34);
+      background: rgba(255,96,82,.075);
+    }
+
+    .delivery-step.warning b::before {
+      background: var(--red);
+    }
+
+    .delivery-step.pending b::before {
+      background: rgba(255,255,255,.28);
+    }
+
+    .command-result-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .command-result-actions button {
+      min-height: 34px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      background: rgba(255,255,255,.07);
+      color: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .command-result-actions button:first-child {
+      border-color: rgba(178,255,82,.42);
+      background: rgba(178,255,82,.16);
+      color: #ecffd6;
+    }
+
     .delivery-board {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2698,12 +2815,23 @@
       }
 
       .audience-switch,
-      .command-actions {
+      .command-actions,
+      .delivery-checklist,
+      .command-result-actions {
         grid-template-columns: 1fr;
       }
 
       .command-head {
         display: grid;
+      }
+
+      .command-result-head {
+        display: grid;
+      }
+
+      .command-result-head span {
+        max-width: none;
+        text-align: left;
       }
 
       .onboarding-grid,
@@ -2961,6 +3089,36 @@
         </div>
 
         <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
+
+        <div class="command-result" id="heroDeliveryPanel" hidden>
+          <div class="command-result-head">
+            <strong id="heroDeliveryTitle">本次交付包</strong>
+            <span id="heroDeliverySummary">封面、背景方向和下一步动作会在生成后出现。</span>
+          </div>
+          <div class="delivery-checklist" aria-label="生成交付状态">
+            <div class="delivery-step pending" data-delivery-step="cover">
+              <b>封面 PNG</b>
+              <span>等待内容输入</span>
+            </div>
+            <div class="delivery-step pending" data-delivery-step="background">
+              <b>背景方向</b>
+              <span>等待 Agent 判断</span>
+            </div>
+            <div class="delivery-step pending" data-delivery-step="motion">
+              <b>片头 / 片尾</b>
+              <span>可一键补齐</span>
+            </div>
+            <div class="delivery-step pending" data-delivery-step="library">
+              <b>素材库</b>
+              <span>生成后可保存</span>
+            </div>
+          </div>
+          <div class="command-result-actions">
+            <button type="button" id="heroSaveAssetBtn">保存到素材库</button>
+            <button type="button" id="heroExportAssetBtn">导出当前资产</button>
+            <button type="button" id="heroOutroBtn">补一个片尾</button>
+          </div>
+        </div>
       </section>
     </header>
   </div>
@@ -3241,11 +3399,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.13</span>
+            <span class="version-pill current">当前版本 v0.14</span>
             <span class="version-pill">2026.06.17 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>打开页面先输入内容，系统自动分流到封面、动效或账号 DNA。</h3>
+          <h3>输入之后马上看到交付包：封面、背景、动效和素材库下一步。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3267,7 +3425,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.13</span>
+                <span class="version-pill current">v0.14</span>
+                <strong>新增生成后的交付包，用户知道下一步该做什么</strong>
+                <span>适合公开试用和宣发录屏，减少“点完按钮以后去哪”的困惑。</span>
+              </div>
+              <div class="release-date">2026.06.17</div>
+            </div>
+            <p>首屏生成后会展示“本次交付包”：封面 PNG、背景方向、片头/片尾、素材库四个状态。用户可以直接保存到素材库、导出当前资产，或补一个带关注引导的片尾。</p>
+            <ul class="release-points">
+              <li>短标题预览后会先显示草稿交付状态。</li>
+              <li>生成完成后会标记哪些资产已 ready，哪些还需要配置 Image2 或补动效。</li>
+              <li>不同用户场景会给不同下一步建议：个人导出、品牌入库、代运营解码 DNA。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.13</span>
                 <strong>新增首屏一键指挥台，降低第一次使用门槛</strong>
                 <span>适合宣发录屏、客户演示和非技术用户第一次试用。</span>
               </div>
@@ -4170,6 +4345,7 @@
       agentMessages: [],
       generatedStyle: null,
       heroAudience: "solo",
+      heroDeliveryMode: "draft",
       modelConfig: null,
       motionMedia: null,
       motionMediaType: "",
@@ -4229,6 +4405,12 @@
       heroDnaBtn: document.getElementById("heroDnaBtn"),
       heroIntroBtn: document.getElementById("heroIntroBtn"),
       heroCommandStatus: document.getElementById("heroCommandStatus"),
+      heroDeliveryPanel: document.getElementById("heroDeliveryPanel"),
+      heroDeliveryTitle: document.getElementById("heroDeliveryTitle"),
+      heroDeliverySummary: document.getElementById("heroDeliverySummary"),
+      heroSaveAssetBtn: document.getElementById("heroSaveAssetBtn"),
+      heroExportAssetBtn: document.getElementById("heroExportAssetBtn"),
+      heroOutroBtn: document.getElementById("heroOutroBtn"),
       onboardingOverlay: document.getElementById("onboardingOverlay"),
       onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
       onboardingSkipBtn: document.getElementById("onboardingSkipBtn"),
@@ -6189,6 +6371,56 @@
       });
     }
 
+    function heroAudienceNextStep(mode) {
+      const audience = state.heroAudience;
+      if (mode === "dna") return "下一步：应用 Style，再用同一套规则批量生产封面。";
+      if (mode === "intro") return "下一步：预览 1-2 秒动效，满意后导出 M4V。";
+      if (audience === "brand") return "下一步：保存到素材库，把同栏目内容继续做成系列。";
+      if (audience === "agency") return "下一步：先解码客户 DNA，再把这套视觉规则交给 Agent 批量复用。";
+      return "下一步：导出 PNG，或补一个片尾做关注收束。";
+    }
+
+    function setDeliveryStep(name, status, label) {
+      const node = document.querySelector(`[data-delivery-step="${name}"]`);
+      if (!node) return;
+      node.classList.remove("ready", "pending", "warning");
+      node.classList.add(status || "pending");
+      const span = node.querySelector("span");
+      if (span) span.textContent = label || "";
+    }
+
+    function showHeroDelivery(mode = "draft", options = {}) {
+      if (!el.heroDeliveryPanel) return;
+      state.heroDeliveryMode = mode;
+      const v = values();
+      const titleText = (v.title || el.heroCommandInput.value || "当前内容").replace(/\s+/g, " / ");
+      el.heroDeliveryPanel.hidden = false;
+      el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "动效交付包" : "封面交付包";
+      el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
+
+      if (mode === "draft") {
+        setDeliveryStep("cover", "ready", "标题已预览，可继续生成");
+        setDeliveryStep("background", "pending", "等待 Image2 或本地背景");
+        setDeliveryStep("motion", "pending", "可一键补片头/片尾");
+        setDeliveryStep("library", "pending", "生成后可保存");
+        return;
+      }
+
+      if (mode === "dna") {
+        setDeliveryStep("cover", "pending", "等待应用 Style 后生成");
+        setDeliveryStep("background", "ready", "已生成账号风格方向");
+        setDeliveryStep("motion", "pending", "可按 Style 做动效");
+        setDeliveryStep("library", "pending", "应用后可保存资产");
+        return;
+      }
+
+      const bgFallback = Boolean(options.backgroundFallback);
+      setDeliveryStep("cover", "ready", mode === "intro" ? "动效封面帧已生成" : "1080 x 1920 可导出");
+      setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "Image2 未返回，已用占位背景" : "背景已按内容生成");
+      setDeliveryStep("motion", mode === "intro" ? "ready" : "pending", mode === "intro" ? "可预览或导出 M4V" : "可补片头/片尾");
+      setDeliveryStep("library", "pending", "保存后进入素材库");
+    }
+
     function isDouyinLikeInput(text) {
       const value = String(text || "");
       return Boolean(
@@ -6207,6 +6439,12 @@
       const preset = heroAudiencePresets[next];
       el.heroCommandInput.placeholder = preset.placeholder;
       setHeroStatus(preset.status);
+      if (el.heroDeliveryPanel && !el.heroDeliveryPanel.hidden) {
+        const bgStep = document.querySelector('[data-delivery-step="background"]');
+        showHeroDelivery(state.heroDeliveryMode || "draft", {
+          backgroundFallback: Boolean(bgStep && bgStep.classList.contains("warning"))
+        });
+      }
     }
 
     function syncHeroDraftToStudio() {
@@ -6224,6 +6462,7 @@
       }
       el.smartTitleInput.value = raw;
       previewSmartTitleLocally();
+      showHeroDelivery("draft");
       setHeroStatus("已按短标题预览封面：继续点生成，会自动归类、翻译、编号，并尝试生成配图。", "success");
     }
 
@@ -6244,6 +6483,7 @@
             : el.agentMessage.value;
           setHeroStatus("正在解码 DNA / Style：适合新账号、客户账号或系列化改版。", "success");
           await runClientDnaAnalysis();
+          showHeroDelivery("dna");
           setHeroStatus("DNA / Style 已发送到 Agent 面板；生成结果会出现在右侧工作台，可继续应用到当前封面。", "success");
           return;
         }
@@ -6254,12 +6494,14 @@
             el.douyinShare.value = raw;
             setHeroStatus("正在把链接/文案转成片头动效方案。", "success");
             await runCoverAgent({ fromDouyin: true });
+            showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
             setHeroStatus("片头动效方案已生成，请在工作台预览或导出 M4V。", "success");
           } else {
             el.smartTitleInput.value = raw;
             el.smartAssetType.value = "intro";
             setHeroStatus("正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
             await runSmartTitleFlow("intro");
+            showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
             setHeroStatus("片头动效已生成，请在工作台预览或导出 M4V。", "success");
           }
           return;
@@ -6269,12 +6511,14 @@
           el.douyinShare.value = raw;
           setHeroStatus("正在读取内容并生成封面/动效。", "success");
           await runCoverAgent({ fromDouyin: true });
+          showHeroDelivery("cover", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
           setHeroStatus("内容已进入 Agent 生成链路，请在工作台继续微调、保存或导出。", "success");
         } else {
           el.smartTitleInput.value = raw;
           el.smartAssetType.value = "work";
           setHeroStatus("正在从标题生成封面和配图方向。", "success");
           await runSmartTitleFlow("work");
+          showHeroDelivery("cover", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
           setHeroStatus("封面已生成，请在工作台继续改字、保存素材或导出 PNG。", "success");
         }
       } catch (error) {
@@ -7207,6 +7451,29 @@
 
     el.heroIntroBtn.addEventListener("click", () => {
       runHeroCommand("intro").catch(error => setHeroStatus(`片头失败：${error.message}`, "error"));
+    });
+
+    el.heroSaveAssetBtn.addEventListener("click", () => {
+      saveCurrentAsset().catch(error => setHeroStatus(`保存失败：${error.message}`, "error"));
+    });
+
+    el.heroExportAssetBtn.addEventListener("click", () => {
+      if (isMotionTemplate()) {
+        exportMotionM4v().catch(error => setHeroStatus(`导出失败：${error.message}`, "error"));
+      } else {
+        exportPng();
+      }
+    });
+
+    el.heroOutroBtn.addEventListener("click", () => {
+      const source = el.heroCommandInput.value.trim() || el.smartTitleInput.value.trim() || el.title.value.trim();
+      if (source) el.smartTitleInput.value = source;
+      runSmartTitleFlow("outro")
+        .then(() => {
+          showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+          setHeroStatus("片尾已补齐：默认包含关注引导，可预览或导出 M4V。", "success");
+        })
+        .catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
     });
 
     el.dnaResult.addEventListener("click", event => {
