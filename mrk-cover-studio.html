@@ -137,6 +137,195 @@
       color: #080a0d;
     }
 
+    .command-console {
+      display: grid;
+      gap: 12px;
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid rgba(178,255,82,.28);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.12), rgba(80,216,255,.06) 44%, rgba(255,255,255,.045)),
+        rgba(8, 10, 13, .72);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 24px 70px rgba(0,0,0,.24);
+    }
+
+    .command-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .command-head strong {
+      display: block;
+      color: #fff;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .command-head span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .command-badge {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border: 1px solid rgba(178,255,82,.36);
+      border-radius: 999px;
+      background: rgba(178,255,82,.1);
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .audience-switch {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .audience-switch button {
+      min-width: 0;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.74);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .audience-switch button strong {
+      display: block;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .audience-switch button span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255,255,255,.5);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .audience-switch button.active {
+      border-color: var(--lime);
+      background: rgba(178,255,82,.14);
+      box-shadow: inset 0 0 0 1px rgba(178,255,82,.48);
+    }
+
+    .command-input-wrap {
+      display: grid;
+      gap: 8px;
+    }
+
+    .command-input-wrap label {
+      color: rgba(255,255,255,.78);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .command-input {
+      width: 100%;
+      min-height: 112px;
+      resize: vertical;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      background: rgba(0,0,0,.42);
+      color: #f7f8fa;
+      padding: 12px;
+      outline: 0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .command-input:focus {
+      border-color: var(--lime);
+      box-shadow: 0 0 0 3px rgba(178,255,82,.14);
+    }
+
+    .command-input::placeholder {
+      color: rgba(255,255,255,.38);
+    }
+
+    .command-actions {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .9fr);
+      gap: 8px;
+    }
+
+    .command-actions button {
+      min-height: 42px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .command-primary {
+      border: 1px solid var(--lime);
+      background: var(--lime);
+      color: #080a0d;
+    }
+
+    .command-secondary {
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+    }
+
+    .command-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .command-example {
+      min-height: 28px;
+      padding: 0 9px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.055);
+      color: rgba(255,255,255,.68);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .command-status {
+      min-height: 36px;
+      padding: 9px 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(0,0,0,.24);
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .command-status.success {
+      border-color: rgba(178,255,82,.35);
+      background: rgba(178,255,82,.08);
+      color: rgba(236,255,214,.88);
+    }
+
+    .command-status.error {
+      border-color: rgba(255,96,82,.34);
+      background: rgba(255,96,82,.08);
+      color: rgba(255,220,216,.9);
+    }
+
     .delivery-board {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2508,6 +2697,15 @@
         grid-template-columns: 1fr;
       }
 
+      .audience-switch,
+      .command-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .command-head {
+        display: grid;
+      }
+
       .onboarding-grid,
       .tour-grid,
       .version-stat-grid,
@@ -2721,24 +2919,49 @@
         </div>
       </div>
 
-      <div class="delivery-board" aria-label="Deployment options">
-        <div class="delivery-card">
+      <section class="command-console" aria-label="一键生成入口">
+        <div class="command-head">
           <div>
-            <strong>01 INPUT</strong>
-            <span>抖音链接 / 分享文案 / 参考图</span>
+            <strong>一句话开始生产</strong>
+            <span>粘贴抖音链接、分享文案、截图转文字，或直接写一个观点；系统会自动分流到封面、动效或 DNA。</span>
           </div>
-          <div class="delivery-command">content → brief → background</div>
-          <div class="delivery-status"><span>Agent</span><span>LLM</span></div>
+          <span class="command-badge">3 free runs</span>
         </div>
-        <div class="delivery-card">
-          <div>
-            <strong>02 OUTPUT</strong>
-            <span>统一封面 / 素材库 / PNG 导出</span>
-          </div>
-          <div class="delivery-command">render → save → publish</div>
-          <div class="delivery-status"><span>Canvas</span><span>Local</span></div>
+
+        <div class="audience-switch" id="heroAudienceButtons" aria-label="选择使用场景">
+          <button class="active" data-hero-audience="solo">
+            <strong>个人创作者</strong>
+            <span>标题进来，马上出封面</span>
+          </button>
+          <button data-hero-audience="brand">
+            <strong>品牌团队</strong>
+            <span>统一栏目和素材库</span>
+          </button>
+          <button data-hero-audience="agency">
+            <strong>代运营 / Agent</strong>
+            <span>先解码客户 DNA</span>
+          </button>
         </div>
-      </div>
+
+        <div class="command-input-wrap">
+          <label for="heroCommandInput">输入内容</label>
+          <textarea id="heroCommandInput" class="command-input" placeholder="例：乔布斯：多和聪明的人交往"></textarea>
+        </div>
+
+        <div class="command-actions">
+          <button class="command-primary" id="heroGenerateBtn">生成封面 / 动效</button>
+          <button class="command-secondary" id="heroDnaBtn">解码 DNA / Style</button>
+          <button class="command-secondary" id="heroIntroBtn">一键片头</button>
+        </div>
+
+        <div class="command-examples" aria-label="示例内容">
+          <button class="command-example" data-command-example="乔布斯：多和聪明的人交往">乔布斯金句</button>
+          <button class="command-example" data-command-example="半年前关于AI对职业发展的预测全中">AI 职业预测</button>
+          <button class="command-example" data-command-example="粘贴一个抖音作品链接后，帮我找到主页并解码账号 DNA">抖音链接 DNA</button>
+        </div>
+
+        <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
+      </section>
     </header>
   </div>
 
@@ -2746,8 +2969,8 @@
     <section class="onboarding-panel" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
       <header class="onboarding-head">
         <div>
-          <h2 id="onboardingTitle">4 步上手 Mr.K Cover Studio</h2>
-          <p>从抖音链接到封面/动效资产，按这条路径走。演示时可以直接照着这段讲。</p>
+          <h2 id="onboardingTitle">4 步上手 AI Cover Command</h2>
+          <p>先用首屏输入框跑通一次，再进入工作台微调。演示时可以直接照着这条路径讲。</p>
         </div>
         <button class="onboarding-close" id="onboardingCloseBtn" aria-label="关闭">×</button>
       </header>
@@ -2764,18 +2987,18 @@
           <div class="tour-grid">
             <div class="tour-card">
               <b>01</b>
-              <strong>丢进内容</strong>
-              <span>粘贴抖音链接、分享文案、截图转文字，或直接写一个主题。</span>
+              <strong>一句话开始</strong>
+              <span>在首屏粘贴抖音链接、分享文案、截图转文字，或直接写一个主题。</span>
             </div>
             <div class="tour-card">
               <b>02</b>
-              <strong>AI 定方案</strong>
-              <span>系统提炼标题、栏目、英文副题、摘要和背景方向。</span>
+              <strong>选择使用场景</strong>
+              <span>个人创作者快速出封面，品牌团队保持资产一致，代运营先解码客户 DNA。</span>
             </div>
             <div class="tour-card">
               <b>03</b>
-              <strong>固定风格</strong>
-              <span>模板负责头像、K 标、栏目色、标题层级和安全区。</span>
+              <strong>AI 定方案</strong>
+              <span>系统提炼标题、栏目、英文副题、摘要和背景方向，再套固定视觉 DNA。</span>
             </div>
             <div class="tour-card">
               <b>04</b>
@@ -2785,7 +3008,7 @@
           </div>
           <div class="recording-script">
             <strong>演示话术</strong>
-            “我做这个工具，是为了少花时间排版。把抖音链接、文案或截图放进来，它会先读懂这条内容，再生成标题、栏目和背景方向。你可以继续改标题、换背景，满意后保存到素材库，直接导出封面、片头或片尾。”
+            “打开后先不用找设置。把抖音链接、文案或截图文字放进首屏输入框，选个人创作者、品牌团队或代运营场景，它会先读懂这条内容，再生成标题、栏目和背景方向。你可以继续改标题、换背景，满意后保存到素材库，直接导出封面、片头或片尾。”
           </div>
         </div>
 
@@ -3018,12 +3241,12 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.12</span>
-            <span class="version-pill">2026.06.04 更新</span>
+            <span class="version-pill current">当前版本 v0.13</span>
+            <span class="version-pill">2026.06.17 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>从“填字段”，升级成“输入标题就能生产一套资产”。</h3>
-          <p>这里记录的是产品能力变化，不是代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 Mr.K Cover Studio 每次迭代解决了什么问题。</p>
+          <h3>打开页面先输入内容，系统自动分流到封面、动效或账号 DNA。</h3>
+          <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
               <strong>封面资产</strong>
@@ -3044,7 +3267,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.12</span>
+                <span class="version-pill current">v0.13</span>
+                <strong>新增首屏一键指挥台，降低第一次使用门槛</strong>
+                <span>适合宣发录屏、客户演示和非技术用户第一次试用。</span>
+              </div>
+              <div class="release-date">2026.06.17</div>
+            </div>
+            <p>首屏新增统一输入框：用户粘贴抖音链接、分享文案、截图转文字，或直接写一个观点，系统会判断该走标题封面、抖音 Agent、片头动效还是账号 DNA。</p>
+            <ul class="release-points">
+              <li>新增三类使用场景：个人创作者、品牌团队、代运营 / Agent。</li>
+              <li>短标题会立即同步到右侧标题工作流并预览封面。</li>
+              <li>长文案和抖音链接会进入 Agent 流；DNA 按钮会进入账号 Style 解码。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.12</span>
                 <strong>标题驱动生成：自动归类、翻译、编号、配图和动效</strong>
                 <span>适合录屏演示，也适合真实生产时从一个观点直接开工。</span>
               </div>
@@ -3831,6 +4071,21 @@
       }
     };
 
+    const heroAudiencePresets = {
+      solo: {
+        placeholder: "例：乔布斯：多和聪明的人交往",
+        status: "个人创作者模式：输入短标题会先预览封面；粘贴抖音链接会让 Agent 先读内容再生成。"
+      },
+      brand: {
+        placeholder: "例：把这组 AI 产品观点做成统一栏目封面，并保存到素材库",
+        status: "品牌团队模式：优先保持栏目、视觉 DNA 和素材库一致，适合系列内容和多账号复用。"
+      },
+      agency: {
+        placeholder: "例：粘贴客户抖音作品链接，先解码账号 DNA，再给封面设计方向",
+        status: "代运营 / Agent 模式：优先解码账号 DNA，再生成适合客户风格的封面和动效方向。"
+      }
+    };
+
     const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效/片尾动效方案。
 
 默认账号：
@@ -3914,6 +4169,7 @@
       agentPromptHint: "",
       agentMessages: [],
       generatedStyle: null,
+      heroAudience: "solo",
       modelConfig: null,
       motionMedia: null,
       motionMediaType: "",
@@ -3967,6 +4223,12 @@
       smartOutroBtn: document.getElementById("smartOutroBtn"),
       smartMeta: document.getElementById("smartMeta"),
       smartStatus: document.getElementById("smartStatus"),
+      heroCommandInput: document.getElementById("heroCommandInput"),
+      heroAudienceButtons: document.getElementById("heroAudienceButtons"),
+      heroGenerateBtn: document.getElementById("heroGenerateBtn"),
+      heroDnaBtn: document.getElementById("heroDnaBtn"),
+      heroIntroBtn: document.getElementById("heroIntroBtn"),
+      heroCommandStatus: document.getElementById("heroCommandStatus"),
       onboardingOverlay: document.getElementById("onboardingOverlay"),
       onboardingCloseBtn: document.getElementById("onboardingCloseBtn"),
       onboardingSkipBtn: document.getElementById("onboardingSkipBtn"),
@@ -5915,6 +6177,113 @@
       }
     }
 
+    function setHeroStatus(message, type = "") {
+      if (!el.heroCommandStatus) return;
+      el.heroCommandStatus.textContent = message;
+      el.heroCommandStatus.className = `command-status ${type}`.trim();
+    }
+
+    function setHeroButtonsDisabled(disabled) {
+      [el.heroGenerateBtn, el.heroDnaBtn, el.heroIntroBtn].forEach(button => {
+        if (button) button.disabled = disabled;
+      });
+    }
+
+    function isDouyinLikeInput(text) {
+      const value = String(text || "");
+      return Boolean(
+        extractUrlFromText(value)
+        || /抖音|Dou音|douyin|v\.douyin|复制此链接|打开Dou音搜索/i.test(value)
+        || value.length > 80
+      );
+    }
+
+    function setHeroAudience(audience) {
+      const next = heroAudiencePresets[audience] ? audience : "solo";
+      state.heroAudience = next;
+      document.querySelectorAll("[data-hero-audience]").forEach(button => {
+        button.classList.toggle("active", button.dataset.heroAudience === next);
+      });
+      const preset = heroAudiencePresets[next];
+      el.heroCommandInput.placeholder = preset.placeholder;
+      setHeroStatus(preset.status);
+    }
+
+    function syncHeroDraftToStudio() {
+      const raw = el.heroCommandInput.value.trim();
+      if (!raw) {
+        setHeroStatus(heroAudiencePresets[state.heroAudience].status);
+        return;
+      }
+      if (isDouyinLikeInput(raw)) {
+        el.douyinShare.value = raw;
+        const url = extractUrlFromText(raw);
+        if (url) el.agentLink.value = url;
+        setHeroStatus("已识别为链接/长文案：会交给 Agent 读取内容、判断栏目、生成标题和背景方向。", "success");
+        return;
+      }
+      el.smartTitleInput.value = raw;
+      previewSmartTitleLocally();
+      setHeroStatus("已按短标题预览封面：继续点生成，会自动归类、翻译、编号，并尝试生成配图。", "success");
+    }
+
+    async function runHeroCommand(action = "cover") {
+      const raw = el.heroCommandInput.value.trim();
+      if (!raw) {
+        setHeroStatus("先粘贴抖音链接、分享文案，或直接写一个标题。", "error");
+        el.heroCommandInput.focus();
+        return;
+      }
+      syncHeroDraftToStudio();
+      setHeroButtonsDisabled(true);
+      try {
+        if (action === "dna") {
+          el.douyinShare.value = raw;
+          el.agentMessage.value = state.heroAudience === "agency"
+            ? "先解码这个账号的内容 DNA，再给出可应用的封面 Style。"
+            : el.agentMessage.value;
+          setHeroStatus("正在解码 DNA / Style：适合新账号、客户账号或系列化改版。", "success");
+          await runClientDnaAnalysis();
+          setHeroStatus("DNA / Style 已发送到 Agent 面板；生成结果会出现在右侧工作台，可继续应用到当前封面。", "success");
+          return;
+        }
+
+        if (action === "intro") {
+          if (isDouyinLikeInput(raw)) {
+            setTemplate("intro");
+            el.douyinShare.value = raw;
+            setHeroStatus("正在把链接/文案转成片头动效方案。", "success");
+            await runCoverAgent({ fromDouyin: true });
+            setHeroStatus("片头动效方案已生成，请在工作台预览或导出 M4V。", "success");
+          } else {
+            el.smartTitleInput.value = raw;
+            el.smartAssetType.value = "intro";
+            setHeroStatus("正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
+            await runSmartTitleFlow("intro");
+            setHeroStatus("片头动效已生成，请在工作台预览或导出 M4V。", "success");
+          }
+          return;
+        }
+
+        if (isDouyinLikeInput(raw)) {
+          el.douyinShare.value = raw;
+          setHeroStatus("正在读取内容并生成封面/动效。", "success");
+          await runCoverAgent({ fromDouyin: true });
+          setHeroStatus("内容已进入 Agent 生成链路，请在工作台继续微调、保存或导出。", "success");
+        } else {
+          el.smartTitleInput.value = raw;
+          el.smartAssetType.value = "work";
+          setHeroStatus("正在从标题生成封面和配图方向。", "success");
+          await runSmartTitleFlow("work");
+          setHeroStatus("封面已生成，请在工作台继续改字、保存素材或导出 PNG。", "success");
+        }
+      } catch (error) {
+        setHeroStatus(`生成失败：${error.message}`, "error");
+      } finally {
+        setHeroButtonsDisabled(false);
+      }
+    }
+
     function values() {
       return {
         categoryTitle: el.categoryTitle.value.trim(),
@@ -6813,6 +7182,33 @@
       if (btn) setCategory(btn.dataset.category);
     });
 
+    el.heroAudienceButtons.addEventListener("click", event => {
+      const btn = event.target.closest("[data-hero-audience]");
+      if (btn) setHeroAudience(btn.dataset.heroAudience);
+    });
+
+    el.heroCommandInput.addEventListener("input", syncHeroDraftToStudio);
+
+    document.querySelectorAll("[data-command-example]").forEach(button => {
+      button.addEventListener("click", () => {
+        el.heroCommandInput.value = button.dataset.commandExample || "";
+        syncHeroDraftToStudio();
+        el.heroCommandInput.focus();
+      });
+    });
+
+    el.heroGenerateBtn.addEventListener("click", () => {
+      runHeroCommand("cover").catch(error => setHeroStatus(`生成失败：${error.message}`, "error"));
+    });
+
+    el.heroDnaBtn.addEventListener("click", () => {
+      runHeroCommand("dna").catch(error => setHeroStatus(`解码失败：${error.message}`, "error"));
+    });
+
+    el.heroIntroBtn.addEventListener("click", () => {
+      runHeroCommand("intro").catch(error => setHeroStatus(`片头失败：${error.message}`, "error"));
+    });
+
     el.dnaResult.addEventListener("click", event => {
       const btn = event.target.closest("[data-dna-style-action]");
       if (!btn) return;
@@ -7103,6 +7499,7 @@
     initAuth();
     syncColorInputs(categories[state.category].color);
     syncSmartEditorFromMain();
+    setHeroAudience("solo");
     openOnboarding();
   </script>
 </body>
