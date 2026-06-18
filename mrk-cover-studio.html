@@ -524,6 +524,73 @@
       line-height: 1.55;
     }
 
+    .launch-pack {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid rgba(178,255,82,.26);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.08), rgba(80,216,255,.045)),
+        rgba(0,0,0,.18);
+    }
+
+    .launch-pack-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .launch-pack-head strong {
+      color: #f7f8fa;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .launch-pack-head button {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid rgba(178,255,82,.34);
+      border-radius: 8px;
+      background: rgba(178,255,82,.14);
+      color: #ecffd6;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .launch-pack-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .launch-pack-item {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .launch-pack-item b {
+      display: block;
+      color: rgba(255,255,255,.86);
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .launch-pack-item span {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-line;
+    }
+
     .delivery-board {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2899,12 +2966,21 @@
       .command-playbooks,
       .command-actions,
       .delivery-checklist,
-      .command-result-actions {
+      .command-result-actions,
+      .launch-pack-grid {
         grid-template-columns: 1fr;
       }
 
       .command-head {
         display: grid;
+      }
+
+      .launch-pack-head {
+        display: grid;
+      }
+
+      .launch-pack-head button {
+        width: 100%;
       }
 
       .command-result-head {
@@ -3215,6 +3291,22 @@
             <strong>录屏话术</strong>
             <span>把一句观点放进来，系统会先判断栏目和标题，再套上固定视觉 DNA。生成后能看到封面、背景、动效和素材库四个交付项，满意就保存或导出。</span>
           </div>
+          <div class="launch-pack" id="heroLaunchPack" hidden>
+            <div class="launch-pack-head">
+              <strong>Launch Pack</strong>
+              <button type="button" id="heroCopyLaunchPackBtn">复制发布包</button>
+            </div>
+            <div class="launch-pack-grid">
+              <div class="launch-pack-item">
+                <b>发布文案</b>
+                <span id="heroLaunchCaption">生成后自动整理。</span>
+              </div>
+              <div class="launch-pack-item">
+                <b>口播话术</b>
+                <span id="heroLaunchScript">生成后自动整理。</span>
+              </div>
+            </div>
+          </div>
           <div class="command-result-actions">
             <button type="button" id="heroSaveAssetBtn">保存到素材库</button>
             <button type="button" id="heroExportAssetBtn">导出当前资产</button>
@@ -3501,11 +3593,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.17</span>
+            <span class="version-pill current">当前版本 v0.18</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>第一次打开，不填内容也能跑出第一版结果。</h3>
+          <h3>生成之后，直接拿到可发布的文案和口播稿。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3527,7 +3619,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.17</span>
+                <span class="version-pill current">v0.18</span>
+                <strong>新增 Launch Pack，生成后直接进入发布状态</strong>
+                <span>适合录屏讲解、发给试用用户和真实发布前整理素材。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首屏生成完成后，会自动整理一份发布文案和口播话术。用户不用再从封面结果里反推怎么介绍这条内容，可以直接复制、录屏、保存或导出。</p>
+            <ul class="release-points">
+              <li>单条封面会生成标题、摘要、栏目编号和话题标签。</li>
+              <li>DNA、片头和演示模式会生成对应的口播话术。</li>
+              <li>支持一键复制整份发布包，减少从生成到发布的断点。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.17</span>
                 <strong>主按钮变成智能开始，新用户不用先想填什么</strong>
                 <span>适合录屏演示、第一次试用和给不同角色的人看。</span>
               </div>
@@ -4596,6 +4705,10 @@
       heroDeliveryTitle: document.getElementById("heroDeliveryTitle"),
       heroDeliverySummary: document.getElementById("heroDeliverySummary"),
       heroDemoScript: document.getElementById("heroDemoScript"),
+      heroLaunchPack: document.getElementById("heroLaunchPack"),
+      heroLaunchCaption: document.getElementById("heroLaunchCaption"),
+      heroLaunchScript: document.getElementById("heroLaunchScript"),
+      heroCopyLaunchPackBtn: document.getElementById("heroCopyLaunchPackBtn"),
       heroSaveAssetBtn: document.getElementById("heroSaveAssetBtn"),
       heroExportAssetBtn: document.getElementById("heroExportAssetBtn"),
       heroOutroBtn: document.getElementById("heroOutroBtn"),
@@ -6620,6 +6733,92 @@
       if (span) span.textContent = label || "";
     }
 
+    function oneLine(text) {
+      return String(text || "").replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function launchPackTag(categoryTitle) {
+      const text = String(categoryTitle || activeCategory().label || "");
+      if (/强者/.test(text)) return "#强者恒强 #认知 #个人成长";
+      if (/路上|一线|现场/.test(text)) return "#在路上 #一线观察 #创业";
+      return "#AI下半场 #AI #内容创作";
+    }
+
+    function buildLaunchPack(mode = "cover") {
+      const v = values();
+      const title = oneLine(v.title || el.heroCommandInput.value || "一条观点生成封面");
+      const summary = oneLine(v.summary || "把观点变成统一的视觉资产。");
+      const category = oneLine(v.categoryTitle || activeCategory().label);
+      const code = oneLine(v.code || "draft");
+      const tag = launchPackTag(category);
+
+      if (mode === "dna") {
+        return {
+          caption: [
+            "我先把账号内容 DNA 解出来，再决定封面怎么统一。",
+            "这一步会看栏目、标题习惯、背景方向和视觉禁区。",
+            "适合做客户账号、品牌矩阵和批量换封面。",
+            "微信：kevph2026"
+          ].join("\n"),
+          script: "先不用急着做图。把账号公开作品样本放进来，系统先解码内容 DNA，再给出栏目、标题和背景方向。确认 Style 后，后面的封面和动效都按同一套规则生产。"
+        };
+      }
+
+      if (mode === "demo") {
+        return {
+          caption: [
+            "一句话进来，封面、背景、片头和素材库交付项一起出来。",
+            "它更像给短视频账号用的视觉生产 Agent。",
+            "试用：dna.superk.ai",
+            "微信：kevph2026"
+          ].join("\n"),
+          script: "打开页面后不用准备素材，直接点一次示例。系统会把观点拆成标题、栏目和背景方向，再生成封面交付包。后面可以改文字、保存素材、导出封面，继续补片头或片尾。"
+        };
+      }
+
+      if (mode === "intro") {
+        return {
+          caption: [
+            `《${title}》`,
+            summary,
+            "前 1-2 秒先把主观点打出来，后面视频承接正文。",
+            `${tag} #片头动效`,
+            "微信：kevph2026"
+          ].join("\n"),
+          script: `这条先用「${title}」做开场。片头只负责一件事：让用户在前两秒看到主观点。封面帧、背景和标题保持同一套视觉 DNA，后面正文继续展开。`
+        };
+      }
+
+      return {
+        caption: [
+          `《${title}》`,
+          summary,
+          `栏目：${category} / 编号：${code}`,
+          `${tag} #抖音封面`,
+          "微信：kevph2026"
+        ].join("\n"),
+        script: `这条内容的核心观点是「${title}」。我先把它压成可读的大标题，再按「${category}」的固定视觉 DNA 生成封面。背景服务观点，文字还能继续改，最后直接保存或导出发布。`
+      };
+    }
+
+    function renderLaunchPack(mode = "cover") {
+      if (!el.heroLaunchPack) return;
+      if (mode === "draft") {
+        el.heroLaunchPack.hidden = true;
+        return;
+      }
+      const pack = buildLaunchPack(mode);
+      el.heroLaunchCaption.textContent = pack.caption;
+      el.heroLaunchScript.textContent = pack.script;
+      el.heroLaunchPack.hidden = false;
+    }
+
+    function currentLaunchPackText() {
+      const caption = el.heroLaunchCaption ? el.heroLaunchCaption.textContent.trim() : "";
+      const script = el.heroLaunchScript ? el.heroLaunchScript.textContent.trim() : "";
+      return ["发布文案", caption, "", "口播话术", script].join("\n");
+    }
+
     function updateHeroActionCopy() {
       const raw = el.heroCommandInput.value.trim();
       if (state.heroAudience === "agency") {
@@ -6653,6 +6852,7 @@
       el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
 
       if (mode === "draft") {
+        renderLaunchPack("draft");
         setDeliveryStep("cover", "ready", "标题已预览，可继续生成");
         setDeliveryStep("background", "pending", "等待 Image2 或本地背景");
         setDeliveryStep("motion", "pending", "可一键补片头/片尾");
@@ -6661,6 +6861,7 @@
       }
 
       if (mode === "dna") {
+        renderLaunchPack("dna");
         setDeliveryStep("cover", "pending", "等待应用 Style 后生成");
         setDeliveryStep("background", "ready", "已生成账号风格方向");
         setDeliveryStep("motion", "pending", "可按 Style 做动效");
@@ -6673,12 +6874,14 @@
       setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "Image2 未返回，已用占位背景" : "背景已按内容生成");
       setDeliveryStep("motion", mode === "intro" ? "ready" : "pending", mode === "intro" ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
+      renderLaunchPack(mode);
     }
 
     function runHeroDemo() {
       applyHeroPlaybook("solo");
       showHeroDelivery("demo", { backgroundFallback: true });
       if (el.heroDemoScript) el.heroDemoScript.hidden = false;
+      renderLaunchPack("demo");
       setDeliveryStep("cover", "ready", "演示封面已本地预览");
       setDeliveryStep("background", "warning", "演示用本地背景，接入 Image2 后可换真图");
       setDeliveryStep("motion", "pending", "可继续点一键片头");
@@ -6740,6 +6943,7 @@
       if (playbook.audience === "agency") {
         el.douyinShare.value = playbook.text;
         el.agentMessage.value = "先解码这个账号的内容 DNA，再给出可应用的封面 Style。";
+        renderLaunchPack("draft");
         el.heroDeliveryPanel.hidden = false;
         el.heroDeliveryTitle.textContent = "DNA 体验样本";
         el.heroDeliverySummary.textContent = "已准备 10 条公开作品样本。下一步：点击“解码 DNA / Style”。";
@@ -7789,6 +7993,12 @@
           setHeroStatus("片尾已补齐：默认包含关注引导，可预览或导出 M4V。", "success");
         })
         .catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
+    });
+
+    el.heroCopyLaunchPackBtn.addEventListener("click", () => {
+      copyToClipboard(currentLaunchPackText())
+        .then(() => setHeroStatus("发布文案和口播话术已复制。", "success"))
+        .catch(error => setHeroStatus(`复制失败：${error.message}`, "error"));
     });
 
     el.dnaResult.addEventListener("click", event => {
