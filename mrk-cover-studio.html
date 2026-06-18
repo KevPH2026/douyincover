@@ -3820,11 +3820,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.24</span>
+            <span class="version-pill current">当前版本 v0.25</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>产品名回到第一屏。</h3>
+          <h3>生成时不再吞掉你改好的文案。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3846,7 +3846,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.24</span>
+                <span class="version-pill current">v0.25</span>
+                <strong>修正标题驱动生成的文案锁定</strong>
+                <span>适合真实改稿、换配图和反复生成。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>标题驱动生成会先判断当前文字是不是用户手动改过：如果改过，就锁住主标题、英文标题、子标题和编号；如果只是换了上面的作品标题，就按新标题重新生成建议。</p>
+            <ul class="release-points">
+              <li>点击“生成封面 + 配图”不会再把内部任务句写成封面标题。</li>
+              <li>旧草稿不会误覆盖新输入，只有同一条标题下的手动改稿会被保护。</li>
+              <li>文字锁住但背景方向仍可更新，方便 Image2 按内容生成配图。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.24</span>
                 <strong>首屏品牌统一为 douyincover</strong>
                 <span>适合宣发视频、截图传播和用户记忆。</span>
               </div>
@@ -4999,6 +5016,8 @@
       agentPromptHint: "",
       agentMessages: [],
       generatedStyle: null,
+      smartEditorDirty: false,
+      smartDraftSource: "",
       heroAudience: "solo",
       heroDeliveryMode: "draft",
       modelConfig: null,
@@ -5891,7 +5910,21 @@
       el.smartMeta.textContent = `${smartTypeLabel()} / ${cat.label} / ${el.code.value || "未编号"} / ${el.imageStyle.value || "cinematic"}`;
     }
 
+    function smartSourceSignature(title = cleanSmartTitle(el.smartTitleInput.value), template = el.smartAssetType.value) {
+      return `${template}::${cleanSmartTitle(title)}`;
+    }
+
+    function markSmartEditorClean(source = "") {
+      state.smartEditorDirty = false;
+      state.smartDraftSource = source;
+    }
+
+    function markSmartEditorDirty() {
+      state.smartEditorDirty = true;
+    }
+
     function applySmartEditorToMain() {
+      markSmartEditorDirty();
       el.title.value = el.smartTitleEdit.value;
       el.enTitle.value = el.smartEnTitleEdit.value;
       el.summary.value = el.smartSummaryEdit.value;
@@ -5955,6 +5988,7 @@
       el.bgPreset.value = "auto";
       draw();
       syncSmartEditorFromMain();
+      markSmartEditorClean(smartSourceSignature(title, template));
       setSmartStatus(`已本地判断：${cat.label} / ${smartTypeLabel(template)} / ${el.code.value}。点击生成会先出预览，可用模型时自动增强。`, "success");
     }
 
@@ -5976,11 +6010,15 @@
       if (!ensureGuestCanUse(`生成${smartTypeLabel(targetTemplate)}`)) return;
       el.smartAssetType.value = targetTemplate;
       const draftBeforePreview = readSmartDraft();
+      const sourceSignature = smartSourceSignature(rawTitle, targetTemplate);
+      const shouldPreserveText = state.smartEditorDirty && state.smartDraftSource === sourceSignature && hasSmartDraftText(draftBeforePreview);
       previewSmartTitleLocally();
-      if (hasSmartDraftText(draftBeforePreview)) {
+      if (shouldPreserveText) {
         restoreSmartDraft(draftBeforePreview);
         draw();
         syncSmartEditorFromMain();
+        state.smartEditorDirty = true;
+        state.smartDraftSource = sourceSignature;
       }
       const category = state.category;
       const reservedCode = reserveSmartCode(category, targetTemplate, el.smartCodeEdit.value || el.code.value);
@@ -6019,7 +6057,7 @@
         });
         applyAgentPlan(payload);
         if (targetTemplate !== state.template) setTemplate(targetTemplate);
-        restoreSmartDraft(draftBeforePlan);
+        restoreSmartDraft(draftBeforePlan, { keepImage: false });
         el.code.value = reservedCode;
         if (targetTemplate === "outro" && !/关注|Follow/i.test(el.title.value + el.summary.value + el.enTitle.value)) {
           const cat = activeCategory();
