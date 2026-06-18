@@ -3890,11 +3890,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.26</span>
+            <span class="version-pill current">当前版本 v0.27</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>首屏回到一个命令台。</h3>
+          <h3>第一次打开就能试跑。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3916,7 +3916,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.26</span>
+                <span class="version-pill current">v0.27</span>
+                <strong>新用户不再被弹窗挡住</strong>
+                <span>适合线上投放、社群试用和录屏开场。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首次打开页面时，系统会自动准备一条个人创作者示例，并显示可试跑的交付包。用户不用先读导览，也不用自己想标题，直接点生成就能看到第一张结果。</p>
+            <ul class="release-points">
+              <li>首次访问不再自动弹出导览层，主命令台保持可见。</li>
+              <li>自动套用个人创作者示例，生成按钮直接进入“封面 + 配图”。</li>
+              <li>新手导览仍在菜单里，用户需要时可以随时打开。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.26</span>
                 <strong>首屏收敛为一个主入口</strong>
                 <span>适合录屏宣发、朋友试用和第一次打开。</span>
               </div>
@@ -6562,6 +6579,15 @@
     }
 
     function drawCoverImage(img, x, y, w, h) {
+      if (!img || !img.width || !img.height) {
+        const g = ctx.createLinearGradient(x, y, x + w, y + h);
+        g.addColorStop(0, "#05070a");
+        g.addColorStop(.55, "#0d1418");
+        g.addColorStop(1, "#111820");
+        ctx.fillStyle = g;
+        ctx.fillRect(x, y, w, h);
+        return;
+      }
       const scale = Math.max(w / img.width, h / img.height);
       const sw = w / scale;
       const sh = h / scale;
@@ -7529,6 +7555,19 @@
         setHeroAudience(role);
       }
       return true;
+    }
+
+    function prepareFirstRunStart() {
+      if (localStorage.getItem("mrk.firstRunSeededV1") === "1" && el.heroCommandInput.value.trim()) return;
+      if (!el.heroCommandInput.value.trim()) {
+        applyHeroPlaybook("solo");
+      } else {
+        syncHeroDraftToStudio();
+      }
+      showHeroDelivery("draft");
+      updateHeroActionCopy();
+      setHeroStatus("已放入一条可试跑示例。点“生成封面 + 配图”，先看到第一张结果。", "success");
+      localStorage.setItem("mrk.firstRunSeededV1", "1");
     }
 
     function syncHeroDraftToStudio() {
@@ -8894,12 +8933,17 @@
     applyModelConfigToInputs(state.modelConfig);
     updateModelConfigStatus(state.modelConfig);
 
-    preload();
     initAuth();
     syncColorInputs(categories[state.category].color);
     syncSmartEditorFromMain();
     setHeroAudience("solo");
-    if (!applyRoleLinkFromUrl()) openOnboarding();
+    preload()
+      .catch(error => {
+        el.status.textContent = `Asset loading failed: ${error.message}`;
+      })
+      .finally(() => {
+        if (!applyRoleLinkFromUrl()) prepareFirstRunStart();
+      });
   </script>
 </body>
 </html>
