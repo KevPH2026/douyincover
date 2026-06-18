@@ -261,7 +261,7 @@
 
     .command-actions {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, .9fr);
+      grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, .9fr));
       gap: 8px;
     }
 
@@ -501,6 +501,27 @@
       border-color: rgba(178,255,82,.42);
       background: rgba(178,255,82,.16);
       color: #ecffd6;
+    }
+
+    .command-demo-script {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 1px solid rgba(80,216,255,.22);
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(80,216,255,.09), rgba(178,255,82,.06));
+    }
+
+    .command-demo-script strong {
+      color: #f7f8fa;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .command-demo-script span {
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      line-height: 1.55;
     }
 
     .delivery-board {
@@ -3141,6 +3162,7 @@
           <button class="command-primary" id="heroGenerateBtn">生成封面 / 动效</button>
           <button class="command-secondary" id="heroDnaBtn">解码 DNA / Style</button>
           <button class="command-secondary" id="heroIntroBtn">一键片头</button>
+          <button class="command-secondary" id="heroDemoBtn">30秒演示</button>
         </div>
 
         <div class="command-playbooks" aria-label="角色示例">
@@ -3188,6 +3210,10 @@
               <b>素材库</b>
               <span>生成后可保存</span>
             </div>
+          </div>
+          <div class="command-demo-script" id="heroDemoScript" hidden>
+            <strong>录屏话术</strong>
+            <span>把一句观点放进来，系统会先判断栏目和标题，再套上固定视觉 DNA。生成后能看到封面、背景、动效和素材库四个交付项，满意就保存或导出。</span>
           </div>
           <div class="command-result-actions">
             <button type="button" id="heroSaveAssetBtn">保存到素材库</button>
@@ -3475,7 +3501,7 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.15</span>
+            <span class="version-pill current">当前版本 v0.16</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
@@ -3501,7 +3527,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.15</span>
+                <span class="version-pill current">v0.16</span>
+                <strong>修复标题生成覆盖文案，配图状态更清楚</strong>
+                <span>适合真实生产时反复改字、换背景、再导出。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>标题驱动生成现在会尊重右侧已编辑的主标题、英文标题、子标题和编号。点击“生成封面 + Image2 配图”时，Agent 只负责补全方向和背景，不会把你刚改好的文案重置掉。</p>
+            <ul class="release-points">
+              <li>生成前会锁定当前编辑区文案，生成后自动恢复到画布。</li>
+              <li>Image2 未返回图片时会明确提示，并保留本地占位背景。</li>
+              <li>首屏 30 秒演示按钮已接入，方便录屏介绍产品。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.15</span>
                 <strong>新增角色示例卡，让新用户不用准备素材也能体验</strong>
                 <span>适合官网首屏、宣发录屏和第一次发给朋友试用。</span>
               </div>
@@ -4527,10 +4570,12 @@
       heroGenerateBtn: document.getElementById("heroGenerateBtn"),
       heroDnaBtn: document.getElementById("heroDnaBtn"),
       heroIntroBtn: document.getElementById("heroIntroBtn"),
+      heroDemoBtn: document.getElementById("heroDemoBtn"),
       heroCommandStatus: document.getElementById("heroCommandStatus"),
       heroDeliveryPanel: document.getElementById("heroDeliveryPanel"),
       heroDeliveryTitle: document.getElementById("heroDeliveryTitle"),
       heroDeliverySummary: document.getElementById("heroDeliverySummary"),
+      heroDemoScript: document.getElementById("heroDemoScript"),
       heroSaveAssetBtn: document.getElementById("heroSaveAssetBtn"),
       heroExportAssetBtn: document.getElementById("heroExportAssetBtn"),
       heroOutroBtn: document.getElementById("heroOutroBtn"),
@@ -5326,6 +5371,13 @@
       return `${smartCodePrefix(category, template)}-${twoDigits(next)}`;
     }
 
+    function reserveSmartCode(category, template, preferredCode) {
+      const preferred = String(preferredCode || "").trim();
+      const peek = peekSmartCode(category, template);
+      if (preferred && preferred !== peek) return preferred;
+      return nextSmartCode(category, template);
+    }
+
     function syncSmartEditorFromMain() {
       el.smartTitleEdit.value = el.title.value;
       el.smartEnTitleEdit.value = el.enTitle.value;
@@ -5344,6 +5396,39 @@
       draw();
       el.status.textContent = "Smart text edited";
       syncSmartEditorFromMain();
+    }
+
+    function readSmartDraft() {
+      return {
+        title: el.smartTitleEdit.value,
+        enTitle: el.smartEnTitleEdit.value,
+        summary: el.smartSummaryEdit.value,
+        code: el.smartCodeEdit.value,
+        imageTheme: el.imageTheme.value,
+        imageStyle: el.imageStyle.value,
+        imageDensity: el.imageDensity.value
+      };
+    }
+
+    function hasSmartDraftText(draft) {
+      return Boolean(
+        cleanSmartTitle(draft.title) ||
+        String(draft.enTitle || "").trim() ||
+        String(draft.summary || "").trim()
+      );
+    }
+
+    function restoreSmartDraft(draft, options = {}) {
+      const keepImage = options.keepImage !== false;
+      if ("title" in draft) el.title.value = draft.title;
+      if ("enTitle" in draft) el.enTitle.value = draft.enTitle;
+      if ("summary" in draft) el.summary.value = draft.summary;
+      if ("code" in draft) el.code.value = draft.code;
+      if (keepImage) {
+        if ("imageTheme" in draft) el.imageTheme.value = draft.imageTheme;
+        if (["cinematic", "terminal", "field", "minimal"].includes(draft.imageStyle)) el.imageStyle.value = draft.imageStyle;
+        if (["low", "medium", "high"].includes(draft.imageDensity)) el.imageDensity.value = draft.imageDensity;
+      }
     }
 
     function previewSmartTitleLocally() {
@@ -5377,7 +5462,9 @@
     }
 
     async function runSmartTitleFlow(targetTemplate = "work") {
-      const rawTitle = cleanSmartTitle(el.smartTitleInput.value || el.smartTitleEdit.value || el.title.value);
+      const typedTitle = cleanSmartTitle(el.smartTitleInput.value);
+      const editedTitle = cleanSmartTitle(el.smartTitleEdit.value || el.title.value);
+      const rawTitle = typedTitle || editedTitle;
       if (!rawTitle) {
         setSmartStatus("先输入作品标题或核心观点。", "error");
         el.smartTitleInput.focus();
@@ -5385,9 +5472,15 @@
       }
       if (!ensureGuestCanUse(`生成${smartTypeLabel(targetTemplate)}`)) return;
       el.smartAssetType.value = targetTemplate;
+      const draftBeforePreview = readSmartDraft();
       previewSmartTitleLocally();
+      if (hasSmartDraftText(draftBeforePreview)) {
+        restoreSmartDraft(draftBeforePreview);
+        draw();
+        syncSmartEditorFromMain();
+      }
       const category = state.category;
-      const reservedCode = nextSmartCode(category, targetTemplate);
+      const reservedCode = reserveSmartCode(category, targetTemplate, el.smartCodeEdit.value || el.code.value);
       el.code.value = reservedCode;
       el.smartCodeEdit.value = reservedCode;
       setSmartButtonsDisabled(true);
@@ -5402,46 +5495,38 @@
           : targetTemplate === "intro"
             ? "生成片头动效，主观点要在前 1-2 秒出现。"
             : "生成单条作品封面，并同时生成内容匹配的背景图。";
-        const draftBeforePlan = {
-          title: el.title.value,
-          enTitle: el.enTitle.value,
-          summary: el.summary.value,
-          imageTheme: el.imageTheme.value,
-          imageStyle: el.imageStyle.value,
-          imageDensity: el.imageDensity.value
-        };
+        const draftBeforePlan = readSmartDraft();
+        draftBeforePlan.code = reservedCode;
+        const planningMessage = [
+          `作品标题：${draftBeforePlan.title || rawTitle}`,
+          draftBeforePlan.enTitle ? `英文标题：${draftBeforePlan.enTitle}` : "",
+          draftBeforePlan.summary ? `子标题：${draftBeforePlan.summary}` : "",
+          rawTitle && rawTitle !== cleanSmartTitle(draftBeforePlan.title) ? `原始主题：${rawTitle}` : ""
+        ].filter(Boolean).join("\n");
         const payload = await apiPost("/api/cover-agent", {
-          message: rawTitle,
+          message: planningMessage,
           goal: goalLine,
-          smart_title: rawTitle,
+          smart_title: draftBeforePlan.title || rawTitle,
           douyin_url: "",
           douyin_share_text: "",
           has_reference_image: Boolean(state.agentReference),
-          current: { ...currentAgentContext(), template: targetTemplate, title: rawTitle, smartTitle: rawTitle, code: reservedCode },
+          current: { ...currentAgentContext(), template: targetTemplate, title: draftBeforePlan.title || rawTitle, smartTitle: rawTitle, code: reservedCode },
           history: state.agentMessages,
           model_config: modelConfigPayload()
         });
         applyAgentPlan(payload);
         if (targetTemplate !== state.template) setTemplate(targetTemplate);
-        const finalCode = state.category === category ? reservedCode : nextSmartCode(state.category, targetTemplate);
-        el.code.value = finalCode;
+        restoreSmartDraft(draftBeforePlan);
+        el.code.value = reservedCode;
         if (targetTemplate === "outro" && !/关注|Follow/i.test(el.title.value + el.summary.value + el.enTitle.value)) {
           const cat = activeCategory();
           el.title.value = `关注我\n看懂${cat.label}`;
           el.enTitle.value = "Follow The Signal";
           el.summary.value = "关注我，下一条继续拆给你看。";
         }
-        if (payload.fallback && targetTemplate !== "outro") {
-          el.title.value = draftBeforePlan.title;
-          el.enTitle.value = draftBeforePlan.enTitle;
-          el.summary.value = draftBeforePlan.summary;
-          el.imageTheme.value = draftBeforePlan.imageTheme;
-          el.imageStyle.value = draftBeforePlan.imageStyle;
-          el.imageDensity.value = draftBeforePlan.imageDensity;
-          draw();
-        }
+        draw();
         syncSmartEditorFromMain();
-        addAgentMessage("user", `标题工作流 / ${smartTypeLabel(targetTemplate)}\n${rawTitle}`);
+        addAgentMessage("user", `标题工作流 / ${smartTypeLabel(targetTemplate)}\n${draftBeforePlan.title || rawTitle}`);
         addAgentMessage("assistant", payload.reply || "标题方案已生成，正在生成 Image2 背景。");
         setSmartStatus(`${payload.fallback ? "本地方案" : payload.model || "LLM"} 已完成，正在调用 Image2 生成配套背景。`, payload.fallback ? "error" : "success");
         const bgResult = await generateAiBackground({ fromAgent: true });
@@ -6253,6 +6338,9 @@
         if (!response.ok) {
           throw new Error(payload.message || `HTTP ${response.status}`);
         }
+        if (!payload.image_data_url) {
+          throw new Error(payload.message || "Image2 没有返回可用图片。");
+        }
         const img = await loadImage(payload.image_data_url);
         state.customBg = img;
         state.customBgDataUrl = payload.image_data_url;
@@ -6489,7 +6577,7 @@
     }
 
     function setHeroButtonsDisabled(disabled) {
-      [el.heroGenerateBtn, el.heroDnaBtn, el.heroIntroBtn].forEach(button => {
+      [el.heroGenerateBtn, el.heroDnaBtn, el.heroIntroBtn, el.heroDemoBtn].forEach(button => {
         if (button) button.disabled = disabled;
       });
     }
@@ -6515,13 +6603,14 @@
     function showHeroDelivery(mode = "draft", options = {}) {
       if (!el.heroDeliveryPanel) return;
       state.heroDeliveryMode = mode;
+      if (el.heroDemoScript) el.heroDemoScript.hidden = mode !== "demo";
       const v = values();
       const titleText = (v.title || el.heroCommandInput.value || "当前内容")
         .replace(/\n+/g, " / ")
         .replace(/[ \t]+/g, " ")
         .trim();
       el.heroDeliveryPanel.hidden = false;
-      el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "动效交付包" : "封面交付包";
+      el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "动效交付包" : mode === "demo" ? "演示交付包" : "封面交付包";
       el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
 
       if (mode === "draft") {
@@ -6545,6 +6634,18 @@
       setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "Image2 未返回，已用占位背景" : "背景已按内容生成");
       setDeliveryStep("motion", mode === "intro" ? "ready" : "pending", mode === "intro" ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
+    }
+
+    function runHeroDemo() {
+      applyHeroPlaybook("solo");
+      showHeroDelivery("demo", { backgroundFallback: true });
+      if (el.heroDemoScript) el.heroDemoScript.hidden = false;
+      setDeliveryStep("cover", "ready", "演示封面已本地预览");
+      setDeliveryStep("background", "warning", "演示用本地背景，接入 Image2 后可换真图");
+      setDeliveryStep("motion", "pending", "可继续点一键片头");
+      setDeliveryStep("library", "pending", "可保存到素材库");
+      setHeroStatus("30 秒演示已准备好：现在可以直接录屏讲“输入一句话 -> 生成封面交付包”。", "success");
+      el.status.textContent = "Launch demo ready";
     }
 
     function isDouyinLikeInput(text) {
@@ -7604,6 +7705,8 @@
     el.heroIntroBtn.addEventListener("click", () => {
       runHeroCommand("intro").catch(error => setHeroStatus(`片头失败：${error.message}`, "error"));
     });
+
+    el.heroDemoBtn.addEventListener("click", runHeroDemo);
 
     el.heroSaveAssetBtn.addEventListener("click", () => {
       saveCurrentAsset().catch(error => setHeroStatus(`保存失败：${error.message}`, "error"));
