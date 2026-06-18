@@ -135,6 +135,7 @@
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 4px;
+      position: relative;
     }
 
     .hero-btn {
@@ -153,6 +154,59 @@
       border-color: var(--lime);
       background: var(--lime);
       color: #080a0d;
+    }
+
+    .hero-menu {
+      position: relative;
+      display: inline-flex;
+      justify-content: flex-end;
+    }
+
+    .hero-menu summary {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .hero-menu summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .hero-menu summary::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+      opacity: .72;
+    }
+
+    .hero-menu[open] summary::after {
+      transform: translateY(2px) rotate(225deg);
+    }
+
+    .hero-menu-panel {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 20;
+      display: grid;
+      gap: 8px;
+      width: min(220px, calc(100vw - 40px));
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 8px;
+      background: rgba(8, 11, 16, .96);
+      box-shadow: 0 22px 56px rgba(0,0,0,.42);
+      backdrop-filter: blur(18px);
+    }
+
+    .hero-menu-panel .hero-btn {
+      width: 100%;
+      text-align: left;
     }
 
     .command-console {
@@ -3143,6 +3197,17 @@
         flex: 1 1 120px;
       }
 
+      .hero-menu,
+      .hero-menu summary {
+        width: 100%;
+      }
+
+      .hero-menu-panel {
+        left: 0;
+        right: auto;
+        width: 100%;
+      }
+
       .delivery-board {
         grid-template-columns: 1fr;
       }
@@ -3392,11 +3457,16 @@
         </div>
         <div class="hero-actions">
           <button class="hero-btn primary utility-hidden" id="scrollToStudioBtn">进入工作台</button>
-          <button class="hero-btn primary" id="advancedOpenBtn">手动 / 素材</button>
-          <button class="hero-btn" id="onboardingOpenBtn">新手导览</button>
-          <button class="hero-btn" id="versionOpenBtn">版本 / 更新</button>
-          <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
-          <button class="hero-btn" id="feedbackOpenBtn">反馈</button>
+          <details class="hero-menu" id="heroMenu">
+            <summary class="hero-btn" aria-label="打开菜单">菜单</summary>
+            <div class="hero-menu-panel">
+              <button class="hero-btn primary" id="advancedOpenBtn">手动 / 素材</button>
+              <button class="hero-btn" id="onboardingOpenBtn">新手导览</button>
+              <button class="hero-btn" id="versionOpenBtn">版本 / 更新</button>
+              <button class="hero-btn" id="settingsOpenBtn">模型 / 设置</button>
+              <button class="hero-btn" id="feedbackOpenBtn">反馈</button>
+            </div>
+          </details>
         </div>
       </div>
 
@@ -3820,11 +3890,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.25</span>
+            <span class="version-pill current">当前版本 v0.26</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>生成时不再吞掉你改好的文案。</h3>
+          <h3>首屏回到一个命令台。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3846,7 +3916,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.25</span>
+                <span class="version-pill current">v0.26</span>
+                <strong>首屏收敛为一个主入口</strong>
+                <span>适合录屏宣发、朋友试用和第一次打开。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>顶部不再把设置、版本、反馈和素材入口摊开。第一次打开时，用户先看到产品名、输入框和生成动作；需要细调时再从菜单进入。</p>
+            <ul class="release-points">
+              <li>顶部次级按钮收进“菜单”，减少第一屏选择压力。</li>
+              <li>生成、DNA、片头和演示仍留在命令台，保留核心生产路径。</li>
+              <li>菜单项点击后会自动收起，不挡住后续操作。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.25</span>
                 <strong>修正标题驱动生成的文案锁定</strong>
                 <span>适合真实改稿、换配图和反复生成。</span>
               </div>
@@ -5036,6 +5123,7 @@
 
     const el = {
       canvas: document.getElementById("coverCanvas"),
+      heroMenu: document.getElementById("heroMenu"),
       onboardingOpenBtn: document.getElementById("onboardingOpenBtn"),
       scrollToStudioBtn: document.getElementById("scrollToStudioBtn"),
       advancedOpenBtn: document.getElementById("advancedOpenBtn"),
@@ -8477,6 +8565,18 @@
     });
 
     el.heroDemoBtn.addEventListener("click", runHeroDemo);
+
+    if (el.heroMenu) {
+      el.heroMenu.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => {
+          el.heroMenu.open = false;
+        });
+      });
+      document.addEventListener("click", event => {
+        if (!el.heroMenu.open || el.heroMenu.contains(event.target)) return;
+        el.heroMenu.open = false;
+      });
+    }
 
     el.heroSaveAssetBtn.addEventListener("click", () => {
       saveCurrentAsset().catch(error => setHeroStatus(`保存失败：${error.message}`, "error"));
