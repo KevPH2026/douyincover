@@ -363,6 +363,29 @@
       box-shadow: inset 0 0 0 1px rgba(178,255,82,.42);
     }
 
+    .share-routes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .share-route {
+      min-height: 32px;
+      border: 1px solid rgba(80,216,255,.18);
+      border-radius: 8px;
+      background: rgba(80,216,255,.055);
+      color: rgba(236,250,255,.82);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .share-route:hover {
+      border-color: rgba(178,255,82,.42);
+      background: rgba(178,255,82,.1);
+      color: #ecffd6;
+    }
+
     .command-status {
       min-height: 36px;
       padding: 9px 10px;
@@ -2964,6 +2987,7 @@
 
       .audience-switch,
       .command-playbooks,
+      .share-routes,
       .command-actions,
       .delivery-checklist,
       .command-result-actions,
@@ -3260,6 +3284,12 @@
             <span>给 10 条公开作品样本，先出 Style 再生产封面</span>
             <em>套用 DNA 样本</em>
           </button>
+        </div>
+
+        <div class="share-routes" aria-label="复制不同用户入口">
+          <button class="share-route" type="button" data-copy-role-link="solo">复制个人入口</button>
+          <button class="share-route" type="button" data-copy-role-link="brand">复制品牌入口</button>
+          <button class="share-route" type="button" data-copy-role-link="agency">复制代运营入口</button>
         </div>
 
         <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
@@ -3593,11 +3623,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.18</span>
+            <span class="version-pill current">当前版本 v0.19</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>生成之后，直接拿到可发布的文案和口播稿。</h3>
+          <h3>同一个产品，可以发给不同角色直接试用。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3619,7 +3649,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.18</span>
+                <span class="version-pill current">v0.19</span>
+                <strong>新增角色入口链接，宣发时可以分人群投放</strong>
+                <span>适合发给个人创作者、品牌团队和代运营伙伴。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首屏新增三种可复制入口链接。链接打开后会自动进入对应角色场景，并套用示例内容，用户不用先理解整套工具，也不用自己找按钮。</p>
+            <ul class="release-points">
+              <li>个人创作者入口会直接准备短观点封面示例。</li>
+              <li>品牌团队入口会进入统一栏目资产场景。</li>
+              <li>代运营 / Agent 入口会准备 10 条样本，适合直接演示 DNA 解码。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.18</span>
                 <strong>新增 Launch Pack，生成后直接进入发布状态</strong>
                 <span>适合录屏讲解、发给试用用户和真实发布前整理素材。</span>
               </div>
@@ -6954,6 +7001,32 @@
       }
     }
 
+    function roleLink(role) {
+      const key = heroPlaybooks[role] ? role : "solo";
+      const url = new URL(window.location.href);
+      url.hash = "";
+      url.search = "";
+      url.searchParams.set("role", key);
+      url.searchParams.set("sample", "1");
+      return url.toString();
+    }
+
+    function applyRoleLinkFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const role = params.get("role");
+      const shouldSample = params.get("sample") === "1" || params.get("demo") === "1";
+      if (!heroPlaybooks[role]) return false;
+      localStorage.setItem("mrk.onboardingGuideV2Done", "1");
+      localStorage.setItem("mrk.onboardingDone", "1");
+      if (shouldSample) {
+        applyHeroPlaybook(role);
+        setHeroStatus(`已进入${heroPlaybooks[role].label}入口：示例已准备好，可以直接生成或复制发布包。`, "success");
+      } else {
+        setHeroAudience(role);
+      }
+      return true;
+    }
+
     function syncHeroDraftToStudio() {
       const raw = el.heroCommandInput.value.trim();
       if (!raw) {
@@ -7948,6 +8021,15 @@
       button.addEventListener("click", () => applyHeroPlaybook(button.dataset.heroPlaybook));
     });
 
+    document.querySelectorAll("[data-copy-role-link]").forEach(button => {
+      button.addEventListener("click", () => {
+        const role = button.dataset.copyRoleLink || "solo";
+        copyToClipboard(roleLink(role))
+          .then(() => setHeroStatus(`${heroPlaybooks[role].label}入口链接已复制。`, "success"))
+          .catch(error => setHeroStatus(`复制失败：${error.message}`, "error"));
+      });
+    });
+
     el.heroCommandInput.addEventListener("input", syncHeroDraftToStudio);
 
     document.querySelectorAll("[data-command-example]").forEach(button => {
@@ -8292,7 +8374,7 @@
     syncColorInputs(categories[state.category].color);
     syncSmartEditorFromMain();
     setHeroAudience("solo");
-    openOnboarding();
+    if (!applyRoleLinkFromUrl()) openOnboarding();
   </script>
 </body>
 </html>
