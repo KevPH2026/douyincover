@@ -303,6 +303,66 @@
       font-weight: 800;
     }
 
+    .command-playbooks {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .command-playbook {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 8px;
+      background: rgba(255,255,255,.055);
+      color: #fff;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .command-playbook b {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: rgba(178,255,82,.12);
+      color: var(--lime);
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .command-playbook strong {
+      display: block;
+      margin-top: 8px;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .command-playbook span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.54);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .command-playbook em {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255,255,255,.72);
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 900;
+    }
+
+    .command-playbook.active {
+      border-color: var(--lime);
+      background: rgba(178,255,82,.12);
+      box-shadow: inset 0 0 0 1px rgba(178,255,82,.42);
+    }
+
     .command-status {
       min-height: 36px;
       padding: 9px 10px;
@@ -2815,6 +2875,7 @@
       }
 
       .audience-switch,
+      .command-playbooks,
       .command-actions,
       .delivery-checklist,
       .command-result-actions {
@@ -3082,10 +3143,25 @@
           <button class="command-secondary" id="heroIntroBtn">一键片头</button>
         </div>
 
-        <div class="command-examples" aria-label="示例内容">
-          <button class="command-example" data-command-example="乔布斯：多和聪明的人交往">乔布斯金句</button>
-          <button class="command-example" data-command-example="半年前关于AI对职业发展的预测全中">AI 职业预测</button>
-          <button class="command-example" data-command-example="粘贴一个抖音作品链接后，帮我找到主页并解码账号 DNA">抖音链接 DNA</button>
+        <div class="command-playbooks" aria-label="角色示例">
+          <button class="command-playbook active" data-hero-playbook="solo">
+            <b>个人创作者</b>
+            <strong>一条观点出封面</strong>
+            <span>半年前关于AI对职业发展的预测全中</span>
+            <em>套用并预览</em>
+          </button>
+          <button class="command-playbook" data-hero-playbook="brand">
+            <b>品牌团队</b>
+            <strong>统一栏目资产</strong>
+            <span>把一组 AI 产品观点做成同一套封面风格</span>
+            <em>套用品牌场景</em>
+          </button>
+          <button class="command-playbook" data-hero-playbook="agency">
+            <b>代运营 / Agent</b>
+            <strong>先解码客户 DNA</strong>
+            <span>给 10 条公开作品样本，先出 Style 再生产封面</span>
+            <em>套用 DNA 样本</em>
+          </button>
         </div>
 
         <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
@@ -3399,11 +3475,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.14</span>
-            <span class="version-pill">2026.06.17 更新</span>
+            <span class="version-pill current">当前版本 v0.15</span>
+            <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>输入之后马上看到交付包：封面、背景、动效和素材库下一步。</h3>
+          <h3>不准备素材也能体验：点角色示例，马上看到产品怎么工作。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3425,7 +3501,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.14</span>
+                <span class="version-pill current">v0.15</span>
+                <strong>新增角色示例卡，让新用户不用准备素材也能体验</strong>
+                <span>适合官网首屏、宣发录屏和第一次发给朋友试用。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首屏新增三张可点击的角色示例：个人创作者、品牌团队、代运营 / Agent。用户可以先套用示例，看标题如何变成封面、品牌内容如何进入素材库、客户账号如何先解码 DNA。</p>
+            <ul class="release-points">
+              <li>个人创作者示例会立即填入短观点并预览封面。</li>
+              <li>品牌团队示例会切换到栏目资产语境，提示保存素材库和系列化生产。</li>
+              <li>代运营 / Agent 示例会准备 10 条公开作品样本，引导先解码 DNA / Style。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.14</span>
                 <strong>新增生成后的交付包，用户知道下一步该做什么</strong>
                 <span>适合公开试用和宣发录屏，减少“点完按钮以后去哪”的困惑。</span>
               </div>
@@ -4258,6 +4351,36 @@
       agency: {
         placeholder: "例：粘贴客户抖音作品链接，先解码账号 DNA，再给封面设计方向",
         status: "代运营 / Agent 模式：优先解码账号 DNA，再生成适合客户风格的封面和动效方向。"
+      }
+    };
+
+    const heroPlaybooks = {
+      solo: {
+        audience: "solo",
+        text: "半年前关于AI对职业发展的预测全中",
+        status: "已套用个人创作者示例：这类短观点会立即预览封面，适合录屏展示“输入一句话就出图”。"
+      },
+      brand: {
+        audience: "brand",
+        text: "AI 产品进入下半场：从模型能力展示，转向真实业务场景的重新定价",
+        status: "已套用品牌团队示例：适合把同一栏目内容保持统一视觉，再保存到素材库。"
+      },
+      agency: {
+        audience: "agency",
+        text: [
+          "客户账号公开作品样本：",
+          "1. AI 工具到底改变了谁的工作",
+          "2. 普通人不要再追热点，要追工作流",
+          "3. 为什么老板开始重估一线员工",
+          "4. 一个小团队如何用 AI 做增长",
+          "5. Agent 不是助手，是新的岗位接口",
+          "6. 未来内容团队的核心资产是什么",
+          "7. 低成本创业者怎么判断赛道",
+          "8. 抖音账号必须先有固定栏目",
+          "9. 个人 IP 的封面要像一套杂志",
+          "10. 把客户案例拆成可复用内容资产"
+        ].join("\n"),
+        status: "已套用代运营 / Agent 示例：点“解码 DNA / Style”可以先得到客户账号方向，再生产封面。"
       }
     };
 
@@ -6393,7 +6516,10 @@
       if (!el.heroDeliveryPanel) return;
       state.heroDeliveryMode = mode;
       const v = values();
-      const titleText = (v.title || el.heroCommandInput.value || "当前内容").replace(/\s+/g, " / ");
+      const titleText = (v.title || el.heroCommandInput.value || "当前内容")
+        .replace(/\n+/g, " / ")
+        .replace(/[ \t]+/g, " ")
+        .trim();
       el.heroDeliveryPanel.hidden = false;
       el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "动效交付包" : "封面交付包";
       el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
@@ -6444,6 +6570,28 @@
         showHeroDelivery(state.heroDeliveryMode || "draft", {
           backgroundFallback: Boolean(bgStep && bgStep.classList.contains("warning"))
         });
+      }
+    }
+
+    function applyHeroPlaybook(key) {
+      const playbook = heroPlaybooks[key] || heroPlaybooks.solo;
+      setHeroAudience(playbook.audience);
+      document.querySelectorAll("[data-hero-playbook]").forEach(button => {
+        button.classList.toggle("active", button.dataset.heroPlaybook === key);
+      });
+      el.heroCommandInput.value = playbook.text;
+      syncHeroDraftToStudio();
+      setHeroStatus(playbook.status, "success");
+      if (playbook.audience === "agency") {
+        el.douyinShare.value = playbook.text;
+        el.agentMessage.value = "先解码这个账号的内容 DNA，再给出可应用的封面 Style。";
+        el.heroDeliveryPanel.hidden = false;
+        el.heroDeliveryTitle.textContent = "DNA 体验样本";
+        el.heroDeliverySummary.textContent = "已准备 10 条公开作品样本。下一步：点击“解码 DNA / Style”。";
+        setDeliveryStep("cover", "pending", "等待 Style 后生成");
+        setDeliveryStep("background", "pending", "等待解码风格方向");
+        setDeliveryStep("motion", "pending", "可按 Style 做动效");
+        setDeliveryStep("library", "pending", "生成后可保存");
       }
     }
 
@@ -7429,6 +7577,10 @@
     el.heroAudienceButtons.addEventListener("click", event => {
       const btn = event.target.closest("[data-hero-audience]");
       if (btn) setHeroAudience(btn.dataset.heroAudience);
+    });
+
+    document.querySelectorAll("[data-hero-playbook]").forEach(button => {
+      button.addEventListener("click", () => applyHeroPlaybook(button.dataset.heroPlaybook));
     });
 
     el.heroCommandInput.addEventListener("input", syncHeroDraftToStudio);
