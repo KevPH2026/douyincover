@@ -1049,6 +1049,12 @@
       background: #fff4f2;
     }
 
+    .ai-status.warning {
+      color: #6e4a12;
+      border-color: #ffe0a8;
+      background: #fff8eb;
+    }
+
     .ai-status.success {
       color: #136342;
       border-color: #b8e8cf;
@@ -2463,6 +2469,12 @@
       background: rgba(255,96,82,.1);
     }
 
+    .ai-status.warning {
+      color: #fff2cb;
+      border-color: rgba(255, 202, 97, .5);
+      background: rgba(255, 202, 97, .1);
+    }
+
     .material-thumb {
       background: #07090d;
     }
@@ -2644,6 +2656,49 @@
       color: rgba(232,237,242,.52);
       font-size: 11px;
       line-height: 1.4;
+    }
+
+    .smart-engine-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(4,7,10,.28);
+    }
+
+    .smart-engine-copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+      color: rgba(232,237,242,.58);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .smart-engine-copy strong {
+      color: rgba(247,255,232,.9);
+      font-size: 12px;
+    }
+
+    .smart-engine-link {
+      flex: 0 0 auto;
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid rgba(178,255,82,.34);
+      border-radius: 999px;
+      background: rgba(178,255,82,.1);
+      color: #dfffb4;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .smart-engine-link:hover {
+      border-color: rgba(178,255,82,.68);
+      background: rgba(178,255,82,.16);
     }
 
     .smart-action-grid {
@@ -3545,7 +3600,7 @@
               <button class="ghost-btn" id="saveModelConfigBtn" style="margin-top:0;">保存本地配置</button>
               <button class="ghost-btn" id="clearModelConfigBtn" style="margin-top:0;">清空配置</button>
             </div>
-            <div class="ai-status" id="modelConfigStatus">未配置时会使用服务环境变量；接口不可用时仍会回退到本地规则。</div>
+            <div class="ai-status" id="modelConfigStatus">未配置也能生成本地预览；接入模型后会增强分析、文案和配图。</div>
           </div>
         </section>
 
@@ -3623,11 +3678,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.19</span>
+            <span class="version-pill current">当前版本 v0.20</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>同一个产品，可以发给不同角色直接试用。</h3>
+          <h3>先出可用预览，再接模型增强。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3649,7 +3704,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.19</span>
+                <span class="version-pill current">v0.20</span>
+                <strong>无模型也能完成第一版，Image2 变成增强项</strong>
+                <span>适合新用户试用、录屏演示和本地部署。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>标题驱动生成不再把 Image2 当成前置门槛。用户输入标题后，系统会先生成可编辑封面预览；如果已经接入 Image2，再自动替换为 AI 背景。</p>
+            <ul class="release-points">
+              <li>生成按钮改为“生成封面 + 配图”，降低第一次使用的心理门槛。</li>
+              <li>Image2 未连接时显示本地预览状态，不再暴露工程错误。</li>
+              <li>生成区新增模型设置入口，需要增强时可以直接接入本地或云端生图服务。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.19</span>
                 <strong>新增角色入口链接，宣发时可以分人群投放</strong>
                 <span>适合发给个人创作者、品牌团队和代运营伙伴。</span>
               </div>
@@ -3706,10 +3778,10 @@
               </div>
               <div class="release-date">2026.06.18</div>
             </div>
-            <p>标题驱动生成现在会尊重右侧已编辑的主标题、英文标题、子标题和编号。点击“生成封面 + Image2 配图”时，Agent 只负责补全方向和背景，不会把你刚改好的文案重置掉。</p>
+            <p>标题驱动生成现在会尊重右侧已编辑的主标题、英文标题、子标题和编号。点击“生成封面 + 配图”时，Agent 只负责补全方向和背景，不会把你刚改好的文案重置掉。</p>
             <ul class="release-points">
               <li>生成前会锁定当前编辑区文案，生成后自动恢复到画布。</li>
-              <li>Image2 未返回图片时会明确提示，并保留本地占位背景。</li>
+              <li>Image2 未返回图片时会明确提示，并保留本地预览背景。</li>
               <li>首屏 30 秒演示按钮已接入，方便录屏介绍产品。</li>
             </ul>
           </article>
@@ -4125,11 +4197,18 @@
         </div>
 
         <div class="smart-action-grid">
-          <button class="export-btn" id="smartGenerateBtn">生成封面 + Image2 配图</button>
+          <button class="export-btn" id="smartGenerateBtn">生成封面 + 配图</button>
           <button class="ghost-btn" id="smartIntroBtn">一键片头</button>
           <button class="ghost-btn" id="smartOutroBtn">一键片尾</button>
         </div>
-        <div class="smart-meta" id="smartMeta">输入标题后会先本地归类、翻译、生成编号和子标题；点击生成后再调用 LLM 和 Image2。</div>
+        <div class="smart-engine-row">
+          <div class="smart-engine-copy">
+            <strong>配图模式：本地预览可用</strong>
+            <span>Image2 接入后自动替换为 AI 背景</span>
+          </div>
+          <button class="smart-engine-link" type="button" id="smartModelConfigBtn">模型设置</button>
+        </div>
+        <div class="smart-meta" id="smartMeta">输入标题后会先本地归类、翻译、生成编号和子标题；点击生成会先出预览。</div>
         <div class="ai-status" id="smartStatus">生成后仍可在上方字段直接修改文字，画布会同步更新。</div>
       </section>
 
@@ -4168,7 +4247,7 @@
           <button class="export-btn" id="agentRunBtn">对话生成资产</button>
           <button class="ghost-btn" id="agentClearBtn">清空</button>
         </div>
-        <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。</div>
+        <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；未接入模型时也能生成可编辑预览。</div>
         <div class="agent-flow" aria-label="Agent 对话式接入工作流">
           <div class="agent-flow-head">
             <strong>Agent 接入问法</strong>
@@ -4345,8 +4424,8 @@
           </div>
         </div>
 
-        <button class="ghost-btn" id="generateBgBtn" style="margin-top:0;">AI 生成主题配图</button>
-        <div class="ai-status" id="aiStatus">需要启动 `cover_studio_server.py` 并配置 OPENAI_API_KEY。未配置时会自动使用本地占位配图。</div>
+        <button class="ghost-btn" id="generateBgBtn" style="margin-top:0;">刷新主题配图</button>
+        <div class="ai-status" id="aiStatus">本地预览可直接生成；接入 Image2 后会自动换成 AI 背景。</div>
       </section>
 
       <section class="group">
@@ -4739,6 +4818,7 @@
       smartGenerateBtn: document.getElementById("smartGenerateBtn"),
       smartIntroBtn: document.getElementById("smartIntroBtn"),
       smartOutroBtn: document.getElementById("smartOutroBtn"),
+      smartModelConfigBtn: document.getElementById("smartModelConfigBtn"),
       smartMeta: document.getElementById("smartMeta"),
       smartStatus: document.getElementById("smartStatus"),
       heroCommandInput: document.getElementById("heroCommandInput"),
@@ -5311,7 +5391,7 @@
       applyModelConfigToInputs(state.modelConfig);
       updateModelConfigStatus(state.modelConfig);
       setAgentStatus("本地模型配置已清空，已恢复环境变量或本地回退规则。");
-      setAiStatus("本地模型配置已清空，生图会使用环境变量或本地占位配图。");
+      setAiStatus("本地模型配置已清空，之后会使用当前服务配置；不可用时仍会生成本地预览。");
     }
 
     async function digestText(text) {
@@ -5632,7 +5712,7 @@
       el.bgPreset.value = "auto";
       draw();
       syncSmartEditorFromMain();
-      setSmartStatus(`已本地判断：${cat.label} / ${smartTypeLabel(template)} / ${el.code.value}。点击生成会调用 LLM 精修并用 Image2 出背景。`, "success");
+      setSmartStatus(`已本地判断：${cat.label} / ${smartTypeLabel(template)} / ${el.code.value}。点击生成会先出预览，可用模型时自动增强。`, "success");
     }
 
     function setSmartButtonsDisabled(disabled) {
@@ -5707,13 +5787,13 @@
         draw();
         syncSmartEditorFromMain();
         addAgentMessage("user", `标题工作流 / ${smartTypeLabel(targetTemplate)}\n${draftBeforePlan.title || rawTitle}`);
-        addAgentMessage("assistant", payload.reply || "标题方案已生成，正在生成 Image2 背景。");
-        setSmartStatus(`${payload.fallback ? "本地方案" : payload.model || "LLM"} 已完成，正在调用 Image2 生成配套背景。`, payload.fallback ? "error" : "success");
+        addAgentMessage("assistant", payload.reply || "标题方案已生成，正在生成配套背景。");
+        setSmartStatus(`${payload.fallback ? "本地方案" : payload.model || "LLM"} 已完成，正在生成配套背景。`, payload.fallback ? "warning" : "success");
         const bgResult = await generateAiBackground({ fromAgent: true });
         recordGuestUse(`生成${smartTypeLabel(targetTemplate)}`);
         syncSmartEditorFromMain();
         if (bgResult && bgResult.fallback) {
-          setSmartStatus(`${smartTypeLabel(targetTemplate)}文案已生成且未被重置；Image2 暂未返回图片，已先用本地占位背景。`, "error");
+          setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成本地预览：文字未被重置，配图可继续刷新或接入 Image2 增强。`, "warning");
         } else {
           setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成：文字仍可直接修改；Image2 背景已按内容生成。`, "success");
         }
@@ -6493,13 +6573,28 @@
       el.aiStatus.className = `ai-status ${type}`.trim();
     }
 
+    function imageFallbackMessage(error) {
+      const message = String(error && error.message || "").trim();
+      if (/OPENAI_API_KEY|api key|not set|missing|未配置|没有配置/i.test(message)) {
+        return "Image2 未连接，本次已生成本地预览。需要 AI 背景时，在“模型 / 设置”里接入生图服务。";
+      }
+      if (/failed to fetch|network|timeout|timed out|断开|超时/i.test(message)) {
+        return "Image2 暂时连不上，本次已生成本地预览。网络或模型恢复后可一键刷新配图。";
+      }
+      if (/没有返回|no image|image_data_url/i.test(message)) {
+        return "Image2 没返回图片，本次已生成本地预览。可以调整背景方向后再刷新。";
+      }
+      const detail = message ? ` ${message.slice(0, 72)}` : "";
+      return `Image2 暂时不可用，本次已生成本地预览。${detail}`.trim();
+    }
+
     async function generateAiBackground(options = {}) {
       const shouldCountUsage = !options.fromAgent;
       if (shouldCountUsage && !ensureGuestCanUse("生成背景")) return;
       const prompt = buildAiPrompt();
       el.generateBgBtn.disabled = true;
       if (options.fromAgent) setAgentButtonsDisabled(true);
-      setAiStatus(options.fromAgent ? "正在按方案生成背景图。" : "正在请求 AI 生成配图，通常需要几十秒。", "working");
+      setAiStatus(options.fromAgent ? "正在生成配图：本地预览先就位，Image2 可用时会自动替换。" : "正在刷新主题配图。", "working");
       el.status.textContent = "Generating AI image";
 
       try {
@@ -6531,9 +6626,10 @@
       } catch (error) {
         state.customBg = await makeThemeBackground();
         state.customBgDataUrl = state.customBg.src || "";
-        setAiStatus(`AI 接口暂不可用，已使用本地占位配图。原因：${error.message}`, "error");
+        const fallbackMessage = imageFallbackMessage(error);
+        setAiStatus(fallbackMessage, "warning");
         el.status.textContent = "Local fallback generated";
-        return { ok: true, fallback: true, error };
+        return { ok: true, fallback: true, error, fallbackMessage };
       } finally {
         el.generateBgBtn.disabled = false;
         if (options.fromAgent) setAgentButtonsDisabled(false);
@@ -6683,11 +6779,13 @@
         applyAgentPlan(payload);
         addAgentMessage("assistant", payload.reply || (payload.plan && payload.plan.reason) || "封面方案已生成。");
         const sourceNote = agentSourceNote(payload.source);
-        setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "error" : "success");
-        await generateAiBackground({ fromAgent: true });
+        setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "warning" : "success");
+        const bgResult = await generateAiBackground({ fromAgent: true });
         recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成封面");
         const outputLabel = isMotionTemplate() ? "导出 M4V 或封面帧 PNG" : "导出 PNG";
-        setAgentStatus(`${payload.fallback ? "已用本地方案完成" : `已用 ${payload.model || "LLM"} 方案完成`}，可以直接${outputLabel}。`, payload.fallback ? "error" : "success");
+        const finalType = (payload.fallback || (bgResult && bgResult.fallback)) ? "warning" : "success";
+        const finalMode = bgResult && bgResult.fallback ? "本地预览" : (payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`);
+        setAgentStatus(`已用${finalMode}完成，可以直接${outputLabel}，也可以继续接入模型增强。`, finalType);
         el.status.textContent = "Agent cover generated";
       } catch (error) {
         setAgentStatus(`对话生成失败：${error.message}`, "error");
@@ -6918,7 +7016,7 @@
 
       const bgFallback = Boolean(options.backgroundFallback);
       setDeliveryStep("cover", "ready", mode === "intro" ? "动效封面帧已生成" : "1080 x 1920 可导出");
-      setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "Image2 未返回，已用占位背景" : "背景已按内容生成");
+      setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "已生成本地预览" : "背景已按内容生成");
       setDeliveryStep("motion", mode === "intro" ? "ready" : "pending", mode === "intro" ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
       renderLaunchPack(mode);
@@ -7080,14 +7178,14 @@
             el.douyinShare.value = raw;
             setHeroStatus("正在把链接/文案转成片头动效方案。", "success");
             await runCoverAgent({ fromDouyin: true });
-            showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+            showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
             setHeroStatus("片头动效方案已生成，请在工作台预览或导出 M4V。", "success");
           } else {
             el.smartTitleInput.value = raw;
             el.smartAssetType.value = "intro";
             setHeroStatus("正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
             await runSmartTitleFlow("intro");
-            showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+            showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
             setHeroStatus("片头动效已生成，请在工作台预览或导出 M4V。", "success");
           }
           return;
@@ -7097,14 +7195,14 @@
           el.douyinShare.value = raw;
           setHeroStatus("正在读取内容并生成封面/动效。", "success");
           await runCoverAgent({ fromDouyin: true });
-          showHeroDelivery("cover", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+          showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
           setHeroStatus("内容已进入 Agent 生成链路，请在工作台继续微调、保存或导出。", "success");
         } else {
           el.smartTitleInput.value = raw;
           el.smartAssetType.value = "work";
           setHeroStatus("正在从标题生成封面和配图方向。", "success");
           await runSmartTitleFlow("work");
-          showHeroDelivery("cover", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+          showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
           setHeroStatus("封面已生成，请在工作台继续改字、保存素材或导出 PNG。", "success");
         }
       } catch (error) {
@@ -8071,7 +8169,7 @@
       if (source) el.smartTitleInput.value = source;
       runSmartTitleFlow("outro")
         .then(() => {
-          showHeroDelivery("intro", { backgroundFallback: /暂不可用|占位|OPENAI_API_KEY/i.test(el.aiStatus.textContent) });
+          showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
           setHeroStatus("片尾已补齐：默认包含关注引导，可预览或导出 M4V。", "success");
         })
         .catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
@@ -8140,6 +8238,7 @@
     });
 
     el.settingsOpenBtn.addEventListener("click", () => setSettingsOpen(true));
+    el.smartModelConfigBtn.addEventListener("click", () => setSettingsOpen(true));
     el.settingsCloseBtn.addEventListener("click", () => setSettingsOpen(false));
     el.settingsDrawer.addEventListener("click", event => {
       if (event.target === el.settingsDrawer) setSettingsOpen(false);
