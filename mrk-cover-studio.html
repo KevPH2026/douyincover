@@ -3501,11 +3501,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.16</span>
+            <span class="version-pill current">当前版本 v0.17</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>不准备素材也能体验：点角色示例，马上看到产品怎么工作。</h3>
+          <h3>第一次打开，不填内容也能跑出第一版结果。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3527,7 +3527,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.16</span>
+                <span class="version-pill current">v0.17</span>
+                <strong>主按钮变成智能开始，新用户不用先想填什么</strong>
+                <span>适合录屏演示、第一次试用和给不同角色的人看。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首屏主按钮会根据当前角色和输入内容自动选择路径。没有输入时会套用当前角色示例；个人创作者直接出封面，品牌团队进入统一风格生产，代运营 / Agent 直接进入 DNA 解码。</p>
+            <ul class="release-points">
+              <li>空输入不再只提示报错，会自动用示例跑通第一步。</li>
+              <li>主按钮文案会跟随输入变化：示例生成、Agent 读取、封面配图或 DNA 解码。</li>
+              <li>代运营场景点击主按钮会优先解码账号 Style，减少“到底点哪个”的判断成本。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.16</span>
                 <strong>修复标题生成覆盖文案，配图状态更清楚</strong>
                 <span>适合真实生产时反复改字、换背景、再导出。</span>
               </div>
@@ -4400,16 +4417,19 @@
     const heroPlaybooks = {
       solo: {
         audience: "solo",
+        label: "个人创作者",
         text: "半年前关于AI对职业发展的预测全中",
         status: "已套用个人创作者示例：这类短观点会立即预览封面，适合录屏展示“输入一句话就出图”。"
       },
       brand: {
         audience: "brand",
+        label: "品牌团队",
         text: "AI 产品进入下半场：从模型能力展示，转向真实业务场景的重新定价",
         status: "已套用品牌团队示例：适合把同一栏目内容保持统一视觉，再保存到素材库。"
       },
       agency: {
         audience: "agency",
+        label: "代运营 / Agent",
         text: [
           "客户账号公开作品样本：",
           "1. AI 工具到底改变了谁的工作",
@@ -6600,6 +6620,25 @@
       if (span) span.textContent = label || "";
     }
 
+    function updateHeroActionCopy() {
+      const raw = el.heroCommandInput.value.trim();
+      if (state.heroAudience === "agency") {
+        el.heroGenerateBtn.textContent = raw ? "解码 DNA 并出 Style" : "用样本解码 DNA";
+        el.heroDnaBtn.textContent = "解码 DNA / Style";
+        return;
+      }
+      if (!raw) {
+        el.heroGenerateBtn.textContent = "用示例生成";
+      } else if (isMotionIntent(raw)) {
+        el.heroGenerateBtn.textContent = "生成片头动效";
+      } else if (isDouyinLikeInput(raw)) {
+        el.heroGenerateBtn.textContent = "Agent 读取生成";
+      } else {
+        el.heroGenerateBtn.textContent = "生成封面 + 配图";
+      }
+      el.heroDnaBtn.textContent = "解码 DNA / Style";
+    }
+
     function showHeroDelivery(mode = "draft", options = {}) {
       if (!el.heroDeliveryPanel) return;
       state.heroDeliveryMode = mode;
@@ -6648,6 +6687,19 @@
       el.status.textContent = "Launch demo ready";
     }
 
+    function autoFillHeroStarter(action) {
+      const key = action === "dna" ? "agency" : (state.heroAudience || "solo");
+      const playbook = heroPlaybooks[key] || heroPlaybooks.solo;
+      applyHeroPlaybook(key);
+      setHeroStatus(`已自动套用${playbook.label}示例。现在继续生成，不需要先准备素材。`, "success");
+      updateHeroActionCopy();
+      return el.heroCommandInput.value.trim();
+    }
+
+    function isMotionIntent(text) {
+      return /(片头|开头|前\s*1|前\s*2|1-2\s*秒|动效|intro|motion)/i.test(String(text || ""));
+    }
+
     function isDouyinLikeInput(text) {
       const value = String(text || "");
       return Boolean(
@@ -6666,6 +6718,7 @@
       const preset = heroAudiencePresets[next];
       el.heroCommandInput.placeholder = preset.placeholder;
       setHeroStatus(preset.status);
+      updateHeroActionCopy();
       if (el.heroDeliveryPanel && !el.heroDeliveryPanel.hidden) {
         const bgStep = document.querySelector('[data-delivery-step="background"]');
         showHeroDelivery(state.heroDeliveryMode || "draft", {
@@ -6682,6 +6735,7 @@
       });
       el.heroCommandInput.value = playbook.text;
       syncHeroDraftToStudio();
+      updateHeroActionCopy();
       setHeroStatus(playbook.status, "success");
       if (playbook.audience === "agency") {
         el.douyinShare.value = playbook.text;
@@ -6700,6 +6754,7 @@
       const raw = el.heroCommandInput.value.trim();
       if (!raw) {
         setHeroStatus(heroAudiencePresets[state.heroAudience].status);
+        updateHeroActionCopy();
         return;
       }
       if (isDouyinLikeInput(raw)) {
@@ -6707,25 +6762,30 @@
         const url = extractUrlFromText(raw);
         if (url) el.agentLink.value = url;
         setHeroStatus("已识别为链接/长文案：会交给 Agent 读取内容、判断栏目、生成标题和背景方向。", "success");
+        updateHeroActionCopy();
         return;
       }
       el.smartTitleInput.value = raw;
       previewSmartTitleLocally();
       showHeroDelivery("draft");
       setHeroStatus("已按短标题预览封面：继续点生成，会自动归类、翻译、编号，并尝试生成配图。", "success");
+      updateHeroActionCopy();
     }
 
     async function runHeroCommand(action = "cover") {
-      const raw = el.heroCommandInput.value.trim();
+      let raw = el.heroCommandInput.value.trim();
       if (!raw) {
-        setHeroStatus("先粘贴抖音链接、分享文案，或直接写一个标题。", "error");
-        el.heroCommandInput.focus();
-        return;
+        raw = autoFillHeroStarter(action);
+        if (!raw) {
+          setHeroStatus("先粘贴抖音链接、分享文案，或直接写一个标题。", "error");
+          el.heroCommandInput.focus();
+          return;
+        }
       }
       syncHeroDraftToStudio();
       setHeroButtonsDisabled(true);
       try {
-        if (action === "dna") {
+        if (action === "dna" || (action === "cover" && state.heroAudience === "agency")) {
           el.douyinShare.value = raw;
           el.agentMessage.value = state.heroAudience === "agency"
             ? "先解码这个账号的内容 DNA，再给出可应用的封面 Style。"
