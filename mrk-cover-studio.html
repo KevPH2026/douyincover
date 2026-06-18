@@ -225,6 +225,46 @@
       box-shadow: inset 0 0 0 1px rgba(178,255,82,.48);
     }
 
+    .hero-outcome-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .hero-outcome-card {
+      min-width: 0;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.075), transparent 58%),
+        rgba(0,0,0,.24);
+    }
+
+    .hero-outcome-card b {
+      display: block;
+      color: rgba(178,255,82,.92);
+      font-size: 10px;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .hero-outcome-card strong {
+      display: block;
+      margin-top: 6px;
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.28;
+    }
+
+    .hero-outcome-card span {
+      display: block;
+      margin-top: 5px;
+      color: rgba(255,255,255,.56);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
     .command-input-wrap {
       display: grid;
       gap: 8px;
@@ -3041,6 +3081,7 @@
       }
 
       .audience-switch,
+      .hero-outcome-grid,
       .command-playbooks,
       .share-routes,
       .command-actions,
@@ -3306,6 +3347,24 @@
             <strong>代运营 / Agent</strong>
             <span>先解码客户 DNA</span>
           </button>
+        </div>
+
+        <div class="hero-outcome-grid" aria-label="角色交付预览">
+          <div class="hero-outcome-card">
+            <b>Input</b>
+            <strong id="heroOutcomeInput">一句观点</strong>
+            <span id="heroOutcomeInputHint">短标题、抖音链接或分享文案</span>
+          </div>
+          <div class="hero-outcome-card">
+            <b>Output</b>
+            <strong id="heroOutcomeOutput">封面 PNG</strong>
+            <span id="heroOutcomeOutputHint">标题、栏目、背景和发布包</span>
+          </div>
+          <div class="hero-outcome-card">
+            <b>Next</b>
+            <strong id="heroOutcomeNext">导出发布</strong>
+            <span id="heroOutcomeNextHint">可继续补片头和片尾</span>
+          </div>
         </div>
 
         <div class="command-input-wrap">
@@ -3678,11 +3737,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.20</span>
+            <span class="version-pill current">当前版本 v0.21</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>先出可用预览，再接模型增强。</h3>
+          <h3>不同角色，一眼看到交付路径。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3704,7 +3763,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.20</span>
+                <span class="version-pill current">v0.21</span>
+                <strong>首屏增加角色化交付预览</strong>
+                <span>适合宣发落地页、录屏讲解和分人群试用。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>用户选择个人创作者、品牌团队或代运营 / Agent 后，首屏会立即显示这一类用户的输入、产出和下一步动作。还没点击生成，也能知道这次能拿到什么。</p>
+            <ul class="release-points">
+              <li>个人创作者看到“一句观点 -> 封面 PNG -> 导出发布”。</li>
+              <li>品牌团队看到“栏目主题 -> 系列资产 -> 团队复用”。</li>
+              <li>代运营 / Agent 看到“客户样本 -> DNA Style -> 批量生产”。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.20</span>
                 <strong>无模型也能完成第一版，Image2 变成增强项</strong>
                 <span>适合新用户试用、录屏演示和本地部署。</span>
               </div>
@@ -4637,15 +4713,30 @@
     const heroAudiencePresets = {
       solo: {
         placeholder: "例：乔布斯：多和聪明的人交往",
-        status: "个人创作者模式：输入短标题会先预览封面；粘贴抖音链接会让 Agent 先读内容再生成。"
+        status: "个人创作者模式：输入短标题会先预览封面；粘贴抖音链接会让 Agent 先读内容再生成。",
+        outcome: {
+          input: ["一句观点", "短标题、抖音链接或分享文案"],
+          output: ["封面 PNG", "标题、栏目、背景和发布包"],
+          next: ["导出发布", "可继续补片头和片尾"]
+        }
       },
       brand: {
         placeholder: "例：把这组 AI 产品观点做成统一栏目封面，并保存到素材库",
-        status: "品牌团队模式：优先保持栏目、视觉 DNA 和素材库一致，适合系列内容和多账号复用。"
+        status: "品牌团队模式：优先保持栏目、视觉 DNA 和素材库一致，适合系列内容和多账号复用。",
+        outcome: {
+          input: ["栏目主题", "一组内容、产品观点或账号素材"],
+          output: ["系列资产", "统一封面、栏目编号和素材库"],
+          next: ["复制入口", "发给团队按同一套 Style 复用"]
+        }
       },
       agency: {
         placeholder: "例：粘贴客户抖音作品链接，先解码账号 DNA，再给封面设计方向",
-        status: "代运营 / Agent 模式：优先解码账号 DNA，再生成适合客户风格的封面和动效方向。"
+        status: "代运营 / Agent 模式：优先解码账号 DNA，再生成适合客户风格的封面和动效方向。",
+        outcome: {
+          input: ["客户样本", "主页链接、作品链接或 10 条公开内容"],
+          output: ["DNA Style", "定位、栏目、标题规则和视觉方向"],
+          next: ["批量生产", "把 Style 交给 Agent 持续出图"]
+        }
       }
     };
 
@@ -4823,6 +4914,12 @@
       smartStatus: document.getElementById("smartStatus"),
       heroCommandInput: document.getElementById("heroCommandInput"),
       heroAudienceButtons: document.getElementById("heroAudienceButtons"),
+      heroOutcomeInput: document.getElementById("heroOutcomeInput"),
+      heroOutcomeInputHint: document.getElementById("heroOutcomeInputHint"),
+      heroOutcomeOutput: document.getElementById("heroOutcomeOutput"),
+      heroOutcomeOutputHint: document.getElementById("heroOutcomeOutputHint"),
+      heroOutcomeNext: document.getElementById("heroOutcomeNext"),
+      heroOutcomeNextHint: document.getElementById("heroOutcomeNextHint"),
       heroGenerateBtn: document.getElementById("heroGenerateBtn"),
       heroDnaBtn: document.getElementById("heroDnaBtn"),
       heroIntroBtn: document.getElementById("heroIntroBtn"),
@@ -7057,14 +7154,32 @@
       );
     }
 
+    function setHeroOutcome(audience) {
+      const preset = heroAudiencePresets[audience] || heroAudiencePresets.solo;
+      const outcome = preset.outcome || heroAudiencePresets.solo.outcome;
+      const [inputTitle, inputHint] = outcome.input;
+      const [outputTitle, outputHint] = outcome.output;
+      const [nextTitle, nextHint] = outcome.next;
+      el.heroOutcomeInput.textContent = inputTitle;
+      el.heroOutcomeInputHint.textContent = inputHint;
+      el.heroOutcomeOutput.textContent = outputTitle;
+      el.heroOutcomeOutputHint.textContent = outputHint;
+      el.heroOutcomeNext.textContent = nextTitle;
+      el.heroOutcomeNextHint.textContent = nextHint;
+    }
+
     function setHeroAudience(audience) {
       const next = heroAudiencePresets[audience] ? audience : "solo";
       state.heroAudience = next;
       document.querySelectorAll("[data-hero-audience]").forEach(button => {
         button.classList.toggle("active", button.dataset.heroAudience === next);
       });
+      document.querySelectorAll("[data-hero-playbook]").forEach(button => {
+        button.classList.toggle("active", button.dataset.heroPlaybook === next);
+      });
       const preset = heroAudiencePresets[next];
       el.heroCommandInput.placeholder = preset.placeholder;
+      setHeroOutcome(next);
       setHeroStatus(preset.status);
       updateHeroActionCopy();
       if (el.heroDeliveryPanel && !el.heroDeliveryPanel.hidden) {
