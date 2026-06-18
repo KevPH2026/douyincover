@@ -426,6 +426,55 @@
       color: #ecffd6;
     }
 
+    .share-invite {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid rgba(178,255,82,.28);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.1), rgba(80,216,255,.045)),
+        rgba(0,0,0,.22);
+    }
+
+    .share-invite-copy {
+      min-width: 0;
+    }
+
+    .share-invite-copy strong {
+      display: block;
+      color: #f7ffe8;
+      font-size: 12px;
+      line-height: 1.28;
+    }
+
+    .share-invite-copy span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255,255,255,.58);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    .share-invite button {
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(178,255,82,.48);
+      border-radius: 8px;
+      background: rgba(178,255,82,.16);
+      color: #ecffd6;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .share-invite button:hover {
+      background: rgba(178,255,82,.22);
+    }
+
     .command-status {
       min-height: 36px;
       padding: 9px 10px;
@@ -3095,6 +3144,14 @@
         display: grid;
       }
 
+      .share-invite {
+        grid-template-columns: 1fr;
+      }
+
+      .share-invite button {
+        width: 100%;
+      }
+
       .launch-pack-head {
         display: grid;
       }
@@ -3404,6 +3461,14 @@
           <button class="share-route" type="button" data-copy-role-link="solo">复制个人入口</button>
           <button class="share-route" type="button" data-copy-role-link="brand">复制品牌入口</button>
           <button class="share-route" type="button" data-copy-role-link="agency">复制代运营入口</button>
+        </div>
+
+        <div class="share-invite" aria-label="复制当前角色试用邀请">
+          <div class="share-invite-copy">
+            <strong id="heroInviteTitle">复制个人创作者试用邀请</strong>
+            <span id="heroInviteHint">带示例链接，发出去就能直接体验。</span>
+          </div>
+          <button type="button" id="heroInviteCopyBtn">复制邀请</button>
         </div>
 
         <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
@@ -3737,11 +3802,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.21</span>
+            <span class="version-pill current">当前版本 v0.22</span>
             <span class="version-pill">2026.06.18 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>不同角色，一眼看到交付路径。</h3>
+          <h3>复制出去的不只是链接，是试用邀请。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3763,7 +3828,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.21</span>
+                <span class="version-pill current">v0.22</span>
+                <strong>新增分人群试用邀请复制</strong>
+                <span>适合微信、社群、客户沟通和 Agent 分发。</span>
+              </div>
+              <div class="release-date">2026.06.18</div>
+            </div>
+            <p>首屏现在可以按当前角色复制一整段试用邀请。对方收到的不只是链接，还会看到这个入口适合谁、能得到什么，以及 3 次免登录试用说明。</p>
+            <ul class="release-points">
+              <li>个人创作者邀请强调“一句话出封面”。</li>
+              <li>品牌团队邀请强调统一栏目资产和团队复用。</li>
+              <li>代运营 / Agent 邀请强调先解码客户 DNA，再批量生产。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.21</span>
                 <strong>首屏增加角色化交付预览</strong>
                 <span>适合宣发落地页、录屏讲解和分人群试用。</span>
               </div>
@@ -4718,7 +4800,10 @@
           input: ["一句观点", "短标题、抖音链接或分享文案"],
           output: ["封面 PNG", "标题、栏目、背景和发布包"],
           next: ["导出发布", "可继续补片头和片尾"]
-        }
+        },
+        inviteTitle: "复制个人创作者试用邀请",
+        inviteHint: "适合发给内容创作者，强调一句话出封面。",
+        inviteText: "试一下这个抖音封面 Agent：把一句观点、抖音链接或分享文案丢进去，它会先生成可编辑封面预览，再补标题、栏目、背景和发布包。没接模型也能先跑一版。"
       },
       brand: {
         placeholder: "例：把这组 AI 产品观点做成统一栏目封面，并保存到素材库",
@@ -4727,7 +4812,10 @@
           input: ["栏目主题", "一组内容、产品观点或账号素材"],
           output: ["系列资产", "统一封面、栏目编号和素材库"],
           next: ["复制入口", "发给团队按同一套 Style 复用"]
-        }
+        },
+        inviteTitle: "复制品牌团队试用邀请",
+        inviteHint: "适合发给品牌、市场和内容团队。",
+        inviteText: "给你一个短视频封面工作台：适合把一组内容做成统一栏目资产。输入主题或内容样本后，它会生成封面预览、栏目编号、背景方向和素材库交付项，方便团队复用同一套 Style。"
       },
       agency: {
         placeholder: "例：粘贴客户抖音作品链接，先解码账号 DNA，再给封面设计方向",
@@ -4736,7 +4824,10 @@
           input: ["客户样本", "主页链接、作品链接或 10 条公开内容"],
           output: ["DNA Style", "定位、栏目、标题规则和视觉方向"],
           next: ["批量生产", "把 Style 交给 Agent 持续出图"]
-        }
+        },
+        inviteTitle: "复制代运营 / Agent 试用邀请",
+        inviteHint: "适合发给代运营、顾问和自动化 Agent。",
+        inviteText: "这个入口适合先解码客户账号 DNA：放入主页链接、作品链接或 10 条公开内容样本，系统会整理定位、栏目、标题规则和视觉方向，再把 Style 交给 Agent 批量生产封面和动效。"
       }
     };
 
@@ -4920,6 +5011,9 @@
       heroOutcomeOutputHint: document.getElementById("heroOutcomeOutputHint"),
       heroOutcomeNext: document.getElementById("heroOutcomeNext"),
       heroOutcomeNextHint: document.getElementById("heroOutcomeNextHint"),
+      heroInviteTitle: document.getElementById("heroInviteTitle"),
+      heroInviteHint: document.getElementById("heroInviteHint"),
+      heroInviteCopyBtn: document.getElementById("heroInviteCopyBtn"),
       heroGenerateBtn: document.getElementById("heroGenerateBtn"),
       heroDnaBtn: document.getElementById("heroDnaBtn"),
       heroIntroBtn: document.getElementById("heroIntroBtn"),
@@ -7168,6 +7262,12 @@
       el.heroOutcomeNextHint.textContent = nextHint;
     }
 
+    function setHeroInvite(audience) {
+      const preset = heroAudiencePresets[audience] || heroAudiencePresets.solo;
+      el.heroInviteTitle.textContent = preset.inviteTitle || "复制当前角色试用邀请";
+      el.heroInviteHint.textContent = preset.inviteHint || "带示例链接，发出去就能直接体验。";
+    }
+
     function setHeroAudience(audience) {
       const next = heroAudiencePresets[audience] ? audience : "solo";
       state.heroAudience = next;
@@ -7180,6 +7280,7 @@
       const preset = heroAudiencePresets[next];
       el.heroCommandInput.placeholder = preset.placeholder;
       setHeroOutcome(next);
+      setHeroInvite(next);
       setHeroStatus(preset.status);
       updateHeroActionCopy();
       if (el.heroDeliveryPanel && !el.heroDeliveryPanel.hidden) {
@@ -7222,6 +7323,18 @@
       url.searchParams.set("role", key);
       url.searchParams.set("sample", "1");
       return url.toString();
+    }
+
+    function roleInviteText(role) {
+      const key = heroAudiencePresets[role] ? role : "solo";
+      const preset = heroAudiencePresets[key];
+      return [
+        preset.inviteText || "试一下这个抖音封面 Agent：输入内容后，它会生成可编辑封面预览和发布素材。",
+        "",
+        `试用入口：${roleLink(key)}`,
+        "3 次免登录试用。",
+        "微信：kevph2026"
+      ].join("\n");
     }
 
     function applyRoleLinkFromUrl() {
@@ -8241,6 +8354,14 @@
           .then(() => setHeroStatus(`${heroPlaybooks[role].label}入口链接已复制。`, "success"))
           .catch(error => setHeroStatus(`复制失败：${error.message}`, "error"));
       });
+    });
+
+    el.heroInviteCopyBtn.addEventListener("click", () => {
+      const role = state.heroAudience || "solo";
+      const label = heroPlaybooks[role] ? heroPlaybooks[role].label : "当前角色";
+      copyToClipboard(roleInviteText(role))
+        .then(() => setHeroStatus(`「${label}」试用邀请已复制，可以直接发给对方。`, "success"))
+        .catch(error => setHeroStatus(`复制失败：${error.message}`, "error"));
     });
 
     el.heroCommandInput.addEventListener("input", syncHeroDraftToStudio);
