@@ -1,0 +1,16 @@
+.DS_Store
+.codex-local/
+.pytest_cache/
+.playwright-cli/
+.baoyu-skills/
+__pycache__/
+
+agent-harness/
+post-to-wechat/
+shopify-ai-shelf-article/
+
+ai-moat-*
+*.zip
+
+generated-covers/
+work-cover-samples/
