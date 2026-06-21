@@ -373,7 +373,7 @@
 
     .command-actions {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, .9fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -389,6 +389,10 @@
       border: 1px solid var(--lime);
       background: var(--lime);
       color: #080a0d;
+    }
+
+    .command-primary.is-cover {
+      box-shadow: 0 0 0 1px rgba(178,255,82,.28), 0 12px 32px rgba(178,255,82,.12);
     }
 
     .command-secondary {
@@ -477,7 +481,7 @@
 
     .share-routes {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
     }
 
@@ -3439,6 +3443,43 @@
       .release-card {
         padding: 14px;
       }
+
+      .hero-outcome-grid {
+        display: none;
+      }
+
+      .command-actions {
+        order: 3;
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .command-input-wrap {
+        order: 4;
+      }
+
+      .command-playbooks {
+        order: 5;
+      }
+
+      .share-routes {
+        order: 6;
+      }
+
+      .share-invite {
+        order: 7;
+      }
+
+      .command-status {
+        order: 8;
+      }
+
+      .command-result {
+        order: 9;
+      }
+
+      .command-input {
+        min-height: 82px;
+      }
     }
   </style>
 </head>
@@ -3518,10 +3559,10 @@
         </div>
 
         <div class="command-actions">
-          <button class="command-primary" id="heroGenerateBtn">生成封面 / 动效</button>
-          <button class="command-secondary" id="heroDnaBtn">解码 DNA / Style</button>
-          <button class="command-secondary" id="heroIntroBtn">一键片头</button>
-          <button class="command-secondary" id="heroDemoBtn">30秒演示</button>
+          <button class="command-primary is-cover" id="heroGenerateBtn">生成封面</button>
+          <button class="command-secondary" id="heroIntroBtn">生成片头</button>
+          <button class="command-secondary" id="heroOutroTopBtn">生成片尾</button>
+          <button class="command-secondary" id="heroDnaBtn">解码 DNA</button>
         </div>
 
         <div class="command-playbooks" aria-label="角色示例">
@@ -3549,6 +3590,7 @@
           <button class="share-route" type="button" data-copy-role-link="solo">复制个人入口</button>
           <button class="share-route" type="button" data-copy-role-link="brand">复制品牌入口</button>
           <button class="share-route" type="button" data-copy-role-link="agency">复制代运营入口</button>
+          <button class="share-route" type="button" id="heroDemoBtn">30秒演示</button>
         </div>
 
         <div class="share-invite" aria-label="复制当前角色试用邀请">
@@ -3890,11 +3932,11 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.27</span>
-            <span class="version-pill">2026.06.18 更新</span>
+            <span class="version-pill current">当前版本 v0.28</span>
+            <span class="version-pill">2026.06.21 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>第一次打开就能试跑。</h3>
+          <h3>片头片尾回到第一层。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
@@ -3916,7 +3958,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.27</span>
+                <span class="version-pill current">v0.28</span>
+                <strong>片头和片尾入口回到首屏</strong>
+                <span>适合真实生产时快速选择资产类型。</span>
+              </div>
+              <div class="release-date">2026.06.21</div>
+            </div>
+            <p>首屏命令台现在直接显示“生成封面、生成片头、生成片尾、解码 DNA”四个生产动作。片尾不再藏在生成结果里，打开页面就能找到。</p>
+            <ul class="release-points">
+              <li>新增首屏“生成片尾”按钮，和片头同级。</li>
+              <li>“30秒演示”移到下方辅助区，不再占用生产动作位。</li>
+              <li>片尾生成会直接进入关注引导动效，并可导出 M4V。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.27</span>
                 <strong>新用户不再被弹窗挡住</strong>
                 <span>适合线上投放、社群试用和录屏开场。</span>
               </div>
@@ -5193,6 +5252,7 @@
       heroGenerateBtn: document.getElementById("heroGenerateBtn"),
       heroDnaBtn: document.getElementById("heroDnaBtn"),
       heroIntroBtn: document.getElementById("heroIntroBtn"),
+      heroOutroTopBtn: document.getElementById("heroOutroTopBtn"),
       heroDemoBtn: document.getElementById("heroDemoBtn"),
       heroCommandStatus: document.getElementById("heroCommandStatus"),
       heroDeliveryPanel: document.getElementById("heroDeliveryPanel"),
@@ -7250,7 +7310,7 @@
     }
 
     function setHeroButtonsDisabled(disabled) {
-      [el.heroGenerateBtn, el.heroDnaBtn, el.heroIntroBtn, el.heroDemoBtn].forEach(button => {
+      [el.heroGenerateBtn, el.heroDnaBtn, el.heroIntroBtn, el.heroOutroTopBtn, el.heroDemoBtn].forEach(button => {
         if (button) button.disabled = disabled;
       });
     }
@@ -7259,6 +7319,7 @@
       const audience = state.heroAudience;
       if (mode === "dna") return "下一步：应用 Style，再用同一套规则批量生产封面。";
       if (mode === "intro") return "下一步：预览 1-2 秒动效，满意后导出 M4V。";
+      if (mode === "outro") return "下一步：预览结尾关注引导，满意后导出 M4V。";
       if (audience === "brand") return "下一步：保存到素材库，把同栏目内容继续做成系列。";
       if (audience === "agency") return "下一步：先解码客户 DNA，再把这套视觉规则交给 Agent 批量复用。";
       return "下一步：导出 PNG，或补一个片尾做关注收束。";
@@ -7329,6 +7390,18 @@
         };
       }
 
+      if (mode === "outro") {
+        return {
+          caption: [
+            `《${title}》`,
+            "结尾 1-2 秒做关注引导和账号收束。",
+            `${tag} #片尾动效`,
+            "微信：kevph2026"
+          ].join("\n"),
+          script: `这条视频结尾用「${title}」做收束。片尾只负责一个动作：让看完的人知道关注谁、下一条还能继续看什么。`
+        };
+      }
+
       return {
         caption: [
           `《${title}》`,
@@ -7363,7 +7436,7 @@
       const raw = el.heroCommandInput.value.trim();
       if (state.heroAudience === "agency") {
         el.heroGenerateBtn.textContent = raw ? "解码 DNA 并出 Style" : "用样本解码 DNA";
-        el.heroDnaBtn.textContent = "解码 DNA / Style";
+        el.heroDnaBtn.textContent = "解码 DNA";
         return;
       }
       if (!raw) {
@@ -7375,7 +7448,7 @@
       } else {
         el.heroGenerateBtn.textContent = "生成封面 + 配图";
       }
-      el.heroDnaBtn.textContent = "解码 DNA / Style";
+      el.heroDnaBtn.textContent = "解码 DNA";
     }
 
     function showHeroDelivery(mode = "draft", options = {}) {
@@ -7388,7 +7461,7 @@
         .replace(/[ \t]+/g, " ")
         .trim();
       el.heroDeliveryPanel.hidden = false;
-      el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "动效交付包" : mode === "demo" ? "演示交付包" : "封面交付包";
+      el.heroDeliveryTitle.textContent = mode === "dna" ? "DNA 交付包" : mode === "intro" ? "片头交付包" : mode === "outro" ? "片尾交付包" : mode === "demo" ? "演示交付包" : "封面交付包";
       el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
 
       if (mode === "draft") {
@@ -7410,9 +7483,9 @@
       }
 
       const bgFallback = Boolean(options.backgroundFallback);
-      setDeliveryStep("cover", "ready", mode === "intro" ? "动效封面帧已生成" : "1080 x 1920 可导出");
+      setDeliveryStep("cover", "ready", isMotionTemplate(mode) ? "动效封面帧已生成" : "1080 x 1920 可导出");
       setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "已生成本地预览" : "背景已按内容生成");
-      setDeliveryStep("motion", mode === "intro" ? "ready" : "pending", mode === "intro" ? "可预览或导出 M4V" : "可补片头/片尾");
+      setDeliveryStep("motion", isMotionTemplate(mode) ? "ready" : "pending", isMotionTemplate(mode) ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
       renderLaunchPack(mode);
     }
@@ -7605,6 +7678,7 @@
       syncHeroDraftToStudio();
       setHeroButtonsDisabled(true);
       try {
+        if (action === "cover" && isMotionIntent(raw)) action = "intro";
         if (action === "dna" || (action === "cover" && state.heroAudience === "agency")) {
           el.douyinShare.value = raw;
           el.agentMessage.value = state.heroAudience === "agency"
@@ -7617,21 +7691,23 @@
           return;
         }
 
-        if (action === "intro") {
+        if (action === "intro" || action === "outro") {
+          const isOutro = action === "outro";
+          const motionName = isOutro ? "片尾" : "片头";
           if (isDouyinLikeInput(raw)) {
-            setTemplate("intro");
+            setTemplate(action);
             el.douyinShare.value = raw;
-            setHeroStatus("正在把链接/文案转成片头动效方案。", "success");
+            setHeroStatus(`正在把链接/文案转成${motionName}动效方案。`, "success");
             await runCoverAgent({ fromDouyin: true });
-            showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-            setHeroStatus("片头动效方案已生成，请在工作台预览或导出 M4V。", "success");
+            showHeroDelivery(action, { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+            setHeroStatus(`${motionName}动效方案已生成，请在工作台预览或导出 M4V。`, "success");
           } else {
             el.smartTitleInput.value = raw;
-            el.smartAssetType.value = "intro";
-            setHeroStatus("正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
-            await runSmartTitleFlow("intro");
-            showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-            setHeroStatus("片头动效已生成，请在工作台预览或导出 M4V。", "success");
+            el.smartAssetType.value = action;
+            setHeroStatus(isOutro ? "正在生成片尾动效：结尾会带关注引导。" : "正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
+            await runSmartTitleFlow(action);
+            showHeroDelivery(action, { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+            setHeroStatus(`${motionName}动效已生成，请在工作台预览或导出 M4V。`, "success");
           }
           return;
         }
@@ -8603,6 +8679,12 @@
       runHeroCommand("intro").catch(error => setHeroStatus(`片头失败：${error.message}`, "error"));
     });
 
+    if (el.heroOutroTopBtn) {
+      el.heroOutroTopBtn.addEventListener("click", () => {
+        runHeroCommand("outro").catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
+      });
+    }
+
     el.heroDemoBtn.addEventListener("click", runHeroDemo);
 
     if (el.heroMenu) {
@@ -8630,14 +8712,7 @@
     });
 
     el.heroOutroBtn.addEventListener("click", () => {
-      const source = el.heroCommandInput.value.trim() || el.smartTitleInput.value.trim() || el.title.value.trim();
-      if (source) el.smartTitleInput.value = source;
-      runSmartTitleFlow("outro")
-        .then(() => {
-          showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-          setHeroStatus("片尾已补齐：默认包含关注引导，可预览或导出 M4V。", "success");
-        })
-        .catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
+      runHeroCommand("outro").catch(error => setHeroStatus(`片尾失败：${error.message}`, "error"));
     });
 
     el.heroCopyLaunchPackBtn.addEventListener("click", () => {
