@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>douyincover - AI Cover Command for Douyin creators</title>
-  <meta name="description" content="输入抖音链接、截图或一句观点，自动生成封面、片头、片尾和账号 DNA Style。个人创作者、品牌团队、代运营 Agent 都可以 3 次免登录试用。">
+  <title>douyincover - Social Asset Command for creators</title>
+  <meta name="description" content="输入社媒链接、截图或一句观点，自动生成抖音、小红书、视频号、B站、公众号、LinkedIn/X 等多平台封面、片头、片尾和账号 DNA Style。">
   <meta name="application-name" content="douyincover">
   <meta name="theme-color" content="#b2ff52">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23080a0d'/%3E%3Cpath d='M18 10h10v21L45 10h12L38 33l20 21H45L28 36v18H18z' fill='%23b2ff52'/%3E%3C/svg%3E">
@@ -13,15 +13,15 @@
   <meta property="og:site_name" content="douyincover">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dna.superk.ai/">
-  <meta property="og:title" content="douyincover - 抖音封面和账号 DNA 生成 Agent">
-  <meta property="og:description" content="给它抖音链接、截图或一句观点，先生成可编辑封面预览，再补栏目、背景、片头/片尾和发布包。">
+  <meta property="og:title" content="douyincover - 多平台封面和社媒资产生成 Agent">
+  <meta property="og:description" content="给它社媒链接、截图或一句观点，先生成可编辑预览，再输出多平台规格、发布文案、片头/片尾和素材包。">
   <meta property="og:image" content="https://dna.superk.ai/profile-background/mrk-profile-background-1500x500.png">
   <meta property="og:image:width" content="1500">
   <meta property="og:image:height" content="500">
   <meta property="og:locale" content="zh_CN">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="douyincover - AI Cover Command">
-  <meta name="twitter:description" content="抖音链接、截图、文案进来，封面、动效、账号 Style 和发布包出去。">
+  <meta name="twitter:title" content="douyincover - Social Asset Command">
+  <meta name="twitter:description" content="社媒链接、截图、文案进来，多平台封面、动效、账号 Style 和发布包出去。">
   <meta name="twitter:image" content="https://dna.superk.ai/profile-background/mrk-profile-background-1500x500.png">
   <style>
     :root {
@@ -552,6 +552,156 @@
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.08);
       color: #fff;
+    }
+
+    .platform-pack {
+      grid-column: 1;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(80,216,255,.07), rgba(178,255,82,.045)),
+        rgba(0,0,0,.18);
+    }
+
+    .platform-pack-head,
+    .platform-output-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .platform-pack-head strong,
+    .platform-output-head strong {
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .platform-pack-head span,
+    .platform-output-head span {
+      color: rgba(232,237,242,.54);
+      font-size: 11px;
+      line-height: 1.4;
+      text-align: right;
+    }
+
+    .platform-toggle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .platform-toggle {
+      display: grid;
+      min-height: 48px;
+      padding: 8px 9px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 8px;
+      background: rgba(255,255,255,.055);
+      color: rgba(232,237,242,.8);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .platform-toggle strong {
+      color: rgba(255,255,255,.92);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .platform-toggle span {
+      margin-top: 3px;
+      color: rgba(232,237,242,.48);
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
+    .platform-toggle.active {
+      border-color: rgba(178,255,82,.86);
+      background: rgba(178,255,82,.13);
+      box-shadow: inset 3px 0 0 var(--lime);
+    }
+
+    .platform-output {
+      display: grid;
+      gap: 9px;
+      padding: 10px;
+      border: 1px solid rgba(80,216,255,.18);
+      border-radius: 8px;
+      background: rgba(0,0,0,.2);
+    }
+
+    .platform-output-head button {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid rgba(178,255,82,.55);
+      border-radius: 7px;
+      background: rgba(178,255,82,.12);
+      color: #f7ffe8;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .platform-asset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .platform-asset-card {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 8px;
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,.045);
+      color: rgba(232,237,242,.78);
+    }
+
+    .platform-asset-card img {
+      width: 54px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: rgba(0,0,0,.36);
+    }
+
+    .platform-asset-card strong {
+      display: block;
+      overflow: hidden;
+      color: #fff;
+      font-size: 12px;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .platform-asset-card span {
+      display: block;
+      margin-top: 3px;
+      color: rgba(232,237,242,.5);
+      font-size: 10px;
+      line-height: 1.25;
+    }
+
+    .platform-asset-card button {
+      margin-top: 6px;
+      min-height: 28px;
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 7px;
+      background: rgba(255,255,255,.055);
+      color: #f7ffe8;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
     }
 
     .command-examples {
@@ -3381,6 +3531,7 @@
       .hero-live-preview,
       .command-input-wrap,
       .command-actions,
+      .platform-pack,
       .command-playbooks,
       .share-routes,
       .share-invite,
@@ -3424,6 +3575,8 @@
 
       .audience-switch,
       .hero-outcome-grid,
+      .platform-toggle-grid,
+      .platform-asset-grid,
       .command-playbooks,
       .share-routes,
       .command-actions,
@@ -3666,7 +3819,7 @@
 
       .hero-live-preview {
         grid-row: auto;
-        order: 5;
+        order: 6;
       }
 
       .hero-preview-frame {
@@ -3682,24 +3835,47 @@
         order: 3;
       }
 
-      .command-playbooks {
-        order: 8;
+      .platform-pack {
+        order: 5;
       }
 
-      .share-routes {
+      .platform-pack-head,
+      .platform-output-head {
+        display: grid;
+      }
+
+      .platform-pack-head span,
+      .platform-output-head span {
+        text-align: left;
+      }
+
+      .platform-asset-card {
+        grid-template-columns: 64px minmax(0, 1fr);
+      }
+
+      .platform-asset-card img {
+        width: 64px;
+        height: 64px;
+      }
+
+      .command-playbooks {
         order: 9;
       }
 
-      .share-invite {
+      .share-routes {
         order: 10;
       }
 
+      .share-invite {
+        order: 11;
+      }
+
       .command-status {
-        order: 6;
+        order: 7;
       }
 
       .command-result {
-        order: 7;
+        order: 8;
         max-height: none;
       }
 
@@ -3715,10 +3891,10 @@
       <div class="hero-main">
         <span class="hero-kicker">D.C</span>
         <h1>douyincover</h1>
-        <p>AI Cover Command：抖音链接、截图、文案进来，封面、片头、片尾和账号 DNA Style 出去。</p>
+        <p>Social Asset Command：社媒链接、截图、文案进来，多平台封面、片头、片尾和账号 DNA Style 出去。</p>
         <div class="hero-meta">
           <span class="hero-chip">dna.superk.ai</span>
-          <span class="hero-chip">Douyin ID: KevPH2026</span>
+          <span class="hero-chip">Multi-platform pack</span>
           <span class="hero-chip">WeChat: kevph2026</span>
           <a class="hero-chip" href="https://github.com/KevPH2026/douyincover" target="_blank" rel="noreferrer">GitHub: douyincover</a>
         </div>
@@ -3741,7 +3917,7 @@
         <div class="command-head">
           <div>
             <strong>一句话开始生产</strong>
-            <span>粘贴抖音链接、分享文案、截图转文字，或直接写一个观点；系统会自动分流到封面、动效或 DNA。</span>
+            <span>粘贴任意社媒链接、分享文案、截图转文字，或直接写一个观点；系统会自动分流到封面、动效、DNA 或多平台资源包。</span>
           </div>
           <span class="command-badge">3 free runs</span>
         </div>
@@ -3765,12 +3941,12 @@
           <div class="hero-outcome-card">
             <b>Input</b>
             <strong id="heroOutcomeInput">一句观点</strong>
-            <span id="heroOutcomeInputHint">短标题、抖音链接或分享文案</span>
+            <span id="heroOutcomeInputHint">短标题、社媒链接或分享文案</span>
           </div>
           <div class="hero-outcome-card">
             <b>Output</b>
             <strong id="heroOutcomeOutput">封面 PNG</strong>
-            <span id="heroOutcomeOutputHint">标题、栏目、背景和发布包</span>
+            <span id="heroOutcomeOutputHint">标题、栏目、背景和平台包</span>
           </div>
           <div class="hero-outcome-card">
             <b>Next</b>
@@ -3805,6 +3981,14 @@
           <button class="command-secondary" id="heroOutroTopBtn">生成片尾</button>
           <button class="command-secondary" id="heroDnaBtn">解码 DNA</button>
         </div>
+
+        <section class="platform-pack" aria-label="选择平台资源包">
+          <div class="platform-pack-head">
+            <strong>平台包</strong>
+            <span id="platformPackCount">已选 3 个平台</span>
+          </div>
+          <div class="platform-toggle-grid" id="platformButtons"></div>
+        </section>
 
         <div class="command-playbooks" aria-label="角色示例">
           <button class="command-playbook active" data-hero-playbook="solo">
@@ -3842,7 +4026,7 @@
           <button type="button" id="heroInviteCopyBtn">复制邀请</button>
         </div>
 
-        <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
+        <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览，社媒链接会交给 Agent 读取。</div>
 
         <div class="command-result" id="heroDeliveryPanel">
           <div class="command-result-head">
@@ -3866,6 +4050,16 @@
               <b>素材库</b>
               <span>生成后可保存</span>
             </div>
+          </div>
+          <div class="platform-output" id="platformOutputPanel" hidden>
+            <div class="platform-output-head">
+              <div>
+                <strong>多平台资源</strong>
+                <span id="platformPackSummary">生成后显示各平台规格。</span>
+              </div>
+              <button type="button" id="platformPackDownloadBtn">导出全部 PNG</button>
+            </div>
+            <div class="platform-asset-grid" id="platformAssetList"></div>
           </div>
           <div class="command-demo-script" id="heroDemoScript" hidden>
             <strong>录屏话术</strong>
@@ -3928,7 +4122,7 @@
             <div class="tour-card">
               <b>01</b>
               <strong>一句话开始</strong>
-              <span>在首屏粘贴抖音链接、分享文案、截图转文字，或直接写一个主题。</span>
+              <span>在首屏粘贴社媒链接、分享文案、截图转文字，或直接写一个主题。</span>
             </div>
             <div class="tour-card">
               <b>02</b>
@@ -3948,7 +4142,7 @@
           </div>
           <div class="recording-script">
             <strong>演示话术</strong>
-            “打开后先不用找设置。把抖音链接、文案或截图文字放进首屏输入框，选个人创作者、品牌团队或代运营场景，它会先读懂这条内容，再生成标题、栏目和背景方向。你可以继续改标题、换背景，满意后保存到素材库，直接导出封面、片头或片尾。”
+            “打开后先不用找设置。把社媒链接、文案或截图文字放进首屏输入框，选个人创作者、品牌团队或代运营场景，它会先读懂这条内容，再生成标题、栏目、背景方向和多平台资源包。你可以继续改标题、换背景，满意后保存到素材库，直接导出封面、片头或片尾。”
           </div>
         </div>
 
@@ -3956,7 +4150,7 @@
           <div class="onboarding-grid">
             <button class="onboarding-choice active" data-onboarding-path="agent">
               <strong>Agent Skill</strong>
-              <span>把抖音链接、截图或文案发给 Agent，由 Agent 追问标题、分类、背景方向，再生成封面方案。</span>
+              <span>把社媒链接、截图或文案发给 Agent，由 Agent 追问标题、分类、背景方向，再生成平台资源方案。</span>
             </button>
             <button class="onboarding-choice" data-onboarding-path="local">
               <strong>Local Web Studio</strong>
@@ -3989,7 +4183,7 @@
             </button>
             <button class="onboarding-choice" data-quick-template="profile-safe">
               <strong>主页背景</strong>
-              <span>适合更新抖音主页背景，保留移动端安全区。</span>
+              <span>适合更新社媒主页背景，保留移动端安全区。</span>
             </button>
             <button class="onboarding-choice" data-quick-template="motion-intro">
               <strong>片头动效</strong>
@@ -4181,20 +4375,20 @@
       <div class="settings-body">
         <section class="version-hero">
           <div class="version-meta-row">
-            <span class="version-pill current">当前版本 v0.28</span>
-            <span class="version-pill">2026.06.21 更新</span>
+            <span class="version-pill current">当前版本 v0.29</span>
+            <span class="version-pill">2026.06.27 更新</span>
             <span class="version-pill">面向创作者和 Agent</span>
           </div>
-          <h3>片头片尾回到第一层。</h3>
+          <h3>一次生成多平台资源包。</h3>
           <p>这里记录的是产品能力变化，不列代码清单。你可以直接把这页展示给用户、客户或录屏观众，让他们快速理解 AI Cover Command 每次迭代解决了什么问题。</p>
           <div class="version-stat-grid">
             <div class="version-stat">
-              <strong>封面资产</strong>
-              <span>单条封面、合集封面、主页背景，统一账号风格。</span>
+              <strong>多平台资产</strong>
+              <span>抖音、小红书、视频号、B站、公众号、LinkedIn/X 同步输出。</span>
             </div>
             <div class="version-stat">
               <strong>Agent 协作</strong>
-              <span>抖音链接、图片和文案进来，先理解内容再出视觉方案。</span>
+              <span>社媒链接、图片和文案进来，先理解内容再出视觉方案。</span>
             </div>
             <div class="version-stat">
               <strong>片头动效</strong>
@@ -4207,7 +4401,24 @@
           <article class="release-card current">
             <div class="release-head">
               <div class="release-title">
-                <span class="version-pill current">v0.28</span>
+                <span class="version-pill current">v0.29</span>
+                <strong>从单平台封面升级为社媒资源包</strong>
+                <span>适合一条内容同时发多个平台。</span>
+              </div>
+              <div class="release-date">2026.06.27</div>
+            </div>
+            <p>输入一句观点、社媒链接、截图文字或账号样本后，系统会先按固定视觉 DNA 生成主画面，再自动裁切成多个平台可用的规格。</p>
+            <ul class="release-points">
+              <li>新增平台包选择：抖音、小红书、视频号、B站、公众号、LinkedIn/X。</li>
+              <li>生成完成后直接在当前页面看到每个平台的预览、尺寸、用途和下载按钮。</li>
+              <li>保留原来的封面、片头、片尾入口，平台扩展不会打断原有生产路径。</li>
+            </ul>
+          </article>
+
+          <article class="release-card">
+            <div class="release-head">
+              <div class="release-title">
+                <span class="version-pill">v0.28</span>
                 <strong>片头和片尾入口回到首屏</strong>
                 <span>适合真实生产时快速选择资产类型。</span>
               </div>
@@ -4298,7 +4509,7 @@
               </div>
               <div class="release-date">2026.06.18</div>
             </div>
-            <p>页面现在有更完整的产品标题、描述、社交分享图和 canonical 信息。链接被转发时，对方能先看到这是一个抖音封面和账号 DNA 生成 Agent。</p>
+            <p>页面现在有更完整的产品标题、描述、社交分享图和 canonical 信息。链接被转发时，对方能先看到这是一个社媒封面、动效和账号 DNA 生成 Agent。</p>
             <ul class="release-points">
               <li>浏览器标题从内部工具名升级为 douyincover 产品名。</li>
               <li>补齐 Open Graph 和 Twitter Card 信息。</li>
@@ -4468,11 +4679,11 @@
               </div>
               <div class="release-date">2026.06.17</div>
             </div>
-            <p>首屏新增统一输入框：用户粘贴抖音链接、分享文案、截图转文字，或直接写一个观点，系统会判断该走标题封面、抖音 Agent、片头动效还是账号 DNA。</p>
+            <p>首屏新增统一输入框：用户粘贴社媒链接、分享文案、截图转文字，或直接写一个观点，系统会判断该走标题封面、社媒 Agent、片头动效还是账号 DNA。</p>
             <ul class="release-points">
               <li>新增三类使用场景：个人创作者、品牌团队、代运营 / Agent。</li>
               <li>短标题会立即同步到右侧标题工作流并预览封面。</li>
-              <li>长文案和抖音链接会进入 Agent 流；DNA 按钮会进入账号 Style 解码。</li>
+              <li>长文案和社媒链接会进入 Agent 流；DNA 按钮会进入账号 Style 解码。</li>
             </ul>
           </article>
 
@@ -4582,7 +4793,7 @@
               <div class="release-title">
                 <span class="version-pill">v0.6</span>
                 <strong>让 Agent 先理解内容，再生成封面</strong>
-                <span>适合把抖音链接、截图、分享文案直接丢给 Agent。</span>
+                <span>适合把社媒链接、截图、分享文案直接丢给 Agent。</span>
               </div>
               <div class="release-date">2026.06.03</div>
             </div>
@@ -4621,7 +4832,7 @@
             <ul class="release-points">
               <li>确定三大栏目：AI下半场、强者恒强、在路上。</li>
               <li>统一 K 标、KevPH2026、标题层级、栏目色和安全区。</li>
-              <li>支持单条作品封面、合集封面和抖音主页背景。</li>
+              <li>支持单条作品封面、合集封面、主页背景和多平台规格导出。</li>
             </ul>
           </article>
         </section>
@@ -4646,7 +4857,7 @@
       <div class="settings-body">
         <section class="feedback-intro">
           <strong>哪里卡住了，直接写。</strong>
-          <span>适合反馈：生成失败、封面不好看、抖音链接读不出来、手机端显示问题、功能建议。提交后会带上当前页面上下文，方便定位。</span>
+          <span>适合反馈：生成失败、封面不好看、社媒链接读不出来、手机端显示问题、功能建议。提交后会带上当前页面上下文，方便定位。</span>
         </section>
 
         <div class="field">
@@ -4668,7 +4879,7 @@
 
         <div class="field">
           <label for="feedbackMessage">你遇到了什么</label>
-          <textarea id="feedbackMessage" placeholder="例如：粘贴抖音链接后一直没有结果；或者手机上导出按钮被挡住。"></textarea>
+          <textarea id="feedbackMessage" placeholder="例如：粘贴社媒链接后一直没有结果；或者手机上导出按钮被挡住。"></textarea>
         </div>
 
         <label class="feedback-check" for="feedbackIncludeContext">
@@ -4796,7 +5007,7 @@
           <div class="field">
             <label for="workLinkInput">作品链接</label>
             <div class="work-link-row">
-              <input id="workLinkInput" placeholder="粘贴抖音作品链接或复制分享文案">
+              <input id="workLinkInput" placeholder="粘贴社媒作品链接或复制分享文案">
               <button class="export-btn" id="workLinkGenerateBtn" type="button">自动生成</button>
             </div>
           </div>
@@ -4847,7 +5058,7 @@
         </div>
 
         <div class="smart-action-grid">
-          <button class="export-btn" id="smartGenerateBtn">生成封面 + 配图</button>
+          <button class="export-btn" id="smartGenerateBtn">生成资源包 + 配图</button>
           <button class="ghost-btn" id="smartIntroBtn">一键片头</button>
           <button class="ghost-btn" id="smartOutroBtn">一键片尾</button>
         </div>
@@ -4867,7 +5078,7 @@
 
         <div class="field">
           <label for="douyinShare">给 AI 的素材</label>
-          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴抖音链接/分享文案/主题。解码 DNA / 生成 Style：给 1 个抖音作品链接也可以，系统会自动找作者主页、头像、ID 和其它公开作品。"></textarea>
+          <textarea id="douyinShare" class="ai-command-input" style="min-height:156px;" placeholder="生成单条封面/片头动效/片尾动效：粘贴社媒链接/分享文案/主题。解码 DNA / 生成 Style：给 1 个作品链接也可以，系统会尝试找作者主页、头像、ID 和其它公开作品。"></textarea>
           <div class="ai-command-grid">
             <button class="export-btn ai-command-btn" id="douyinRunBtn">生成封面/动效</button>
             <button class="ghost-btn ai-command-btn" id="dnaRunBtn" style="margin-top:0;">解码 DNA / Style</button>
@@ -4880,8 +5091,8 @@
         </div>
 
         <div class="field ai-secondary">
-          <label for="agentLink">抖音作品链接</label>
-          <input id="agentLink" placeholder="https://v.douyin.com/...">
+          <label for="agentLink">社媒作品链接</label>
+          <input id="agentLink" placeholder="https://...">
         </div>
 
         <div class="field">
@@ -4897,7 +5108,7 @@
           <button class="export-btn" id="agentRunBtn">对话生成资产</button>
           <button class="ghost-btn" id="agentClearBtn">清空</button>
         </div>
-        <div class="ai-status" id="agentStatus">粘贴抖音分享文案可自动提炼标题；未接入模型时也能生成可编辑预览。</div>
+        <div class="ai-status" id="agentStatus">粘贴社媒分享文案可自动提炼标题；未接入模型时也能生成可编辑预览。</div>
         <div class="agent-flow" aria-label="Agent 对话式接入工作流">
           <div class="agent-flow-head">
             <strong>Agent 接入问法</strong>
@@ -4907,8 +5118,8 @@
             <li>
               <span class="agent-flow-index">01</span>
               <div class="agent-flow-copy">
-                <strong>抖音 ID / 主页链接</strong>
-                <span>默认 Mr.K 用 KevPH2026；新账号先发 ID、主页链接或主页截图。</span>
+                <strong>账号 ID / 主页链接</strong>
+                <span>默认 Mr.K 用 KevPH2026；新账号先发平台、ID、主页链接或主页截图。</span>
               </div>
             </li>
             <li>
@@ -4940,7 +5151,7 @@
               </div>
             </li>
           </ol>
-          <div class="agent-flow-prompt">推荐开场：我的抖音 ID 是 ___，这次要做 ___，内容/链接是 ___。</div>
+          <div class="agent-flow-prompt">推荐开场：我的平台/ID 是 ___，这次要做 ___，内容/链接是 ___。</div>
           <div class="agent-guide-actions">
             <a class="agent-guide-action primary" href="AGENT_GUIDE.md" target="_blank" rel="noreferrer">下载 / 安装 Skill</a>
             <button class="agent-guide-action" type="button" data-copy-agent-guide>直接复制</button>
@@ -5287,15 +5498,15 @@
     const heroAudiencePresets = {
       solo: {
         placeholder: "例：乔布斯：多和聪明的人交往",
-        status: "个人创作者模式：输入短标题会先预览封面；粘贴抖音链接会让 Agent 先读内容再生成。",
+        status: "个人创作者模式：输入短标题会先预览；粘贴社媒链接会让 Agent 先读内容再生成。",
         outcome: {
-          input: ["一句观点", "短标题、抖音链接或分享文案"],
-          output: ["封面 PNG", "标题、栏目、背景和发布包"],
+          input: ["一句观点", "短标题、社媒链接或分享文案"],
+          output: ["平台包 PNG", "标题、栏目、背景和多规格资产"],
           next: ["导出发布", "可继续补片头和片尾"]
         },
         inviteTitle: "复制个人创作者试用邀请",
         inviteHint: "适合发给内容创作者，强调一句话出封面。",
-        inviteText: "试一下这个抖音封面 Agent：把一句观点、抖音链接或分享文案丢进去，它会先生成可编辑封面预览，再补标题、栏目、背景和发布包。没接模型也能先跑一版。"
+        inviteText: "试一下这个社媒封面 Agent：把一句观点、社媒链接或分享文案丢进去，它会先生成可编辑封面预览，再补标题、栏目、背景和多平台资源包。没接模型也能先跑一版。"
       },
       brand: {
         placeholder: "例：把这组 AI 产品观点做成统一栏目封面，并保存到素材库",
@@ -5310,7 +5521,7 @@
         inviteText: "给你一个短视频封面工作台：适合把一组内容做成统一栏目资产。输入主题或内容样本后，它会生成封面预览、栏目编号、背景方向和素材库交付项，方便团队复用同一套 Style。"
       },
       agency: {
-        placeholder: "例：粘贴客户抖音作品链接，先解码账号 DNA，再给封面设计方向",
+        placeholder: "例：粘贴客户社媒作品链接，先解码账号 DNA，再给封面设计方向",
         status: "代运营 / Agent 模式：优先解码账号 DNA，再生成适合客户风格的封面和动效方向。",
         outcome: {
           input: ["客户样本", "主页链接、作品链接或 10 条公开内容"],
@@ -5356,17 +5567,99 @@
       }
     };
 
-    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Douyin Cover Agent，负责把抖音链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效/片尾动效方案。
+    const platformTargets = {
+      douyin: {
+        label: "抖音",
+        shortLabel: "抖音 9:16",
+        spec: "1080 x 1920",
+        width: 1080,
+        height: 1920,
+        ratio: "9:16",
+        file: "douyin",
+        focusY: .18,
+        usage: "短视频封面 / 片头封面帧"
+      },
+      xhs: {
+        label: "小红书",
+        shortLabel: "小红书 3:4",
+        spec: "1080 x 1440",
+        width: 1080,
+        height: 1440,
+        ratio: "3:4",
+        file: "xhs",
+        focusY: .14,
+        usage: "笔记首图 / 图文封面"
+      },
+      xhsSquare: {
+        label: "小红书方图",
+        shortLabel: "小红书 1:1",
+        spec: "1080 x 1080",
+        width: 1080,
+        height: 1080,
+        ratio: "1:1",
+        file: "xhs-square",
+        focusY: .18,
+        usage: "方图卡片 / 头像式预览"
+      },
+      wechatVideo: {
+        label: "视频号",
+        shortLabel: "视频号 9:16",
+        spec: "1080 x 1920",
+        width: 1080,
+        height: 1920,
+        ratio: "9:16",
+        file: "wechat-video",
+        focusY: .18,
+        usage: "竖版视频封面"
+      },
+      bilibili: {
+        label: "B站",
+        shortLabel: "B站 16:9",
+        spec: "1920 x 1080",
+        width: 1920,
+        height: 1080,
+        ratio: "16:9",
+        file: "bilibili",
+        focusY: .2,
+        usage: "横版视频封面"
+      },
+      wechatArticle: {
+        label: "公众号",
+        shortLabel: "公众号封面",
+        spec: "900 x 383",
+        width: 900,
+        height: 383,
+        ratio: "2.35:1",
+        file: "wechat-article",
+        focusY: .18,
+        usage: "头条封面"
+      },
+      linkedinX: {
+        label: "LinkedIn / X",
+        shortLabel: "LinkedIn/X",
+        spec: "1200 x 675",
+        width: 1200,
+        height: 675,
+        ratio: "16:9",
+        file: "linkedin-x",
+        focusY: .2,
+        usage: "海外社媒配图"
+      }
+    };
+
+    const defaultPlatformSelection = ["douyin", "xhs", "wechatVideo"];
+
+    const AGENT_INTEGRATION_PROMPT = `你是 Mr.K Social Cover Agent，负责把抖音、小红书、视频号、B站、公众号、LinkedIn/X 等社媒链接、分享文案、截图或主题，转成 Mr.K 在路上的统一封面/合集/主页背景/片头动效/片尾动效和多平台资源包方案。
 
 默认账号：
 - 账号名：MR.K 在路上
-- 抖音 ID：KevPH2026
+- 默认社媒 ID：KevPH2026
 - 微信 ID：kevph2026
 - 域名：dna.superk.ai
 - 固定栏目：AI下半场、强者恒强、在路上
 
 对话工作流：
-1. 先问账号入口：抖音 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
+1. 先问账号入口：平台、账号 ID、主页链接或主页截图。若用户没有说明，默认使用 Mr.K / KevPH2026。
 2. 再问任务类型：单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面、主页背景。
 3. 再判断内容分类：优先在 AI下半场、强者恒强、在路上里选择；确实不适合才开自定义栏目。
 4. 再收素材：单条作品需要链接/文案/截图/主题；片头/片尾动效还要确认是否有图片或视频素材；解码 DNA / 生成 Style 优先从 1 个作品链接自动追作者主页、头像、ID 和其它公开作品；批量任务需要作品清单和优先级规则。
@@ -5374,7 +5667,7 @@
 6. 生成前必须确认 brief：中文标题、英文副题、摘要、背景方向、比例/时长、编号、栏目。
 
 硬规则：
-- 不要声称看到了没有提供的抖音内容。
+- 不要声称看到了没有提供的社媒内容。
 - 链接打不开时，让用户提供截图、标题、封面文字或分享文案。
 - 私密作品默认不参与。
 - 单条封面默认 9:16 / 1080x1920；用户指定方图时才用 1:1 / 1080x1080。
@@ -5386,7 +5679,7 @@
 - 不要写播放量、点赞数或历史表现，除非用户明确要求。
 - 背景要根据文案内容适配，避免泛 AI 壁纸、抽象光球、随机科技渐变。
 - 给客户账号做解码时，必须输出能被页面应用的 style_profile，不要只写审美建议。
-- 用户只给 1 个抖音作品链接时，先自动拉取作者昵称、抖音号/主页 ID、头像、主页链接和其它公开作品；抓不到再让用户补截图或作品标题。
+- 用户只给 1 个作品链接时，先自动拉取作者昵称、平台 ID、头像、主页链接和其它公开作品；抓不到再让用户补截图或作品标题。
 
 输出 brief JSON：
 {
@@ -5444,6 +5737,8 @@
       smartAutoFields: { title: "", enTitle: "", summary: "" },
       heroAudience: "solo",
       heroDeliveryMode: "draft",
+      selectedPlatforms: defaultPlatformSelection.slice(),
+      platformAssets: [],
       studioOpen: false,
       modelConfig: null,
       motionMedia: null,
@@ -5532,6 +5827,12 @@
       heroIntroBtn: document.getElementById("heroIntroBtn"),
       heroOutroTopBtn: document.getElementById("heroOutroTopBtn"),
       heroDemoBtn: document.getElementById("heroDemoBtn"),
+      platformButtons: document.getElementById("platformButtons"),
+      platformPackCount: document.getElementById("platformPackCount"),
+      platformOutputPanel: document.getElementById("platformOutputPanel"),
+      platformPackSummary: document.getElementById("platformPackSummary"),
+      platformPackDownloadBtn: document.getElementById("platformPackDownloadBtn"),
+      platformAssetList: document.getElementById("platformAssetList"),
       heroCommandStatus: document.getElementById("heroCommandStatus"),
       heroDeliveryPanel: document.getElementById("heroDeliveryPanel"),
       heroDeliveryTitle: document.getElementById("heroDeliveryTitle"),
@@ -5631,6 +5932,7 @@
 
     const ctx = el.canvas.getContext("2d");
     let heroPreviewSyncPending = false;
+    let platformPackSyncPending = false;
 
     function loadImage(src) {
       return new Promise((resolve, reject) => {
@@ -5917,10 +6219,10 @@
       copy.appendChild(title);
       const idLine = document.createElement("span");
       idLine.textContent = [
-        identity.douyin_id ? `抖音号 ${identity.douyin_id}` : "",
+        identity.douyin_id ? `平台 ID ${identity.douyin_id}` : "",
         identity.short_id ? `短号 ${identity.short_id}` : "",
         identity.sec_uid ? "已识别主页 ID" : ""
-      ].filter(Boolean).join(" / ") || "未在公开页面里识别到抖音号";
+      ].filter(Boolean).join(" / ") || "未在公开页面里识别到平台 ID";
       copy.appendChild(idLine);
       const discoveryLine = document.createElement("span");
       discoveryLine.textContent = `自动抓取：主页样本 ${Number(discovery.profile_sample_count || 0)} 条 / 相关作品样本 ${Number(discovery.related_sample_count || 0)} 条`;
@@ -5992,24 +6294,24 @@
       return clean.slice(0, 80);
     }
 
-    function applyWorkLinkLocalPreview(raw, reason = "") {
-      const topic = cleanDouyinShareForTitle(raw);
-      const url = extractUrlFromText(raw);
-      el.douyinShare.value = raw;
-      if (url) el.agentLink.value = url;
-      if (!topic || topic === url) {
-        setWorkLinkStatus("当前是 file:// 本地打开，只粘链接时浏览器读不到抖音内容。请粘贴完整分享文案，或用本地服务/线上页面自动读取。", "error");
-        setAgentStatus("纯链接需要通过本地服务读取；也可以粘贴抖音复制分享文案，先生成本地预览。", "error");
-        return false;
-      }
+	    function applyWorkLinkLocalPreview(raw, reason = "") {
+	      const topic = cleanDouyinShareForTitle(raw);
+	      const url = extractUrlFromText(raw);
+	      el.douyinShare.value = raw;
+	      if (url) el.agentLink.value = url;
+	      if (!topic || topic === url) {
+	        setWorkLinkStatus("当前是 file:// 本地打开，只粘链接时浏览器读不到社媒内容。请粘贴完整分享文案，或用本地服务/线上页面自动读取。", "error");
+	        setAgentStatus("纯链接需要通过本地服务读取；也可以粘贴平台复制的分享文案，先生成本地预览。", "error");
+	        return false;
+	      }
       el.smartAssetType.value = "work";
       el.smartTitleInput.value = topic;
       previewSmartTitleLocally();
       showHeroDelivery("draft");
-      setWorkLinkStatus(reason || "已从分享文案提取主题，并生成本地预览。", "success");
-      setHeroStatus("已按作品内容生成封面预览；可以继续生成配图、保存或导出。", "success");
-      return true;
-    }
+	      setWorkLinkStatus(reason || "已从分享文案提取主题，并生成本地预览。", "success");
+	      setHeroStatus("已按作品内容生成封面预览；可以继续生成配图、平台包、保存或导出。", "success");
+	      return true;
+	    }
 
     function isLocalStaticPreview() {
       const host = window.location.hostname;
@@ -6027,11 +6329,11 @@
     async function runWorkLinkGenerate(options = {}) {
       const raw = el.workLinkInput.value.trim();
       const url = extractUrlFromText(raw);
-      if (!raw) {
-        setWorkLinkStatus("先粘贴抖音作品链接或复制分享文案。", "error");
-        el.workLinkInput.focus();
-        return false;
-      }
+	      if (!raw) {
+	        setWorkLinkStatus("先粘贴社媒作品链接或复制分享文案。", "error");
+	        el.workLinkInput.focus();
+	        return false;
+	      }
       if (options.auto && state.lastWorkLinkRun === raw) return false;
       state.lastWorkLinkRun = raw;
       el.heroCommandInput.value = raw;
@@ -6045,15 +6347,15 @@
           : "已从分享文案提取主题，并生成本地预览。");
       }
 
-      setWorkLinkStatus("正在读取作品链接并生成封面。", "working");
-      setHeroStatus("正在读取作品链接并生成封面。", "success");
-      const ok = await runCoverAgent({ fromDouyin: true });
-      if (ok) {
-        showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-        setWorkLinkStatus("作品链接已生成封面，可以继续改字、保存或导出。", "success");
-        setHeroStatus("作品链接已生成封面，可以继续改字、保存或导出。", "success");
-        return true;
-      }
+	      setWorkLinkStatus("正在读取作品链接并生成资源包。", "working");
+	      setHeroStatus("正在读取作品链接并生成资源包。", "success");
+	      const ok = await runCoverAgent({ fromDouyin: true });
+	      if (ok) {
+	        showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+	        setWorkLinkStatus("作品链接已生成资源包，可以继续改字、保存或导出。", "success");
+	        setHeroStatus("作品链接已生成资源包，可以继续改字、保存或导出。", "success");
+	        return true;
+	      }
       return applyWorkLinkLocalPreview(raw, "链接读取失败，已先用分享文案生成本地预览。");
     }
 
@@ -6074,9 +6376,9 @@
 
     function agentSourceNote(source = {}) {
       const status = source.status || (source.meta && source.meta.status);
-      if (source.clean_text) return "，已解析抖音分享文案";
-      if (status === "ok") return "，已读取抖音链接信息";
-      if (source.url) return "，已提取抖音链接";
+	      if (source.clean_text) return "，已解析平台分享文案";
+	      if (status === "ok") return "，已读取社媒链接信息";
+	      if (source.url) return "，已提取社媒链接";
       return "";
     }
 
@@ -6683,7 +6985,7 @@
           ? "生成片尾动效，结尾必须引导关注 Mr.K / KevPH2026。"
           : targetTemplate === "intro"
             ? "生成片头动效，主观点要在前 1-2 秒出现。"
-            : "生成单条作品封面，并同时生成内容匹配的背景图。";
+	            : "生成单条作品封面，并同时生成内容匹配的背景图和多平台资源包。";
         const draftBeforePlan = readSmartDraft();
         draftBeforePlan.code = reservedCode;
         const planningMessage = [
@@ -7487,9 +7789,9 @@
 
     function templateLabel() {
       return {
-        work: "vertical 9:16 Douyin work cover background",
-        collection: "square 1:1 Douyin series cover background",
-        profile: "wide 3:1 Douyin profile banner background",
+	        work: "vertical 9:16 social media work cover background",
+	        collection: "square 1:1 social series cover background",
+	        profile: "wide social profile banner background",
         intro: "vertical 9:16 short video intro overlay background",
         outro: "vertical 9:16 short video outro call-to-action background"
       }[state.template];
@@ -7518,7 +7820,7 @@
       const theme = el.imageTheme.value.trim() || [v.title, v.summary].filter(Boolean).join(" / ");
       const generatedStyle = normalizeGeneratedStyle(state.generatedStyle);
       const safeArea = state.template === "profile"
-        ? "Keep the left 55 percent calm and uncluttered for native Douyin avatar, username and bio overlays. Put visual interest on the right third."
+	        ? "Keep the left 55 percent calm and uncluttered for native social profile avatar, username and bio overlays. Put visual interest on the right third."
         : state.template === "intro"
           ? "Keep the left and center-left title animation area dark, clean and readable for kinetic Chinese typography. Put motion-friendly visual interest on the right third or lower right."
           : state.template === "outro"
@@ -7533,7 +7835,7 @@
         generatedStyle ? `Account style profile: ${generatedStyle.name}. Title rule: ${generatedStyle.titleRule || "stable judgment-like Chinese title"}. Background rule: ${generatedStyle.backgroundRule || generatedStyle.imageTheme}. Cover rule: ${generatedStyle.coverRule || "fixed high-contrast editorial cover system"}.` : "",
         state.agentPromptHint ? `Editorial direction from DeepSeek: ${state.agentPromptHint}.` : "",
         state.agentReference ? "Use the uploaded image as a loose visual reference for mood, color and scene structure, but do not copy text or identifiable UI." : "",
-        state.agentCoverImageUrl ? "Use the Douyin source cover image as a loose visual reference when provided, while keeping the final result in Mr.K's fixed cover system." : "",
+	        state.agentCoverImageUrl ? "Use the source platform cover image as a loose visual reference when provided, while keeping the final result in Mr.K's fixed cover system." : "",
         `Visual style: ${styleLabel()}. Information density: ${densityLabel()}.`,
         safeArea,
         "Use a dark cinematic base, realistic depth, subtle neon accent highlights, mature business and technology mood.",
@@ -7717,17 +8019,17 @@
         ? (extractedUrl || el.agentLink.value.trim())
         : el.agentLink.value.trim();
 
-      if (fromDouyin && !message && !douyinUrl) {
-        setAgentStatus("先粘贴一段抖音分享文案或链接。", "error");
-        return false;
-      }
+	      if (fromDouyin && !message && !douyinUrl) {
+	        setAgentStatus("先粘贴一段社媒分享文案或作品链接。", "error");
+	        return false;
+	      }
       if (fromDouyin && extractedUrl) {
         el.agentLink.value = extractedUrl;
       }
-      if (!ensureGuestCanUse(fromDouyin ? "根据抖音内容生成" : "对话生成")) return false;
+	      if (!ensureGuestCanUse(fromDouyin ? "根据社媒内容生成" : "对话生成")) return false;
 
       const userLine = [
-        fromDouyin ? "抖音链接生成封面" : (message || "按当前内容生成一版封面"),
+	        fromDouyin ? "社媒链接生成资源包" : (message || "按当前内容生成一版封面"),
         fromDouyin && shareText ? shareText : "",
         !fromDouyin && douyinUrl ? `链接：${douyinUrl}` : "",
         fromDouyin && douyinUrl ? `链接：${douyinUrl}` : "",
@@ -7736,7 +8038,7 @@
 
       addAgentMessage("user", userLine);
       setAgentButtonsDisabled(true);
-      setAgentStatus(fromDouyin ? "正在解析抖音分享内容、定栏目和标题。" : "正在让 LLM 拆内容、定栏目和标题。", "working");
+	      setAgentStatus(fromDouyin ? "正在解析社媒分享内容、定栏目和标题。" : "正在让 LLM 拆内容、定栏目和标题。", "working");
       el.status.textContent = "Agent planning";
 
       try {
@@ -7753,7 +8055,7 @@
               })();
           if (!localOk) return false;
           await generateAiBackground({ fromAgent: true });
-          recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成封面");
+	        recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成资源包");
           addAgentMessage("assistant", "已生成本地预览。线上或本地 API 模式会自动调用 Agent 和 Image2。");
           setAgentStatus("本地预览已生成；文字、栏目、背景方向可继续修改。", "success");
           el.status.textContent = "Local agent preview generated";
@@ -7782,10 +8084,10 @@
         setAgentStatus(`${payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`}已应用${sourceNote}，正在生成背景。`, payload.fallback ? "warning" : "success");
         const bgResult = await generateAiBackground({ fromAgent: true });
         recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成封面");
-        const outputLabel = isMotionTemplate() ? "导出 M4V 或封面帧 PNG" : "导出 PNG";
+	        const outputLabel = isMotionTemplate() ? "导出 M4V 或封面帧 PNG" : "导出多平台 PNG";
         const finalType = (payload.fallback || (bgResult && bgResult.fallback)) ? "warning" : "success";
         const finalMode = bgResult && bgResult.fallback ? "本地预览" : (payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`);
-        setAgentStatus(`已用${finalMode}完成，可以直接${outputLabel}，也可以继续接入模型增强。`, finalType);
+	        setAgentStatus(`已用${finalMode}完成，可以直接${outputLabel}，也可以继续接入模型增强。`, finalType);
         el.status.textContent = "Agent cover generated";
         return true;
       } catch (error) {
@@ -7802,7 +8104,7 @@
       const message = el.agentMessage.value.trim();
       const extractedUrl = extractUrlFromText([sourceText, el.agentLink.value, message].join("\n"));
       if (!sourceText && !message && !extractedUrl) {
-        setAgentStatus("先粘贴抖音主页/作品链接，或至少 10 条作品标题、封面文字、截图转文字。", "error");
+	        setAgentStatus("先粘贴社媒主页/作品链接，或至少 10 条作品标题、封面文字、截图转文字。", "error");
         return;
       }
       if (!ensureGuestCanUse("解码 DNA")) return;
@@ -7876,7 +8178,7 @@
       if (mode === "outro") return "下一步：预览结尾关注引导，满意后导出 M4V。";
       if (audience === "brand") return "下一步：保存到素材库，把同栏目内容继续做成系列。";
       if (audience === "agency") return "下一步：先解码客户 DNA，再把这套视觉规则交给 Agent 批量复用。";
-      return "下一步：导出 PNG，或补一个片尾做关注收束。";
+      return "下一步：导出平台包 PNG，或补一个片尾做关注收束。";
     }
 
     function setDeliveryStep(name, status, label) {
@@ -7890,6 +8192,174 @@
 
     function oneLine(text) {
       return String(text || "").replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function selectedPlatformTargets() {
+      return state.selectedPlatforms
+        .map(id => platformTargets[id])
+        .filter(Boolean);
+    }
+
+    function updatePlatformCount() {
+      if (!el.platformPackCount) return;
+      const count = selectedPlatformTargets().length;
+      el.platformPackCount.textContent = count > 0 ? `已选 ${count} 个平台` : "至少选 1 个平台";
+    }
+
+    function renderPlatformButtons() {
+      if (!el.platformButtons) return;
+      el.platformButtons.innerHTML = "";
+      Object.entries(platformTargets).forEach(([id, target]) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "platform-toggle";
+        button.dataset.platformId = id;
+        button.innerHTML = `<strong>${target.shortLabel}</strong><span>${target.spec}</span>`;
+        button.classList.toggle("active", state.selectedPlatforms.includes(id));
+        el.platformButtons.appendChild(button);
+      });
+      updatePlatformCount();
+    }
+
+    function togglePlatformTarget(id) {
+      if (!platformTargets[id]) return;
+      const next = state.selectedPlatforms.includes(id)
+        ? state.selectedPlatforms.filter(item => item !== id)
+        : [...state.selectedPlatforms, id];
+      if (!next.length) {
+        setHeroStatus("至少保留 1 个平台规格。", "error");
+        return;
+      }
+      state.selectedPlatforms = next;
+      renderPlatformButtons();
+      if (state.heroDeliveryMode && !["draft", "dna"].includes(state.heroDeliveryMode)) {
+        generatePlatformPack();
+      }
+    }
+
+    function safeFilePart(text) {
+      return String(text || "asset")
+        .replace(/\s+/g, "-")
+        .replace(/[^\w\u4e00-\u9fff-]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "")
+        .slice(0, 42) || "asset";
+    }
+
+    function platformFilename(target) {
+      const v = values();
+      const code = safeFilePart(v.code || "draft");
+      const title = safeFilePart(oneLine(v.title || el.heroCommandInput.value || "cover"));
+      return `${target.file}-${code}-${title}.png`;
+    }
+
+    function drawPlatformCrop(sourceCanvas, target) {
+      const output = document.createElement("canvas");
+      output.width = target.width;
+      output.height = target.height;
+      const out = output.getContext("2d");
+      out.fillStyle = "#05070a";
+      out.fillRect(0, 0, output.width, output.height);
+
+      const sw = sourceCanvas.width;
+      const sh = sourceCanvas.height;
+      const scale = Math.max(output.width / sw, output.height / sh);
+      const cropW = output.width / scale;
+      const cropH = output.height / scale;
+      const focusX = Number.isFinite(target.focusX) ? target.focusX : .5;
+      const focusY = Number.isFinite(target.focusY) ? target.focusY : .18;
+      const sx = Math.max(0, Math.min(sw - cropW, (sw - cropW) * focusX));
+      const sy = Math.max(0, Math.min(sh - cropH, (sh - cropH) * focusY));
+
+      out.imageSmoothingEnabled = true;
+      out.imageSmoothingQuality = "high";
+      out.drawImage(sourceCanvas, sx, sy, cropW, cropH, 0, 0, output.width, output.height);
+      return output;
+    }
+
+    function generatePlatformAsset(target) {
+      const canvas = drawPlatformCrop(el.canvas, target);
+      return {
+        id: target.file,
+        label: target.label,
+        spec: target.spec,
+        ratio: target.ratio,
+        usage: target.usage,
+        filename: platformFilename(target),
+        dataUrl: canvas.toDataURL("image/png"),
+        thumb: canvas.toDataURL("image/jpeg", .74)
+      };
+    }
+
+    function renderPlatformPack() {
+      if (!el.platformOutputPanel || !el.platformAssetList) return;
+      if (!state.platformAssets.length) {
+        el.platformOutputPanel.hidden = true;
+        return;
+      }
+      el.platformOutputPanel.hidden = false;
+      el.platformAssetList.innerHTML = "";
+      if (el.platformPackSummary) {
+        el.platformPackSummary.textContent = `${state.platformAssets.length} 个规格，沿用当前视觉 DNA。`;
+      }
+      state.platformAssets.forEach(asset => {
+        const card = document.createElement("div");
+        card.className = "platform-asset-card";
+        card.innerHTML = `
+          <img src="${asset.thumb}" alt="${asset.label} 预览">
+          <div>
+            <strong>${asset.label}</strong>
+            <span>${asset.spec} / ${asset.ratio}</span>
+            <span>${asset.usage}</span>
+            <button type="button" data-platform-download="${asset.id}">下载 PNG</button>
+          </div>
+        `;
+        el.platformAssetList.appendChild(card);
+      });
+    }
+
+    function generatePlatformPack(options = {}) {
+      if (!selectedPlatformTargets().length) {
+        state.platformAssets = [];
+        renderPlatformPack();
+        return;
+      }
+      if (options.redraw !== false) draw();
+      state.platformAssets = selectedPlatformTargets().map(generatePlatformAsset);
+      renderPlatformPack();
+    }
+
+    function queuePlatformPackSync() {
+      if (platformPackSyncPending || !state.platformAssets.length) return;
+      if (!el.platformOutputPanel || el.platformOutputPanel.hidden) return;
+      platformPackSyncPending = true;
+      requestAnimationFrame(() => {
+        platformPackSyncPending = false;
+        if (!state.platformAssets.length || !el.platformOutputPanel || el.platformOutputPanel.hidden) return;
+        generatePlatformPack({ redraw: false });
+      });
+    }
+
+    function downloadDataUrl(dataUrl, filename) {
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = filename;
+      link.click();
+    }
+
+    function downloadPlatformAsset(id) {
+      const asset = state.platformAssets.find(item => item.id === id);
+      if (!asset) return;
+      downloadDataUrl(asset.dataUrl, asset.filename);
+      el.status.textContent = `Exported ${asset.filename}`;
+    }
+
+    function downloadPlatformPack() {
+      if (!state.platformAssets.length) generatePlatformPack();
+      state.platformAssets.forEach((asset, index) => {
+        setTimeout(() => downloadDataUrl(asset.dataUrl, asset.filename), index * 160);
+      });
+      setHeroStatus(`已开始导出 ${state.platformAssets.length} 个平台 PNG。`, "success");
     }
 
     function queueHeroPreviewSync() {
@@ -7985,7 +8455,7 @@
             "试用：dna.superk.ai",
             "微信：kevph2026"
           ].join("\n"),
-          script: "打开页面后不用准备素材，直接点一次示例。系统会把观点拆成标题、栏目和背景方向，再生成封面交付包。后面可以改文字、保存素材、导出封面，继续补片头或片尾。"
+          script: "打开页面后不用准备素材，直接点一次示例。系统会把观点拆成标题、栏目和背景方向，再生成多平台资源包。后面可以改文字、保存素材、导出各平台封面，继续补片头或片尾。"
         };
       }
 
@@ -8019,10 +8489,10 @@
           `《${title}》`,
           summary,
           `栏目：${category} / 编号：${code}`,
-          `${tag} #抖音封面`,
+          `${tag} #社媒封面 #多平台资源包`,
           "微信：kevph2026"
         ].join("\n"),
-        script: `这条内容的核心观点是「${title}」。我先把它压成可读的大标题，再按「${category}」的固定视觉 DNA 生成封面。背景服务观点，文字还能继续改，最后直接保存或导出发布。`
+        script: `这条内容的核心观点是「${title}」。我先把它压成可读的大标题，再按「${category}」的固定视觉 DNA 生成封面。背景服务观点，文字还能继续改，最后直接导出各平台规格。`
       };
     }
 
@@ -8056,9 +8526,9 @@
       } else if (isMotionIntent(raw)) {
         el.heroGenerateBtn.textContent = "生成片头动效";
       } else if (isDouyinLikeInput(raw)) {
-        el.heroGenerateBtn.textContent = "Agent 读取生成";
+        el.heroGenerateBtn.textContent = "Agent 读取生成平台包";
       } else {
-        el.heroGenerateBtn.textContent = "生成封面 + 配图";
+        el.heroGenerateBtn.textContent = "生成多平台资源包";
       }
       el.heroDnaBtn.textContent = "解码 DNA";
     }
@@ -8077,6 +8547,8 @@
       el.heroDeliverySummary.textContent = `${titleText}。${heroAudienceNextStep(mode)}`;
 
       if (mode === "draft") {
+        state.platformAssets = [];
+        renderPlatformPack();
         renderLaunchPack("draft");
         setDeliveryStep("cover", "ready", "标题已预览，可继续生成");
         setDeliveryStep("background", "pending", "等待 Image2 或本地背景");
@@ -8086,6 +8558,8 @@
       }
 
       if (mode === "dna") {
+        state.platformAssets = [];
+        renderPlatformPack();
         renderLaunchPack("dna");
         setDeliveryStep("cover", "pending", "等待应用 Style 后生成");
         setDeliveryStep("background", "ready", "已生成账号风格方向");
@@ -8095,10 +8569,11 @@
       }
 
       const bgFallback = Boolean(options.backgroundFallback);
-      setDeliveryStep("cover", "ready", isMotionTemplate(mode) ? "动效封面帧已生成" : "1080 x 1920 可导出");
+      setDeliveryStep("cover", "ready", isMotionTemplate(mode) ? "动效封面帧已生成" : `${selectedPlatformTargets().length} 个平台规格可导出`);
       setDeliveryStep("background", bgFallback ? "warning" : "ready", bgFallback ? "已生成本地预览" : "背景已按内容生成");
       setDeliveryStep("motion", isMotionTemplate(mode) ? "ready" : "pending", isMotionTemplate(mode) ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
+      generatePlatformPack();
       renderLaunchPack(mode);
       focusHeroPreviewOnSmallScreen();
     }
@@ -8112,7 +8587,7 @@
       setDeliveryStep("background", "warning", "演示用本地背景，接入 Image2 后可换真图");
       setDeliveryStep("motion", "pending", "可继续点一键片头");
       setDeliveryStep("library", "pending", "可保存到素材库");
-      setHeroStatus("30 秒演示已准备好：现在可以直接录屏讲“输入一句话 -> 生成封面交付包”。", "success");
+      setHeroStatus("30 秒演示已准备好：现在可以直接录屏讲“输入一句话 -> 生成多平台资源包”。", "success");
       el.status.textContent = "Launch demo ready";
     }
 
@@ -8219,7 +8694,7 @@
       const key = heroAudiencePresets[role] ? role : "solo";
       const preset = heroAudiencePresets[key];
       return [
-        preset.inviteText || "试一下这个抖音封面 Agent：输入内容后，它会生成可编辑封面预览和发布素材。",
+        preset.inviteText || "试一下这个社媒封面 Agent：输入内容后，它会生成可编辑封面预览和多平台发布素材。",
         "",
         `试用入口：${roleLink(key)}`,
         "3 次免登录试用。",
@@ -8252,7 +8727,7 @@
       }
       showHeroDelivery("draft");
       updateHeroActionCopy();
-      setHeroStatus("已放入一条可试跑示例。点“生成封面 + 配图”，先看到第一张结果。", "success");
+      setHeroStatus("已放入一条可试跑示例。点“生成多平台资源包”，先看到第一张结果。", "success");
       localStorage.setItem("mrk.firstRunSeededV1", "1");
     }
 
@@ -8267,14 +8742,14 @@
         el.douyinShare.value = raw;
         const url = extractUrlFromText(raw);
         if (url) el.agentLink.value = url;
-        setHeroStatus("已识别为链接/长文案：会交给 Agent 读取内容、判断栏目、生成标题和背景方向。", "success");
+        setHeroStatus("已识别为链接/长文案：会交给 Agent 读取内容、判断栏目、生成标题、背景方向和平台包。", "success");
         updateHeroActionCopy();
         return;
       }
       el.smartTitleInput.value = raw;
       previewSmartTitleLocally();
       showHeroDelivery("draft");
-      setHeroStatus("已按短标题预览封面：继续点生成，会自动归类、翻译、编号，并尝试生成配图。", "success");
+      setHeroStatus("已按短标题预览封面：继续点生成，会自动归类、翻译、编号、配图并输出平台包。", "success");
       updateHeroActionCopy();
     }
 
@@ -8283,7 +8758,7 @@
       if (!raw) {
         raw = autoFillHeroStarter(action);
         if (!raw) {
-          setHeroStatus("先粘贴抖音链接、分享文案，或直接写一个标题。", "error");
+          setHeroStatus("先粘贴社媒链接、分享文案，或直接写一个标题。", "error");
           el.heroCommandInput.focus();
           return;
         }
@@ -8316,7 +8791,7 @@
               ? await runCoverAgent({ fromDouyin: true })
               : applyWorkLinkLocalPreview(raw, "已根据分享文案生成预览；继续生成动效。");
             if (!ok) {
-              setHeroStatus("当前只检测到纯链接。本地 file:// 读不到抖音内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
+              setHeroStatus("当前只检测到纯链接。本地 file:// 读不到社媒内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
               return;
             }
             if (!canUseServerAgent()) {
@@ -8339,21 +8814,21 @@
         if (isDouyinLikeInput(raw)) {
           el.douyinShare.value = raw;
           el.workLinkInput.value = raw;
-          setHeroStatus("正在读取内容并生成封面/动效。", "success");
+          setHeroStatus("正在读取内容并生成多平台资源包。", "success");
           const ok = await runWorkLinkGenerate();
           if (!ok) {
-            setHeroStatus("当前只检测到纯链接。本地 file:// 读不到抖音内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
+            setHeroStatus("当前只检测到纯链接。本地 file:// 读不到社媒内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
             return;
           }
           showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-          setHeroStatus("已根据作品链接/分享文案生成封面，可继续改字、保存或导出。", "success");
+          setHeroStatus("已根据作品链接/分享文案生成资源包，可继续改字、保存或导出。", "success");
         } else {
           el.smartTitleInput.value = raw;
           el.smartAssetType.value = "work";
           setHeroStatus("正在从标题生成封面和配图方向。", "success");
           await runSmartTitleFlow("work");
           showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-          setHeroStatus("封面已生成，可继续改字、保存素材或导出 PNG。", "success");
+          setHeroStatus("资源包已生成，可继续改字、保存素材或导出 PNG。", "success");
         }
       } catch (error) {
         setHeroStatus(`生成失败：${error.message}`, "error");
@@ -8656,6 +9131,7 @@
       updateVisibility();
       updateFileName();
       queueHeroPreviewSync();
+      queuePlatformPackSync();
     }
 
     function updateVisibility() {
@@ -9314,6 +9790,24 @@
       if (btn) setHeroAudience(btn.dataset.heroAudience);
     });
 
+    if (el.platformButtons) {
+      el.platformButtons.addEventListener("click", event => {
+        const btn = event.target.closest("[data-platform-id]");
+        if (btn) togglePlatformTarget(btn.dataset.platformId);
+      });
+    }
+
+    if (el.platformAssetList) {
+      el.platformAssetList.addEventListener("click", event => {
+        const btn = event.target.closest("[data-platform-download]");
+        if (btn) downloadPlatformAsset(btn.dataset.platformDownload);
+      });
+    }
+
+    if (el.platformPackDownloadBtn) {
+      el.platformPackDownloadBtn.addEventListener("click", downloadPlatformPack);
+    }
+
     document.querySelectorAll("[data-hero-playbook]").forEach(button => {
       button.addEventListener("click", () => applyHeroPlaybook(button.dataset.heroPlaybook));
     });
@@ -9593,9 +10087,15 @@
       }
     });
 
-    el.douyinRunBtn.addEventListener("click", () => runCoverAgent({ fromDouyin: true }));
+    el.douyinRunBtn.addEventListener("click", async () => {
+      const ok = await runCoverAgent({ fromDouyin: true });
+      if (ok) showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+    });
     el.dnaRunBtn.addEventListener("click", runClientDnaAnalysis);
-    el.agentRunBtn.addEventListener("click", () => runCoverAgent());
+    el.agentRunBtn.addEventListener("click", async () => {
+      const ok = await runCoverAgent();
+      if (ok) showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+    });
     el.agentClearBtn.addEventListener("click", () => {
       state.agentMessages = [];
       state.agentReference = null;
@@ -9609,7 +10109,7 @@
       el.dnaResult.hidden = true;
       el.dnaResult.innerHTML = "";
       renderAgentTranscript();
-      setAgentStatus("粘贴抖音分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。");
+      setAgentStatus("粘贴社媒分享文案可自动提炼标题；LLM 负责理解内容，Image 负责生成背景。");
     });
 
     el.smartTitleInput.addEventListener("input", previewSmartTitleLocally);
@@ -9617,14 +10117,29 @@
     [el.smartTitleEdit, el.smartEnTitleEdit, el.smartSummaryEdit, el.smartCodeEdit].forEach(input => {
       input.addEventListener("input", applySmartEditorToMain);
     });
-    el.smartGenerateBtn.addEventListener("click", () => {
-      runSmartTitleFlow("work").catch(error => setSmartStatus(`生成失败：${error.message}`, "error"));
+    el.smartGenerateBtn.addEventListener("click", async () => {
+      try {
+        await runSmartTitleFlow("work");
+        showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+      } catch (error) {
+        setSmartStatus(`生成失败：${error.message}`, "error");
+      }
     });
-    el.smartIntroBtn.addEventListener("click", () => {
-      runSmartTitleFlow("intro").catch(error => setSmartStatus(`片头生成失败：${error.message}`, "error"));
+    el.smartIntroBtn.addEventListener("click", async () => {
+      try {
+        await runSmartTitleFlow("intro");
+        showHeroDelivery("intro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+      } catch (error) {
+        setSmartStatus(`片头生成失败：${error.message}`, "error");
+      }
     });
-    el.smartOutroBtn.addEventListener("click", () => {
-      runSmartTitleFlow("outro").catch(error => setSmartStatus(`片尾生成失败：${error.message}`, "error"));
+    el.smartOutroBtn.addEventListener("click", async () => {
+      try {
+        await runSmartTitleFlow("outro");
+        showHeroDelivery("outro", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+      } catch (error) {
+        setSmartStatus(`片尾生成失败：${error.message}`, "error");
+      }
     });
 
     el.saveModelConfigBtn.addEventListener("click", saveModelConfig);
@@ -9697,6 +10212,7 @@
 
     mountAdvancedPanels();
     setStudioOpen(false);
+    renderPlatformButtons();
 
     state.modelConfig = loadModelConfig();
     applyModelConfigToInputs(state.modelConfig);
