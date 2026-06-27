@@ -39,6 +39,9 @@ class CoverStudioHandler(SimpleHTTPRequestHandler):
             except ValueError as exc:
                 self._json(400, {"error": "bad_request", "message": str(exc)})
             except ImageServiceError as exc:
+                if exc.payload.get("error") == "missing_api_key":
+                    self._json(200, {**exc.payload, "fallback": True})
+                    return
                 self._json(exc.status, exc.payload)
             return
 

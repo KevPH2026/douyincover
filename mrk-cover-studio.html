@@ -8194,6 +8194,33 @@
       return String(text || "").replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
     }
 
+    function isCanvasExportError(error) {
+      return /origin-clean|taint|SecurityError/i.test(`${error && error.name || ""} ${error && error.message || ""}`);
+    }
+
+    function ensureExportableCanvas() {
+      try {
+        el.canvas.toDataURL("image/png");
+        return true;
+      } catch (error) {
+        if (!isCanvasExportError(error)) throw error;
+        state.safeMotionExport = true;
+        draw();
+        setAiStatus("当前浏览器限制了本地图片导出，已切换安全背景继续生成。用本地服务打开可保留完整素材。", "warning");
+        return false;
+      }
+    }
+
+    function canvasDataUrl(type = "image/png", quality) {
+      try {
+        return quality === undefined ? el.canvas.toDataURL(type) : el.canvas.toDataURL(type, quality);
+      } catch (error) {
+        if (!isCanvasExportError(error)) throw error;
+        ensureExportableCanvas();
+        return quality === undefined ? el.canvas.toDataURL(type) : el.canvas.toDataURL(type, quality);
+      }
+    }
+
     function selectedPlatformTargets() {
       return state.selectedPlatforms
         .map(id => platformTargets[id])
@@ -8325,6 +8352,7 @@
         return;
       }
       if (options.redraw !== false) draw();
+      ensureExportableCanvas();
       state.platformAssets = selectedPlatformTargets().map(generatePlatformAsset);
       renderPlatformPack();
     }
@@ -9358,7 +9386,7 @@
       if (isMotionTemplate()) {
         link.download = el.fileNameHint.textContent.replace(/\.(m4v|webm)$/i, ".png");
       }
-      link.href = el.canvas.toDataURL("image/png");
+      link.href = canvasDataUrl("image/png");
       link.click();
       el.status.textContent = `Exported ${link.download}`;
     }
@@ -9431,7 +9459,7 @@
     }
 
     function isCanvasOriginError(error) {
-      return /origin-clean|taint|SecurityError/i.test(`${error && error.name || ""} ${error && error.message || ""}`);
+      return isCanvasExportError(error);
     }
 
     function prepareMotionCaptureStream() {
@@ -9559,6 +9587,7 @@
     }
 
     function canvasPreview(maxWidth = 720, quality = .82) {
+      ensureExportableCanvas();
       const ratio = Math.min(1, maxWidth / el.canvas.width);
       const c = document.createElement("canvas");
       c.width = Math.max(1, Math.round(el.canvas.width * ratio));
