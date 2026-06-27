@@ -1,28 +1,42 @@
 {
   "rewrites": [
     {
+      "source": "/ai-moat-field",
+      "destination": "/ai-moat-field.html"
+    },
+    {
       "source": "/",
       "destination": "/mrk-cover-studio.html"
     }
   ],
   "functions": {
     "api/auth.py": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     },
     "api/assets.py": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     },
     "api/feedback.py": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     },
     "api/cover-agent.py": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     },
     "api/dna-agent.py": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     },
     "api/generate-image.py": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
+    },
+    "api/transcode-m4v.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{.git/**,.vercel/**,scribe-studio/**,generated-covers/**,shopify-ai-shelf-article/**,musong-*/**,ai-moat-*/**,ai-moat-*,work-cover-samples/**,.codex-local/**,.playwright-cli/**,profile-background/**,collection-covers*/**}"
     }
   }
 }

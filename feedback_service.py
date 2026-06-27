@@ -91,8 +91,16 @@ def submit_feedback(incoming, headers):
     try:
         return save_feedback_cloud(feedback)
     except ServiceError as exc:
-        if exc.payload.get("error") == "missing_storage" and not os.environ.get("VERCEL"):
-            return save_feedback_local(feedback)
+        if exc.payload.get("error") == "missing_storage":
+            if not os.environ.get("VERCEL"):
+                return save_feedback_local(feedback)
+            return {
+                "ok": True,
+                "feedback": feedback,
+                "storage": "browser-fallback",
+                "fallback": True,
+                "message": exc.payload.get("message"),
+            }
         raise
 
 

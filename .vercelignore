@@ -1,13 +1,19 @@
 .DS_Store
 .codex-local/
+.vercel/
 .pytest_cache/
 .playwright-cli/
 .baoyu-skills/
 __pycache__/
+*.pyc
+pyproject.toml
+uv.lock
 
+scribe-studio/
 agent-harness/
 post-to-wechat/
 shopify-ai-shelf-article/
+musong-*/
 
 ai-moat-*
 *.zip

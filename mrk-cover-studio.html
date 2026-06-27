@@ -7,6 +7,7 @@
   <meta name="description" content="输入抖音链接、截图或一句观点，自动生成封面、片头、片尾和账号 DNA Style。个人创作者、品牌团队、代运营 Agent 都可以 3 次免登录试用。">
   <meta name="application-name" content="douyincover">
   <meta name="theme-color" content="#b2ff52">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23080a0d'/%3E%3Cpath d='M18 10h10v21L45 10h12L38 33l20 21H45L28 36v18H18z' fill='%23b2ff52'/%3E%3C/svg%3E">
   <meta name="robots" content="index,follow">
   <link rel="canonical" href="https://dna.superk.ai/">
   <meta property="og:site_name" content="douyincover">
@@ -55,6 +56,53 @@
       display: grid;
       grid-template-columns: 240px minmax(420px, 1fr) 340px;
       min-height: calc(100vh - 224px);
+    }
+
+    .app.is-collapsed {
+      display: none;
+    }
+
+    .studio-toggle-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 10px 12px 0;
+      padding: 12px 14px;
+      border: 1px solid rgba(178,255,82,.22);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.07), rgba(80,216,255,.035)),
+        rgba(8,10,13,.88);
+      color: rgba(247,255,232,.9);
+    }
+
+    .studio-toggle-strip strong {
+      display: block;
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .studio-toggle-strip span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(232,237,242,.56);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .studio-toggle-strip button {
+      flex: 0 0 auto;
+      min-width: 130px;
+      height: 38px;
+      border: 1px solid rgba(178,255,82,.64);
+      border-radius: 8px;
+      background: rgba(178,255,82,.12);
+      color: #f7ffe8;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 900;
     }
 
     body.mobile-menu-open {
@@ -211,7 +259,9 @@
 
     .command-console {
       display: grid;
+      grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr);
       gap: 12px;
+      align-items: start;
       min-width: 0;
       padding: 16px;
       border: 1px solid rgba(178,255,82,.28);
@@ -223,6 +273,7 @@
     }
 
     .command-head {
+      grid-column: 1 / -1;
       display: flex;
       justify-content: space-between;
       gap: 14px;
@@ -260,6 +311,7 @@
     }
 
     .audience-switch {
+      grid-column: 1;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
@@ -298,6 +350,7 @@
     }
 
     .hero-outcome-grid {
+      grid-column: 1;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
@@ -337,7 +390,106 @@
       line-height: 1.4;
     }
 
+    .hero-live-preview {
+      grid-column: 2;
+      grid-row: 2 / span 5;
+      display: grid;
+      gap: 10px;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(178,255,82,.22);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.08), rgba(80,216,255,.045)),
+        rgba(0,0,0,.26);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .hero-preview-head,
+    .hero-preview-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hero-preview-head strong {
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .hero-preview-head span,
+    .hero-preview-caption span {
+      color: rgba(255,255,255,.55);
+      font-size: 11px;
+      line-height: 1.4;
+      text-align: right;
+    }
+
+    .hero-preview-frame {
+      position: relative;
+      display: grid;
+      place-items: center;
+      height: clamp(300px, 44vh, 520px);
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px),
+        #07090d;
+      background-size: 24px 24px;
+    }
+
+    .hero-preview-frame img {
+      display: block;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 20px 56px rgba(0,0,0,.38);
+    }
+
+    .hero-preview-frame canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: auto;
+      height: 100%;
+      max-width: 100%;
+      transform: translateX(-50%);
+      border-radius: 6px;
+      box-shadow: 0 20px 56px rgba(0,0,0,.38);
+    }
+
+    .hero-preview-frame img[hidden],
+    .hero-preview-frame canvas[hidden] {
+      display: none;
+    }
+
+    .hero-preview-caption {
+      min-height: 28px;
+      padding-top: 2px;
+    }
+
+    .hero-preview-caption strong {
+      min-width: 0;
+      overflow: hidden;
+      color: rgba(255,255,255,.86);
+      font-size: 12px;
+      line-height: 1.35;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     .command-input-wrap {
+      grid-column: 1;
       display: grid;
       gap: 8px;
     }
@@ -372,6 +524,7 @@
     }
 
     .command-actions {
+      grid-column: 1;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
@@ -420,6 +573,7 @@
     }
 
     .command-playbooks {
+      grid-column: 1;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
@@ -480,6 +634,7 @@
     }
 
     .share-routes {
+      grid-column: 1;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
@@ -503,6 +658,7 @@
     }
 
     .share-invite {
+      grid-column: 1;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 8px;
@@ -552,6 +708,7 @@
     }
 
     .command-status {
+      grid-column: 1;
       min-height: 36px;
       padding: 9px 10px;
       border: 1px solid rgba(255,255,255,.12);
@@ -575,8 +732,11 @@
     }
 
     .command-result {
+      grid-column: 2;
       display: grid;
       gap: 10px;
+      max-height: 260px;
+      overflow: auto;
       padding: 12px;
       border: 1px solid rgba(255,255,255,.12);
       border-radius: 8px;
@@ -1042,6 +1202,8 @@
     }
 
     .social-footer {
+      position: relative;
+      z-index: 5;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1950,9 +2112,8 @@
     }
 
     .product-shell {
-      position: sticky;
-      top: 0;
-      z-index: 30;
+      position: relative;
+      z-index: 0;
       background: rgba(7, 9, 13, .82);
       border-bottom: 1px solid rgba(255,255,255,.08);
       backdrop-filter: blur(18px);
@@ -2823,6 +2984,33 @@
       line-height: 1.4;
     }
 
+    .work-link-box {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(178,255,82,.24);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(178,255,82,.08), rgba(80,216,255,.04)),
+        rgba(0,0,0,.18);
+    }
+
+    .work-link-box .field {
+      margin-bottom: 0;
+    }
+
+    .work-link-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 104px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .work-link-row input,
+    .work-link-row button {
+      height: 42px;
+    }
+
     .smart-engine-row {
       display: flex;
       align-items: center;
@@ -3183,6 +3371,24 @@
         padding: 18px;
       }
 
+      .command-console {
+        grid-template-columns: 1fr;
+      }
+
+      .command-head,
+      .audience-switch,
+      .hero-outcome-grid,
+      .hero-live-preview,
+      .command-input-wrap,
+      .command-actions,
+      .command-playbooks,
+      .share-routes,
+      .share-invite,
+      .command-status,
+      .command-result {
+        grid-column: 1;
+      }
+
       .hero-main {
         grid-template-columns: auto 1fr;
       }
@@ -3285,6 +3491,15 @@
         position: static;
       }
 
+      .studio-toggle-strip {
+        display: grid;
+        margin: 10px;
+      }
+
+      .studio-toggle-strip button {
+        width: 100%;
+      }
+
       .side,
       .workspace,
       .inspector {
@@ -3326,6 +3541,7 @@
       }
 
       .row,
+      .work-link-row,
       .agent-actions,
       .agent-guide-actions,
       .auth-actions,
@@ -3448,33 +3664,43 @@
         display: none;
       }
 
+      .hero-live-preview {
+        grid-row: auto;
+        order: 5;
+      }
+
+      .hero-preview-frame {
+        height: min(58vh, 460px);
+      }
+
       .command-actions {
-        order: 3;
+        order: 4;
         grid-template-columns: 1fr 1fr;
       }
 
       .command-input-wrap {
-        order: 4;
+        order: 3;
       }
 
       .command-playbooks {
-        order: 5;
-      }
-
-      .share-routes {
-        order: 6;
-      }
-
-      .share-invite {
-        order: 7;
-      }
-
-      .command-status {
         order: 8;
       }
 
-      .command-result {
+      .share-routes {
         order: 9;
+      }
+
+      .share-invite {
+        order: 10;
+      }
+
+      .command-status {
+        order: 6;
+      }
+
+      .command-result {
+        order: 7;
+        max-height: none;
       }
 
       .command-input {
@@ -3553,6 +3779,21 @@
           </div>
         </div>
 
+        <section class="hero-live-preview" aria-label="当前预览">
+          <div class="hero-preview-head">
+            <strong>当前预览</strong>
+            <span id="heroPreviewMode">单条作品封面</span>
+          </div>
+          <div class="hero-preview-frame">
+            <canvas id="heroPreviewCanvas" width="1080" height="1920" aria-label="当前封面预览"></canvas>
+            <img id="heroPreviewImage" alt="当前封面预览" hidden>
+          </div>
+          <div class="hero-preview-caption">
+            <strong id="heroPreviewTitle">生成后在这里看图</strong>
+            <span id="heroPreviewMeta">1080 x 1920 / PNG</span>
+          </div>
+        </section>
+
         <div class="command-input-wrap">
           <label for="heroCommandInput">输入内容</label>
           <textarea id="heroCommandInput" class="command-input" placeholder="例：乔布斯：多和聪明的人交往"></textarea>
@@ -3603,7 +3844,7 @@
 
         <div class="command-status" id="heroCommandStatus">先选使用场景，再粘贴内容；短标题会直接预览封面，抖音链接会交给 Agent 读取。</div>
 
-        <div class="command-result" id="heroDeliveryPanel" hidden>
+        <div class="command-result" id="heroDeliveryPanel">
           <div class="command-result-head">
             <strong id="heroDeliveryTitle">本次交付包</strong>
             <span id="heroDeliverySummary">封面、背景方向和下一步动作会在生成后出现。</span>
@@ -3655,6 +3896,14 @@
       </section>
     </header>
   </div>
+
+  <section class="studio-toggle-strip" id="studioToggleStrip" aria-label="高级工作区状态">
+    <div>
+      <strong id="studioToggleTitle">高级工作区已收起</strong>
+      <span id="studioToggleHint">当前结果留在上方；需要细改文字、背景或素材时再展开。</span>
+    </div>
+    <button type="button" id="studioToggleBtn">展开工作台</button>
+  </section>
 
   <div class="onboarding-backdrop" id="onboardingOverlay" hidden>
     <section class="onboarding-panel" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
@@ -4450,7 +4699,7 @@
     </section>
   </div>
 
-  <div class="app">
+  <div class="app is-collapsed" id="studioApp">
     <aside class="side">
       <div class="brand-head">
         <h1>Mr.K Cover Studio</h1>
@@ -4541,6 +4790,17 @@
         <div class="smart-flow-head">
           <strong>标题驱动生成</strong>
           <span>标题进来，封面/片头/片尾出去</span>
+        </div>
+
+        <div class="work-link-box" aria-label="作品链接自动生成">
+          <div class="field">
+            <label for="workLinkInput">作品链接</label>
+            <div class="work-link-row">
+              <input id="workLinkInput" placeholder="粘贴抖音作品链接或复制分享文案">
+              <button class="export-btn" id="workLinkGenerateBtn" type="button">自动生成</button>
+            </div>
+          </div>
+          <div class="ai-status" id="workLinkStatus">粘贴链接后会自动生成。</div>
         </div>
 
         <div class="field" style="margin-bottom:0;">
@@ -5181,14 +5441,19 @@
       generatedStyle: null,
       smartEditorDirty: false,
       smartDraftSource: "",
+      smartAutoFields: { title: "", enTitle: "", summary: "" },
       heroAudience: "solo",
       heroDeliveryMode: "draft",
+      studioOpen: false,
       modelConfig: null,
       motionMedia: null,
       motionMediaType: "",
       motionMediaUrl: "",
       motionPlaying: false,
       motionRecording: false,
+      safeMotionExport: false,
+      workLinkTimer: 0,
+      lastWorkLinkRun: "",
       authToken: localStorage.getItem("mrk.authToken") || "",
       user: null,
       storageMode: "local",
@@ -5199,6 +5464,11 @@
 
     const el = {
       canvas: document.getElementById("coverCanvas"),
+      studioApp: document.getElementById("studioApp"),
+      studioToggleStrip: document.getElementById("studioToggleStrip"),
+      studioToggleTitle: document.getElementById("studioToggleTitle"),
+      studioToggleHint: document.getElementById("studioToggleHint"),
+      studioToggleBtn: document.getElementById("studioToggleBtn"),
       heroMenu: document.getElementById("heroMenu"),
       onboardingOpenBtn: document.getElementById("onboardingOpenBtn"),
       scrollToStudioBtn: document.getElementById("scrollToStudioBtn"),
@@ -5238,6 +5508,9 @@
       smartModelConfigBtn: document.getElementById("smartModelConfigBtn"),
       smartMeta: document.getElementById("smartMeta"),
       smartStatus: document.getElementById("smartStatus"),
+      workLinkInput: document.getElementById("workLinkInput"),
+      workLinkGenerateBtn: document.getElementById("workLinkGenerateBtn"),
+      workLinkStatus: document.getElementById("workLinkStatus"),
       heroCommandInput: document.getElementById("heroCommandInput"),
       heroAudienceButtons: document.getElementById("heroAudienceButtons"),
       heroOutcomeInput: document.getElementById("heroOutcomeInput"),
@@ -5246,6 +5519,11 @@
       heroOutcomeOutputHint: document.getElementById("heroOutcomeOutputHint"),
       heroOutcomeNext: document.getElementById("heroOutcomeNext"),
       heroOutcomeNextHint: document.getElementById("heroOutcomeNextHint"),
+      heroPreviewCanvas: document.getElementById("heroPreviewCanvas"),
+      heroPreviewImage: document.getElementById("heroPreviewImage"),
+      heroPreviewMode: document.getElementById("heroPreviewMode"),
+      heroPreviewTitle: document.getElementById("heroPreviewTitle"),
+      heroPreviewMeta: document.getElementById("heroPreviewMeta"),
       heroInviteTitle: document.getElementById("heroInviteTitle"),
       heroInviteHint: document.getElementById("heroInviteHint"),
       heroInviteCopyBtn: document.getElementById("heroInviteCopyBtn"),
@@ -5352,6 +5630,7 @@
     };
 
     const ctx = el.canvas.getContext("2d");
+    let heroPreviewSyncPending = false;
 
     function loadImage(src) {
       return new Promise((resolve, reject) => {
@@ -5689,6 +5968,104 @@
       return match ? match[0].replace(/[，。！？；;、]+$/g, "") : "";
     }
 
+    function setWorkLinkStatus(message, type = "") {
+      if (!el.workLinkStatus) return;
+      el.workLinkStatus.textContent = message;
+      el.workLinkStatus.className = `ai-status ${type}`.trim();
+    }
+
+    function cleanDouyinShareForTitle(text) {
+      let clean = String(text || "")
+        .replace(/https?:\/\/[^\s，。！？；;、)）\]】"'<>]+/gi, " ")
+        .replace(/复制此链接[\s\S]*$/i, " ")
+        .replace(/打开Dou音搜索[\s\S]*$/i, " ")
+        .replace(/打开抖音搜索[\s\S]*$/i, " ")
+        .replace(/#\s*/g, " #")
+        .trim();
+      const beforeTags = clean.split(/\s+#/)[0] || clean;
+      const chineseRuns = beforeTags.match(/[\u4e00-\u9fff][\u4e00-\u9fffA-Za-z0-9：:“”《》、，。！？\s-]{3,90}/g) || [];
+      clean = (chineseRuns.sort((a, b) => b.length - a.length)[0] || beforeTags)
+        .replace(/^[\d.:/%@A-Za-z\s-]{4,}/, "")
+        .replace(/\s+/g, " ")
+        .replace(/[，。！？；;、#\s]+$/g, "")
+        .trim();
+      return clean.slice(0, 80);
+    }
+
+    function applyWorkLinkLocalPreview(raw, reason = "") {
+      const topic = cleanDouyinShareForTitle(raw);
+      const url = extractUrlFromText(raw);
+      el.douyinShare.value = raw;
+      if (url) el.agentLink.value = url;
+      if (!topic || topic === url) {
+        setWorkLinkStatus("当前是 file:// 本地打开，只粘链接时浏览器读不到抖音内容。请粘贴完整分享文案，或用本地服务/线上页面自动读取。", "error");
+        setAgentStatus("纯链接需要通过本地服务读取；也可以粘贴抖音复制分享文案，先生成本地预览。", "error");
+        return false;
+      }
+      el.smartAssetType.value = "work";
+      el.smartTitleInput.value = topic;
+      previewSmartTitleLocally();
+      showHeroDelivery("draft");
+      setWorkLinkStatus(reason || "已从分享文案提取主题，并生成本地预览。", "success");
+      setHeroStatus("已按作品内容生成封面预览；可以继续生成配图、保存或导出。", "success");
+      return true;
+    }
+
+    function isLocalStaticPreview() {
+      const host = window.location.hostname;
+      const localHost = host === "127.0.0.1" || host === "localhost";
+      if (window.location.protocol === "file:") return true;
+      if (!localHost) return false;
+      const params = new URLSearchParams(window.location.search);
+      return params.get("api") !== "local" && localStorage.getItem("mrk.enableLocalApi") !== "1";
+    }
+
+    function canUseServerAgent() {
+      return /^https?:$/i.test(window.location.protocol) && !isLocalStaticPreview();
+    }
+
+    async function runWorkLinkGenerate(options = {}) {
+      const raw = el.workLinkInput.value.trim();
+      const url = extractUrlFromText(raw);
+      if (!raw) {
+        setWorkLinkStatus("先粘贴抖音作品链接或复制分享文案。", "error");
+        el.workLinkInput.focus();
+        return false;
+      }
+      if (options.auto && state.lastWorkLinkRun === raw) return false;
+      state.lastWorkLinkRun = raw;
+      el.heroCommandInput.value = raw;
+      el.douyinShare.value = raw;
+      if (url) el.agentLink.value = url;
+      updateHeroActionCopy();
+
+      if (!canUseServerAgent()) {
+        return applyWorkLinkLocalPreview(raw, url
+          ? "已根据分享文案生成预览。当前是 file://，只粘纯链接时请用本地服务打开。"
+          : "已从分享文案提取主题，并生成本地预览。");
+      }
+
+      setWorkLinkStatus("正在读取作品链接并生成封面。", "working");
+      setHeroStatus("正在读取作品链接并生成封面。", "success");
+      const ok = await runCoverAgent({ fromDouyin: true });
+      if (ok) {
+        showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
+        setWorkLinkStatus("作品链接已生成封面，可以继续改字、保存或导出。", "success");
+        setHeroStatus("作品链接已生成封面，可以继续改字、保存或导出。", "success");
+        return true;
+      }
+      return applyWorkLinkLocalPreview(raw, "链接读取失败，已先用分享文案生成本地预览。");
+    }
+
+    function scheduleWorkLinkAutoGenerate() {
+      clearTimeout(state.workLinkTimer);
+      const raw = el.workLinkInput.value.trim();
+      if (!extractUrlFromText(raw)) return;
+      state.workLinkTimer = setTimeout(() => {
+        runWorkLinkGenerate({ auto: true }).catch(error => setWorkLinkStatus(`自动生成失败：${error.message}`, "error"));
+      }, 700);
+    }
+
     function setAgentButtonsDisabled(disabled) {
       el.agentRunBtn.disabled = disabled;
       el.douyinRunBtn.disabled = disabled;
@@ -5993,9 +6370,16 @@
       const text = cleanSmartTitle(title);
       const lower = text.toLowerCase();
       if (/乔布斯|jobs/.test(text) && /聪明/.test(text)) return "Jobs: Stay With Smart People";
+      if (/聪明的人|高密度的人群|人交往/.test(text)) return "Stay With Smart People";
       if (/预测全中/.test(text) && /ai/i.test(text) && /职业/.test(text)) return "AI Career Prediction Came True";
+      if (/烦恼|人生的问题|人生的内容/.test(text)) return "Trouble Is Material, Not The Problem";
       if (/saas/.test(lower) && /消失/.test(text)) return "SaaS Is Disappearing";
-      if (/ai|模型|agent|openai|deepseek|anthropic/i.test(text)) return "AI Second Half";
+      if (/判断|不能外包|取舍|方向/.test(text)) return "Judgment Moves First";
+      if (/强者恒强|强者|强势文化|竞争|增长|复利/.test(text)) return "The Strong Get Stronger";
+      if (/路上|一线|现场|客户|出差|机场|车里/.test(text)) return "Field Notes From The Road";
+      if (/生意|商业|赚钱|公司|估值|市场/.test(text)) return "Business Judgment Note";
+      if (/agent/i.test(text)) return "Agent Field Note";
+      if (/ai|模型|openai|deepseek|anthropic/i.test(text)) return "AI Field Note";
       if (category === "strong") return "The Strong Get Stronger";
       if (category === "road") return "Road Field Note";
       return "Judgment Note";
@@ -6006,11 +6390,59 @@
       if (template === "outro") return "关注我，下一条继续拆给你看。";
       if (/乔布斯|聪明的人/.test(text)) return "强者会主动进入更高密度的人群。";
       if (/预测全中/.test(text) && /AI/i.test(text) && /职业/.test(text)) return "AI 对职业的影响，已经开始兑现。";
-      if (/烦恼|人生/.test(text)) return "真正的问题，是你把内容看错了。";
+      if (/烦恼|人生的问题|人生的内容/.test(text)) return "把烦恼当成素材，而不是结论。";
+      if (/判断|不能外包|取舍|方向/.test(text)) return "AI 可以给答案，但方向感仍然要自己拿。";
+      if (/强者恒强|强者|强势文化|竞争|增长|复利/.test(text)) return "优势会在一次次选择里继续放大。";
+      if (/路上|一线|现场|客户|出差|机场|车里/.test(text)) return "现场给出的答案，通常比会议室更早。";
+      if (/生意|商业|赚钱|公司|估值|市场/.test(text)) return "真正的变化，最后都会体现在生意里。";
       if (/saas|api|模型|agent|ai/i.test(text)) return "看懂模型之后，才看得懂生意。";
       if (category === "road") return "一线现场，比会议室更早给答案。";
       if (category === "strong") return "差距会在每一次判断里继续拉开。";
       return "把这一轮变化讲清楚。";
+    }
+
+    function rememberSmartAutoFields(title, fields) {
+      state.smartAutoFields = {
+        title: cleanSmartTitle(title),
+        enTitle: String(fields.enTitle || ""),
+        summary: String(fields.summary || "")
+      };
+    }
+
+    function isAutoManagedSmartValue(name, currentValue) {
+      const current = String(currentValue || "").trim();
+      const previous = String((state.smartAutoFields && state.smartAutoFields[name]) || "").trim();
+      return !current || current === previous;
+    }
+
+    function smartAutoCopyForTitle(title, category, template) {
+      const clean = cleanSmartTitle(title);
+      return {
+        enTitle: template === "outro" ? "Follow The Signal" : localSmartEnglish(clean, category),
+        summary: localSmartSummary(clean, category, template)
+      };
+    }
+
+    function autoFillSmartCopyFromTitle(title, options = {}) {
+      const clean = cleanSmartTitle(title);
+      if (!clean) return;
+      const template = options.template || el.smartAssetType.value;
+      const category = options.category || inferSmartCategory(clean);
+      const generated = smartAutoCopyForTitle(clean, category, template);
+      const force = Boolean(options.force);
+      const currentEn = options.preferMain ? el.enTitle.value : el.smartEnTitleEdit.value;
+      const currentSummary = options.preferMain ? el.summary.value : el.smartSummaryEdit.value;
+      const updateEn = force || isAutoManagedSmartValue("enTitle", currentEn);
+      const updateSummary = force || isAutoManagedSmartValue("summary", currentSummary);
+      if (updateEn) {
+        el.enTitle.value = generated.enTitle;
+        el.smartEnTitleEdit.value = generated.enTitle;
+      }
+      if (updateSummary) {
+        el.summary.value = generated.summary;
+        el.smartSummaryEdit.value = generated.summary;
+      }
+      rememberSmartAutoFields(clean, generated);
     }
 
     function localSmartTheme(title, category, template) {
@@ -6088,15 +6520,52 @@
       state.smartEditorDirty = true;
     }
 
-    function applySmartEditorToMain() {
+    function applySmartEditorToMain(eventOrField) {
+      const changedId = typeof eventOrField === "string"
+        ? eventOrField
+        : eventOrField && eventOrField.target
+          ? eventOrField.target.id
+          : "";
       markSmartEditorDirty();
       el.title.value = el.smartTitleEdit.value;
+      if (changedId === "smartTitleEdit") {
+        const editedTitle = cleanSmartTitle(el.smartTitleEdit.value);
+        if (editedTitle) {
+          const category = inferSmartCategory(editedTitle);
+          applyCategoryMeta(category);
+          autoFillSmartCopyFromTitle(editedTitle, { category, template: el.smartAssetType.value });
+          el.imageTheme.value = localSmartTheme(editedTitle, category, el.smartAssetType.value);
+          el.imageStyle.value = category === "road" ? "field" : "cinematic";
+          el.smartTitleInput.value = editedTitle;
+        }
+      }
       el.enTitle.value = el.smartEnTitleEdit.value;
       el.summary.value = el.smartSummaryEdit.value;
       el.code.value = el.smartCodeEdit.value;
       draw();
       el.status.textContent = "Smart text edited";
       syncSmartEditorFromMain();
+      if (changedId === "smartTitleEdit") {
+        setSmartStatus("已根据主标题自动选择英文标题和子标题；手动改过的字段会保留。", "success");
+      }
+    }
+
+    function applyMainTitleAutoCopy() {
+      const editedTitle = cleanSmartTitle(el.title.value);
+      if (!editedTitle) return;
+      const category = inferSmartCategory(editedTitle);
+      applyCategoryMeta(category);
+      autoFillSmartCopyFromTitle(editedTitle, {
+        category,
+        template: el.smartAssetType.value,
+        preferMain: true
+      });
+      el.imageTheme.value = localSmartTheme(editedTitle, category, el.smartAssetType.value);
+      el.imageStyle.value = category === "road" ? "field" : "cinematic";
+      el.smartTitleInput.value = editedTitle;
+      syncSmartEditorFromMain();
+      draw();
+      setSmartStatus("已根据作品中文标题自动选择英文标题和子标题。", "success");
     }
 
     function readSmartDraft() {
@@ -6144,8 +6613,9 @@
       if (state.template !== template) setTemplate(template);
       const displayTitle = template === "outro" ? `关注我\n看懂${cat.label}` : splitSmartTitle(title);
       el.title.value = displayTitle;
-      el.enTitle.value = template === "outro" ? "Follow The Signal" : localSmartEnglish(title, category);
-      el.summary.value = localSmartSummary(title, category, template);
+      const autoCopy = smartAutoCopyForTitle(title, category, template);
+      el.enTitle.value = autoCopy.enTitle;
+      el.summary.value = autoCopy.summary;
       el.code.value = peekSmartCode(category, template);
       el.imageTheme.value = localSmartTheme(title, category, template);
       el.imageStyle.value = category === "road" ? "field" : "cinematic";
@@ -6153,6 +6623,7 @@
       el.bgPreset.value = "auto";
       draw();
       syncSmartEditorFromMain();
+      rememberSmartAutoFields(title, autoCopy);
       markSmartEditorClean(smartSourceSignature(title, template));
       setSmartStatus(`已本地判断：${cat.label} / ${smartTypeLabel(template)} / ${el.code.value}。点击生成会先出预览，可用模型时自动增强。`, "success");
     }
@@ -6196,6 +6667,18 @@
       el.status.textContent = "Smart title planning";
 
       try {
+        if (!canUseServerAgent()) {
+          state.customBg = await makeThemeBackground();
+          state.customBgDataUrl = state.customBg.src || "";
+          draw();
+          syncSmartEditorFromMain();
+          recordGuestUse(`生成${smartTypeLabel(targetTemplate)}`);
+          setSmartStatus(`${smartTypeLabel(targetTemplate)}已生成本地预览：文字、编号和背景方向都可继续修改。`, "success");
+          setAgentStatus("当前为本地静态预览，已跳过云端 Agent；线上或本地 API 模式会自动调用模型。", "success");
+          setAiStatus("本地主题背景已生成；线上接入 Image2 后会自动换成 AI 背景。", "success");
+          el.status.textContent = "Local smart asset generated";
+          return;
+        }
         const goalLine = targetTemplate === "outro"
           ? "生成片尾动效，结尾必须引导关注 Mr.K / KevPH2026。"
           : targetTemplate === "intro"
@@ -6348,7 +6831,11 @@
       try {
         const result = await apiPost("/api/feedback", payload);
         saveLocalFeedback({ ...result.feedback, storage: result.storage, synced: true });
-        const suffix = result.storage === "local" ? "已保存到本地反馈文件。" : "已保存到云端反馈箱。";
+        const suffix = result.storage === "local"
+          ? "已保存到本地反馈文件。"
+          : result.storage === "browser-fallback"
+            ? "已保存在当前浏览器，云端反馈箱接入后会自动走云端。"
+            : "已保存到云端反馈箱。";
         setFeedbackStatus(`收到，反馈编号 ${result.feedback.id}。${suffix}`, "success");
         el.feedbackIssueLink.hidden = true;
         el.feedbackMessage.value = "";
@@ -6639,13 +7126,28 @@
     }
 
     function drawCoverImage(img, x, y, w, h) {
-      if (!img || !img.width || !img.height) {
+      if (state.safeMotionExport || !img || !img.width || !img.height) {
         const g = ctx.createLinearGradient(x, y, x + w, y + h);
         g.addColorStop(0, "#05070a");
-        g.addColorStop(.55, "#0d1418");
+        g.addColorStop(.44, "#0d1418");
         g.addColorStop(1, "#111820");
         ctx.fillStyle = g;
         ctx.fillRect(x, y, w, h);
+        if (state.safeMotionExport) {
+          const accent = activeCategory().color;
+          ctx.save();
+          ctx.globalAlpha = .34;
+          ctx.strokeStyle = rgba(accent, .42);
+          ctx.lineWidth = 3;
+          for (let i = -2; i < 9; i++) {
+            const y0 = h * (.22 + i * .105);
+            ctx.beginPath();
+            ctx.moveTo(x + w * .54, y + y0);
+            ctx.lineTo(x + w * .98, y + y0 - h * .18);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
         return;
       }
       const scale = Math.max(w / img.width, h / img.height);
@@ -6657,6 +7159,10 @@
     }
 
     function drawCoverMedia(media, x, y, w, h, zoom = 1) {
+      if (state.safeMotionExport || !media) {
+        drawCoverImage(null, x, y, w, h);
+        return;
+      }
       const mw = media.videoWidth || media.naturalWidth || media.width || w;
       const mh = media.videoHeight || media.naturalHeight || media.height || h;
       const scale = Math.max(w / mw, h / mh) * zoom;
@@ -6746,8 +7252,21 @@
       ctx.beginPath();
       ctx.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
       ctx.clip();
-      ctx.filter = "grayscale(1)";
-      ctx.drawImage(avatar, x, y, size, size);
+      if (state.safeMotionExport || !avatar) {
+        const g = ctx.createLinearGradient(x, y, x + size, y + size);
+        g.addColorStop(0, "rgba(255,255,255,.96)");
+        g.addColorStop(1, "rgba(178,255,82,.32)");
+        ctx.fillStyle = g;
+        ctx.fillRect(x, y, size, size);
+        ctx.fillStyle = "#06080a";
+        ctx.font = font(size * .42, 900);
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("K", x + size / 2, y + size / 2 + size * .03);
+      } else {
+        ctx.filter = "grayscale(1)";
+        ctx.drawImage(avatar, x, y, size, size);
+      }
       ctx.restore();
     }
 
@@ -7053,6 +7572,13 @@
       el.status.textContent = "Generating AI image";
 
       try {
+        if (!canUseServerAgent()) {
+          state.customBg = await makeThemeBackground();
+          state.customBgDataUrl = state.customBg.src || "";
+          setAiStatus("本地主题背景已生成；线上接入 Image2 后会自动换成 AI 背景。", "success");
+          el.status.textContent = "Local background generated";
+          return { ok: true, fallback: true, local: true, prompt };
+        }
         const response = await fetch("/api/generate-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -7193,12 +7719,12 @@
 
       if (fromDouyin && !message && !douyinUrl) {
         setAgentStatus("先粘贴一段抖音分享文案或链接。", "error");
-        return;
+        return false;
       }
       if (fromDouyin && extractedUrl) {
         el.agentLink.value = extractedUrl;
       }
-      if (!ensureGuestCanUse(fromDouyin ? "根据抖音内容生成" : "对话生成")) return;
+      if (!ensureGuestCanUse(fromDouyin ? "根据抖音内容生成" : "对话生成")) return false;
 
       const userLine = [
         fromDouyin ? "抖音链接生成封面" : (message || "按当前内容生成一版封面"),
@@ -7214,6 +7740,25 @@
       el.status.textContent = "Agent planning";
 
       try {
+        if (!canUseServerAgent()) {
+          const rawLocal = shareText || message || douyinUrl || el.title.value;
+          const localOk = fromDouyin
+            ? applyWorkLinkLocalPreview(rawLocal, "已根据分享文案生成本地预览。")
+            : (() => {
+                const title = cleanSmartTitle(rawLocal || el.title.value);
+                if (!title) return false;
+                el.smartTitleInput.value = title;
+                previewSmartTitleLocally();
+                return true;
+              })();
+          if (!localOk) return false;
+          await generateAiBackground({ fromAgent: true });
+          recordGuestUse(isMotionTemplate() ? `生成${motionLabel()}` : "生成封面");
+          addAgentMessage("assistant", "已生成本地预览。线上或本地 API 模式会自动调用 Agent 和 Image2。");
+          setAgentStatus("本地预览已生成；文字、栏目、背景方向可继续修改。", "success");
+          el.status.textContent = "Local agent preview generated";
+          return true;
+        }
         const response = await fetch("/api/cover-agent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -7242,9 +7787,11 @@
         const finalMode = bgResult && bgResult.fallback ? "本地预览" : (payload.fallback ? "本地方案" : `${payload.model || "LLM"} 方案`);
         setAgentStatus(`已用${finalMode}完成，可以直接${outputLabel}，也可以继续接入模型增强。`, finalType);
         el.status.textContent = "Agent cover generated";
+        return true;
       } catch (error) {
         setAgentStatus(`对话生成失败：${error.message}`, "error");
         el.status.textContent = "Agent failed";
+        return false;
       } finally {
         setAgentButtonsDisabled(false);
       }
@@ -7268,6 +7815,13 @@
       el.dnaResult.innerHTML = "";
 
       try {
+        if (!canUseServerAgent()) {
+          const note = "当前为本地静态预览，解码 DNA 需要线上页面或本地 API 模式读取公开内容。";
+          addAgentMessage("assistant", note);
+          setAgentStatus(note, "warning");
+          el.status.textContent = "DNA decode needs API";
+          return;
+        }
         const response = await fetch("/api/dna-agent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -7336,6 +7890,64 @@
 
     function oneLine(text) {
       return String(text || "").replace(/\s*\n+\s*/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function queueHeroPreviewSync() {
+      if ((!el.heroPreviewCanvas && !el.heroPreviewImage) || heroPreviewSyncPending) return;
+      heroPreviewSyncPending = true;
+      requestAnimationFrame(syncHeroPreview);
+    }
+
+    function syncHeroPreview() {
+      heroPreviewSyncPending = false;
+      if (!el.heroPreviewCanvas && !el.heroPreviewImage) return;
+      const v = values();
+      const modeLabel = {
+        work: "单条作品封面",
+        collection: "合集封面",
+        profile: "主页背景",
+        intro: "片头动效",
+        outro: "片尾动效"
+      }[state.template] || "当前资产";
+      const title = oneLine(v.title || v.categoryTitle || el.heroCommandInput.value || "当前生成结果");
+      if (el.heroPreviewMode) el.heroPreviewMode.textContent = modeLabel;
+      if (el.heroPreviewTitle) el.heroPreviewTitle.textContent = title;
+      if (el.heroPreviewMeta) {
+        el.heroPreviewMeta.textContent = `${el.canvas.width} x ${el.canvas.height} / ${isMotionTemplate() ? "M4V" : "PNG"}`;
+      }
+      if (el.heroPreviewImage) {
+        try {
+          el.heroPreviewImage.src = el.canvas.toDataURL("image/jpeg", .74);
+          el.heroPreviewImage.hidden = false;
+          if (el.heroPreviewCanvas) el.heroPreviewCanvas.hidden = true;
+          return;
+        } catch (error) {
+          el.heroPreviewImage.hidden = true;
+        }
+      }
+      if (el.heroPreviewCanvas) {
+        try {
+          if (el.heroPreviewCanvas.width !== el.canvas.width) el.heroPreviewCanvas.width = el.canvas.width;
+          if (el.heroPreviewCanvas.height !== el.canvas.height) el.heroPreviewCanvas.height = el.canvas.height;
+          const previewCtx = el.heroPreviewCanvas.getContext("2d");
+          previewCtx.clearRect(0, 0, el.heroPreviewCanvas.width, el.heroPreviewCanvas.height);
+          previewCtx.drawImage(el.canvas, 0, 0);
+          el.heroPreviewCanvas.hidden = false;
+          if (el.heroPreviewImage) el.heroPreviewImage.hidden = true;
+          return;
+        } catch (error) {
+          el.heroPreviewCanvas.hidden = true;
+        }
+      }
+      if (el.heroPreviewTitle) el.heroPreviewTitle.textContent = "预览已在下方大画布更新";
+    }
+
+    function focusHeroPreviewOnSmallScreen() {
+      if (!window.matchMedia("(max-width: 760px)").matches) return;
+      const preview = document.querySelector(".hero-live-preview");
+      if (preview) {
+        setTimeout(() => preview.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+      }
     }
 
     function launchPackTag(categoryTitle) {
@@ -7488,6 +8100,7 @@
       setDeliveryStep("motion", isMotionTemplate(mode) ? "ready" : "pending", isMotionTemplate(mode) ? "可预览或导出 M4V" : "可补片头/片尾");
       setDeliveryStep("library", "pending", "保存后进入素材库");
       renderLaunchPack(mode);
+      focusHeroPreviewOnSmallScreen();
     }
 
     function runHeroDemo() {
@@ -7687,7 +8300,7 @@
           setHeroStatus("正在解码 DNA / Style：适合新账号、客户账号或系列化改版。", "success");
           await runClientDnaAnalysis();
           showHeroDelivery("dna");
-          setHeroStatus("DNA / Style 已发送到 Agent 面板；生成结果会出现在右侧工作台，可继续应用到当前封面。", "success");
+          setHeroStatus("DNA / Style 已发送到结果区；展开高级工作区后可应用到当前封面。", "success");
           return;
         }
 
@@ -7697,34 +8310,50 @@
           if (isDouyinLikeInput(raw)) {
             setTemplate(action);
             el.douyinShare.value = raw;
+            el.workLinkInput.value = raw;
             setHeroStatus(`正在把链接/文案转成${motionName}动效方案。`, "success");
-            await runCoverAgent({ fromDouyin: true });
+            const ok = canUseServerAgent()
+              ? await runCoverAgent({ fromDouyin: true })
+              : applyWorkLinkLocalPreview(raw, "已根据分享文案生成预览；继续生成动效。");
+            if (!ok) {
+              setHeroStatus("当前只检测到纯链接。本地 file:// 读不到抖音内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
+              return;
+            }
+            if (!canUseServerAgent()) {
+              el.smartAssetType.value = action;
+              await runSmartTitleFlow(action);
+            }
             showHeroDelivery(action, { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-            setHeroStatus(`${motionName}动效方案已生成，请在工作台预览或导出 M4V。`, "success");
+            setHeroStatus(`${motionName}动效方案已生成，可在当前预览检查或导出 M4V。`, "success");
           } else {
             el.smartTitleInput.value = raw;
             el.smartAssetType.value = action;
             setHeroStatus(isOutro ? "正在生成片尾动效：结尾会带关注引导。" : "正在生成片头动效：主观点会在前 1-2 秒出现。", "success");
             await runSmartTitleFlow(action);
             showHeroDelivery(action, { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-            setHeroStatus(`${motionName}动效已生成，请在工作台预览或导出 M4V。`, "success");
+            setHeroStatus(`${motionName}动效已生成，可在当前预览检查或导出 M4V。`, "success");
           }
           return;
         }
 
         if (isDouyinLikeInput(raw)) {
           el.douyinShare.value = raw;
+          el.workLinkInput.value = raw;
           setHeroStatus("正在读取内容并生成封面/动效。", "success");
-          await runCoverAgent({ fromDouyin: true });
+          const ok = await runWorkLinkGenerate();
+          if (!ok) {
+            setHeroStatus("当前只检测到纯链接。本地 file:// 读不到抖音内容，请粘贴完整分享文案，或用本地服务/线上页面打开。", "error");
+            return;
+          }
           showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-          setHeroStatus("内容已进入 Agent 生成链路，请在工作台继续微调、保存或导出。", "success");
+          setHeroStatus("已根据作品链接/分享文案生成封面，可继续改字、保存或导出。", "success");
         } else {
           el.smartTitleInput.value = raw;
           el.smartAssetType.value = "work";
           setHeroStatus("正在从标题生成封面和配图方向。", "success");
           await runSmartTitleFlow("work");
           showHeroDelivery("cover", { backgroundFallback: /本地预览|未连接|暂时|占位/i.test(el.aiStatus.textContent) });
-          setHeroStatus("封面已生成，请在工作台继续改字、保存素材或导出 PNG。", "success");
+          setHeroStatus("封面已生成，可继续改字、保存素材或导出 PNG。", "success");
         }
       } catch (error) {
         setHeroStatus(`生成失败：${error.message}`, "error");
@@ -8026,6 +8655,7 @@
       if (state.template === "outro") drawOutro(v, cat, 1);
       updateVisibility();
       updateFileName();
+      queueHeroPreviewSync();
     }
 
     function updateVisibility() {
@@ -8182,6 +8812,27 @@
       document.body.classList.toggle("advanced-open", open);
     }
 
+    function setStudioOpen(open, shouldScroll = false) {
+      state.studioOpen = Boolean(open);
+      if (el.studioApp) {
+        el.studioApp.classList.toggle("is-collapsed", !state.studioOpen);
+      }
+      if (el.studioToggleTitle) {
+        el.studioToggleTitle.textContent = state.studioOpen ? "高级工作区已展开" : "高级工作区已收起";
+      }
+      if (el.studioToggleHint) {
+        el.studioToggleHint.textContent = state.studioOpen
+          ? "可细改文字、背景、素材和导出设置。"
+          : "当前结果留在上方；需要细改文字、背景或素材时再展开。";
+      }
+      if (el.studioToggleBtn) {
+        el.studioToggleBtn.textContent = state.studioOpen ? "收起工作台" : "展开工作台";
+      }
+      if (state.studioOpen && shouldScroll && el.studioApp) {
+        el.studioApp.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
     function mountAdvancedPanels() {
       document.querySelectorAll("[data-advanced-panel]").forEach(panel => {
         el.advancedBody.appendChild(panel);
@@ -8303,6 +8954,21 @@
       ].find(type => MediaRecorder.isTypeSupported(type)) || "";
     }
 
+    function isCanvasOriginError(error) {
+      return /origin-clean|taint|SecurityError/i.test(`${error && error.name || ""} ${error && error.message || ""}`);
+    }
+
+    function prepareMotionCaptureStream() {
+      try {
+        return { stream: el.canvas.captureStream(30), safe: false, reason: "" };
+      } catch (error) {
+        if (!isCanvasOriginError(error)) throw error;
+        state.safeMotionExport = true;
+        drawMotionFrame(0);
+        return { stream: el.canvas.captureStream(30), safe: true, reason: error.message || "Canvas is not origin-clean" };
+      }
+    }
+
     async function exportMotionM4v() {
       if (!isMotionTemplate()) setTemplate("intro");
       if (!el.canvas.captureStream || !window.MediaRecorder) {
@@ -8318,7 +8984,14 @@
       }
       const nativeM4v = mimeType.startsWith("video/mp4");
       const filename = el.fileNameHint.textContent.replace(/\.(png|webm|m4v)$/i, nativeM4v ? ".m4v" : ".webm");
-      const stream = el.canvas.captureStream(30);
+      let capture;
+      try {
+        capture = prepareMotionCaptureStream();
+      } catch (error) {
+        setAiStatus(`导出失败：${error.message}`, "error");
+        return;
+      }
+      const stream = capture.stream;
       const chunks = [];
       const recorder = new MediaRecorder(stream, { mimeType });
       recorder.ondataavailable = event => {
@@ -8333,9 +9006,11 @@
       el.previewMotionBtn.disabled = true;
       el.status.textContent = `Recording ${motionStatusLabel()} video`;
       setAiStatus(
-        nativeM4v
-          ? `正在录制${motionLabel()} M4V，本地浏览器完成，不上传素材。`
-          : `当前浏览器暂不支持原生 M4V，先录制中间视频，再请求本地 ffmpeg 转 M4V。`,
+        capture.safe
+          ? `当前是 file:// 本地打开，浏览器限制了本地图像录制；已切换安全导出模式，正在录制${motionLabel()}。`
+          : nativeM4v
+            ? `正在录制${motionLabel()} M4V，本地浏览器完成，不上传素材。`
+            : `当前浏览器暂不支持原生 M4V，先录制中间视频，再请求本地 ffmpeg 转 M4V。`,
         "working"
       );
       await startMotionVideoPlayback();
@@ -8393,12 +9068,15 @@
       link.download = downloadFilename;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1200);
+      state.safeMotionExport = false;
       drawMotionFrame(1);
       updateFileName();
       setAiStatus(
         finalNativeM4v
           ? `${motionLabel()} M4V 已导出：${downloadFilename}。`
-          : `${motionLabel()} WebM 已导出：${downloadFilename}。M4V 转码失败：${fallbackReason || "当前环境不可用"}。`,
+          : capture.safe
+            ? `${motionLabel()} WebM 已导出：${downloadFilename}。已避开 file:// 的本地图像限制；需要完整背景素材时建议用本地服务打开页面。`
+            : `${motionLabel()} WebM 已导出：${downloadFilename}。M4V 转码失败：${fallbackReason || "当前环境不可用"}。`,
         finalNativeM4v ? "success" : "error"
       );
       el.status.textContent = `${motionLabel()} video exported`;
@@ -8659,6 +9337,14 @@
 
     el.heroCommandInput.addEventListener("input", syncHeroDraftToStudio);
 
+    el.workLinkInput.addEventListener("input", scheduleWorkLinkAutoGenerate);
+    el.workLinkInput.addEventListener("paste", () => {
+      setTimeout(scheduleWorkLinkAutoGenerate, 0);
+    });
+    el.workLinkGenerateBtn.addEventListener("click", () => {
+      runWorkLinkGenerate().catch(error => setWorkLinkStatus(`生成失败：${error.message}`, "error"));
+    });
+
     document.querySelectorAll("[data-command-example]").forEach(button => {
       button.addEventListener("click", () => {
         el.heroCommandInput.value = button.dataset.commandExample || "";
@@ -8731,6 +9417,7 @@
       el[id].addEventListener("input", draw);
       el[id].addEventListener("change", draw);
     });
+    el.title.addEventListener("input", applyMainTitleAutoCopy);
 
     el.categoryColor.addEventListener("input", () => {
       syncColorInputs(el.categoryColor.value, "picker");
@@ -8748,8 +9435,14 @@
     });
 
     el.scrollToStudioBtn.addEventListener("click", () => {
-      document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
+      setStudioOpen(true, true);
     });
+
+    if (el.studioToggleBtn) {
+      el.studioToggleBtn.addEventListener("click", () => {
+        setStudioOpen(!state.studioOpen, !state.studioOpen);
+      });
+    }
 
     el.advancedOpenBtn.addEventListener("click", () => setAdvancedOpen(true));
     el.advancedOpenSmallBtn.addEventListener("click", () => setAdvancedOpen(true));
@@ -8800,7 +9493,7 @@
       if (state.onboardingStep === 3) {
         applyOnboardingCategory();
         closeOnboarding(true);
-        document.querySelector(".app").scrollIntoView({ behavior: "smooth", block: "start" });
+        setStudioOpen(true, true);
         return;
       }
       if (state.onboardingStep === 2) syncOnboardingCategoryFromCurrent();
@@ -9003,6 +9696,7 @@
     });
 
     mountAdvancedPanels();
+    setStudioOpen(false);
 
     state.modelConfig = loadModelConfig();
     applyModelConfigToInputs(state.modelConfig);

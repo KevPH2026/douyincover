@@ -25,4 +25,7 @@ class handler(BaseHTTPRequestHandler):
         try:
             self._json(200, generate_image(incoming))
         except ServiceError as exc:
+            if exc.payload.get("error") == "missing_api_key":
+                self._json(200, {**exc.payload, "fallback": True})
+                return
             self._json(exc.status, exc.payload)

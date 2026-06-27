@@ -1,9 +1,10 @@
 # Agent 接入指南
 
-Mr.K Cover Studio 支持两种 Agent 接入方式：
+Mr.K Cover Studio 支持三种 Agent 接入方式：
 
 - 下载 / 安装 Skill：适合 Codex、Claude Code、Cursor Agent 这类支持本地技能目录的 Agent。
 - 直接复制提示词：适合任意 Agent、网页聊天窗口或临时工作流。
+- CLI-Anything Harness：适合让 Codex、脚本或外部 Agent 直接调用稳定命令，不经过浏览器点击。
 
 ## 方式一：下载 / 安装 Skill
 
@@ -120,6 +121,57 @@ Skill 会默认使用 Mr.K 的视觉系统，并按顺序追问：
 
 推荐开场：
 “先建上下文：这是 Mr.K 的 KevPH2026，还是一个新账号？这次要做单条封面、片头动效、片尾动效、解码 DNA、批量换封面、合集封面，还是主页背景？”
+```
+
+## 方式三：CLI-Anything Harness
+
+命令层目录：
+
+- [agent-harness](./agent-harness)
+
+安装：
+
+```bash
+uv tool install --force --editable /Users/k/Documents/SNS/agent-harness
+```
+
+启动本地 API：
+
+```bash
+mrk-cover --json serve --background
+mrk-cover --json health
+```
+
+生成封面方案：
+
+```bash
+mrk-cover --json plan --message "标题：SaaS 正在消失" --template work
+```
+
+一条命令跑通“链接/主题 → 方案 → 导出 JSON”：
+
+```bash
+mrk-cover --json workflow one-link \
+  --url "https://www.douyin.com/video/..." \
+  --message "做一张单条封面" \
+  --output-dir .codex-local/mrk-cover-agent-demo
+```
+
+解码账号 DNA：
+
+```bash
+mrk-cover --json dna \
+  --url "https://www.douyin.com/user/..." \
+  --sample "AI Agent 正在重写 SaaS 入口" \
+  --sample "客户成功会先被 Agent 化"
+```
+
+本地状态：
+
+```bash
+mrk-cover --json state show
+mrk-cover --json state undo
+mrk-cover --json state redo
 ```
 
 ## 本地页面

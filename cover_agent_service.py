@@ -1309,6 +1309,9 @@ def infer_category(text):
 def fallback_title(text, current_title):
     source = str(text or "")
     compact = re.sub(r"\s+", "", source)
+    lower = source.lower()
+    if "agent" in lower and "saas" in lower and any(k in compact for k in ["重写", "改写", "入口"]):
+        return "Agent\n重写SaaS"
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "交往", "多和", "强势文化", "强者恒强"]):
         return "乔布斯：\n多和聪明的人\n交往"
     if "乔布斯" in compact:
@@ -1336,6 +1339,9 @@ def fallback_title(text, current_title):
 def fallback_summary(text, category, current_summary):
     source = str(text or "")
     compact = re.sub(r"\s+", "", source)
+    lower = source.lower()
+    if "agent" in lower and "saas" in lower and any(k in compact for k in ["重写", "改写", "入口"]):
+        return "Agent 正在变成新的软件入口。"
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "交往", "多和", "强势文化", "强者恒强"]):
         return "强者会主动进入更高密度的人群。"
     if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
@@ -1354,6 +1360,9 @@ def fallback_summary(text, category, current_summary):
 def fallback_en_title(text, category, current_en_title):
     source = str(text or "")
     compact = re.sub(r"\s+", "", source)
+    lower = source.lower()
+    if "agent" in lower and "saas" in lower and any(k in compact for k in ["重写", "改写", "入口"]):
+        return "Agents Rewrite SaaS"
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
         return "Stay With Smart People"
     if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
@@ -1372,6 +1381,9 @@ def fallback_en_title(text, category, current_en_title):
 def fallback_image_theme(text, category, current_theme):
     source = trim(text, 180)
     compact = re.sub(r"\s+", "", source)
+    lower = source.lower()
+    if "agent" in lower and "saas" in lower and any(k in compact for k in ["重写", "改写", "入口"]):
+        return "AI Agent 控制台接管 SaaS 工作流，软件入口从 dashboard 变成命令层，深夜产品屏幕，真实商务科技摄影，暗色电影感"
     if "乔布斯" in compact and any(k in compact for k in ["聪明", "强势文化", "强者恒强"]):
         return "硅谷深夜办公室，聪明人围绕白板讨论，黑白肖像气质，强势文化，低调电影感"
     if "预测全中" in compact and "ai" in source.lower() and "职业" in compact:
